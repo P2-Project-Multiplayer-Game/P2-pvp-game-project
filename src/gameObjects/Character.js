@@ -933,11 +933,11 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
         }
         // Update attack1 ready indicator position
         if (this.attack1ReadyIndicator) {
-            this.attack1CooldownIndicator.setPosition(this.x + (this.flipX ? 5 : -5), this.y - 15);
+            this.attack1ReadyIndicator.setPosition(this.x + (this.flipX ? 5 : -5), this.y - 15);
         }
         // Update attack2 ready indicator position
         if (this.attack2ReadyIndicator) {
-            this.attack2CooldownIndicator.setPosition(this.x + (this.flipX ? -5 : 5), this.y - 15);
+            this.attack2ReadyIndicator.setPosition(this.x + (this.flipX ? -5 : 5), this.y - 15);
         }
         
         // Shockwave: Log physics body position to confirm movement
