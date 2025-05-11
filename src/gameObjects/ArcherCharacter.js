@@ -21,12 +21,12 @@ export class ArcherCharacter extends Character {
             //  custom ready indicator positions 
             readyIndicatorConfig: {
                 attack1: {
-                    x: -5,  // Always left
-                    y: -10   // Offset from center
+                    x: -6,  // Always left
+                    y: -12   // Offset from center
                 },
                 attack2: {
-                    x: 5,   // Always right
-                    y: -10   // Offset from center
+                    x: 6,   // Always right
+                    y: -12   // Offset from center
                 }
             },
             animationKeys: {
