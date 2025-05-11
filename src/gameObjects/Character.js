@@ -699,7 +699,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                     this.ninjawave.flipX = true;
                 }
                 this.ninjawave.owner = this; // Reference player for collision handling
-                this.herowave.damage = this.attack2Damage;
+                this.ninjawave.damage = this.attack2Damage; 
                 this.ninjawave.setVelocityX(this.flipX ? -800 : 800); // ninjawave yeet
                 this.ninjawave.body.setAllowGravity(false);
                 this.ninjawave.setScale(0.9);
