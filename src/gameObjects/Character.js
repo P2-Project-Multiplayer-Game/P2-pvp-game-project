@@ -501,6 +501,47 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
 
     startAttack2Cooldown() {
         this.attack2OnCooldown = true;
+        
+        // Create visual indicator for local player only
+        if (this === this.scene.gameSync?.localPlayer) {
+            // Choose emoji based on character type
+            let emojiSymbol = '✨'; // Default
+            if (this.characterType === 'tank') {
+                emojiSymbol = '💫';
+            } else if (this.characterType === 'ninja') {
+                emojiSymbol = '🗡️';
+            } else if (this.characterType === 'archer') {
+                emojiSymbol = '🏹';
+            } else if (this.characterType === 'hero') {
+                emojiSymbol = '⚡';
+            } else if (this.characterType === 'skeleton') {
+                emojiSymbol = '🔥';
+            }
+            // Create a small indicator
+            this.attack2CooldownIndicator = this.scene.add.text(
+                this.x, 
+                this.y - 45, // Position higher than attack1 indicator to avoid overlap
+                emojiSymbol,  // Special attack emoji
+                {
+                    fontSize: '20px',
+                    stroke: '#000000',
+                    strokeThickness: 3
+                }
+            ).setOrigin(0.5).setAlpha(0.8);
+            
+            // Fade out animation
+            this.scene.tweens.add({
+                targets: this.attack2CooldownIndicator,
+                alpha: 0,
+                duration: this.attack2Cooldown,
+                onComplete: () => {
+                    if (this.attack2CooldownIndicator) {
+                        this.attack2CooldownIndicator.destroy();
+                        this.attack2CooldownIndicator = null;
+                    }
+                }
+            });
+        }
 
         // Start cooldown timer
         this.attack2CooldownTimer = this.scene.time.delayedCall(
@@ -886,6 +927,11 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
         if (this.attack1CooldownIndicator) {
             this.attack1CooldownIndicator.setPosition(this.x, this.y - 30);
         }
+        // Update attack2 cooldown indicator position
+        if (this.attack2CooldownIndicator) {
+            this.attack2CooldownIndicator.setPosition(this.x, this.y - 45);
+        }
+        
         // Shockwave: Log physics body position to confirm movement
         if (this.shockwave) {
             console.log(`Shockwave body position: x=${this.shockwave.body.x}, y=${this.shockwave.body.y}`);
