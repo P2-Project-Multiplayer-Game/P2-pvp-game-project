@@ -743,10 +743,46 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                     },
                     repeat: 30 // Log for 300ms
                 });
-                if (this === this.scene.gameSync?.localPlayer) {
-                    this.scene.combatManager.registerNinjawave();
-                }
-                // Ninjawave: Destroy after 300+100ms if no collision
+                
+                // Add a delayed hitbox for the blue crescent effect (2nd part of attack)
+                this.scene.time.delayedCall(1500, () => {
+                    if (this.stateMachine.currentState === 'ATTACK2') {
+                        // Store original hitbox config
+                        const originalWidth = this.hitboxConfig.width;
+                        const originalHeight = this.hitboxConfig.height;
+                        const originalOffsetX = {...this.hitboxOffsetConfig.x};  // Clone object
+                        const originalOffsetY = this.hitboxOffsetConfig.y;
+                        
+                        // Temporarily modify hitbox config to match the blue crescent effect
+                        this.hitboxConfig.width = 120;  // Wider hitbox
+                        this.hitboxConfig.height = 80;  // Taller hitbox
+                        
+                        // Adjust position to match the blue crescent position
+                        this.hitboxOffsetConfig.x = { 
+                            left: -80,  // Position when facing left
+                            right: 80   // Position when facing right
+                        };
+                        this.hitboxOffsetConfig.y = 10;  // Slightly raised
+                        
+                        // Create the special hitbox with higher damage
+                        this.createHitbox();
+                        
+                        // Make sure this hitbox deals full attack2 damage instead of normal attack damage
+                        if (this.hitbox) {
+                            this.hitbox.damage = this.attack2Damage;
+                        }
+                        
+                        // Restore original hitbox config
+                        this.hitboxConfig.width = originalWidth;
+                        this.hitboxConfig.height = originalHeight;
+                        this.hitboxOffsetConfig.x = originalOffsetX;
+                        this.hitboxOffsetConfig.y = originalOffsetY;
+                        
+                        console.log(`${this.characterType} created secondary hitbox for blue crescent attack`);
+                    }
+                });
+                
+                // Ninjawave: Destroy after delay if no collision
                 this.scene.time.delayedCall(1800, () => {
                     if (this.ninjawave) {
                         this.destroyNinjawave();
@@ -756,7 +792,6 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
             });
         }
     }
-
     // Ninjawave: Destroy ninjawave sprite
     destroyNinjawave() {
         if (this.ninjawave) {
