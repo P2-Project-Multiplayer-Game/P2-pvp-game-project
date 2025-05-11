@@ -412,7 +412,20 @@ export class Game extends Phaser.Scene {
             },
             this
         );
-
+        // Setup fireball collisions with remote players
+        this.physics.add.overlap(
+        remotePlayers, 
+        this.fireballs,
+        this.handleFireballCollision,
+        (target, fireball) => {
+            // Don't allow fireball to collide with its owner
+            if (fireball.owner === target) {
+            return false;
+            }
+            return fireball && fireball.active && target.active;
+        },
+        this
+        );
         console.log("PvP collision handlers set up successfully");
     }
 

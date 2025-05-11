@@ -48,6 +48,15 @@ export default class CombatManager {
     this.network.on('ninjawaveDestroyed', (data) => {
       this.handleRemoteNinjawaveDestroyed(data);
     });   
+
+    // Listen for fireball created events
+    this.network.on('fireballCreated', (data) => {
+      this.handleRemoteFireball(data);
+    });
+
+    this.network.on('fireballDestroyed', (data) => {
+      this.handleRemoteFireballDestroyed(data);
+    });
   }
 
   // this is called when local player hits somone
@@ -115,6 +124,19 @@ export default class CombatManager {
     
     // debug log
     console.log("Sent ninjawave creation event to server");
+  }
+
+  registerFireball() {
+    if (!this.gameSync.localPlayer) return;
+    
+    this.network.socket.emit('fireball_created', {
+      x: this.gameSync.localPlayer.x,
+      y: this.gameSync.localPlayer.y,
+      direction: this.gameSync.localPlayer.flipX ? 'left' : 'right'
+    });
+    
+    // debug log
+    console.log("Sent fireball creation event to server");
   }
   // handels hit confermation from server
   handlePlayerHit(data) {
@@ -310,6 +332,39 @@ export default class CombatManager {
     const remotePlayer = this.gameSync.remotePlayers.get(data.playerId);
     if (remotePlayer && remotePlayer.ninjawave) {
       remotePlayer.destroyNinjawave();
+    }
+  }
+
+  // handle remote fireball creation
+  handleRemoteFireball(data) {
+    console.log('Handling remote fireball creation from player:', data.playerId);
+    
+    const remotePlayer = this.gameSync.remotePlayers.get(data.playerId);
+    
+    if (!remotePlayer) {
+      console.log(`Can't create fireball: Player ${data.playerId} not found`);
+      return;
+    }
+    
+    // Set player direction based on data from server before creating fireball
+    if (data.direction === 'left') {
+      remotePlayer.flipX = true;
+    } else if (data.direction === 'right') {
+      remotePlayer.flipX = false;
+    }
+    
+    console.log(`Creating fireball for remote player ${data.playerId} (${remotePlayer.characterType}) facing ${data.direction}`);
+    
+    if (remotePlayer.characterType === 'skeleton') {
+      remotePlayer.createFireball();
+      console.log(`Remote fireball created successfully at (${remotePlayer.x}, ${remotePlayer.y})`);
+    }
+  }
+
+  handleRemoteFireballDestroyed(data) {
+    const remotePlayer = this.gameSync.remotePlayers.get(data.playerId);
+    if (remotePlayer && remotePlayer.fireball) {
+      remotePlayer.destroyFireball();
     }
   }
 }

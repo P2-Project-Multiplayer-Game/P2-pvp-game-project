@@ -233,6 +233,33 @@ io.on('connection', (socket) => {
       });
     }
   });
+
+  socket.on('fireball_created', (data) => {
+    const player = players.get(socket.id);
+    
+    if (player) {
+      // broadcast fireball to other players in same room
+      socket.to(player.roomId).emit('fireball_created', {
+        playerId: socket.id,
+        x: data.x,
+        y: data.y,
+        direction: data.direction
+      });
+      
+      console.log(`Player ${socket.id} created fireball facing ${data.direction}`)
+    }
+  });
+
+  socket.on('fireball_destroyed', (data) => {
+    const player = players.get(socket.id);
+    if (player) {
+      // Broadcast destruction to all clients in room
+      io.to(player.roomId).emit('fireball_destroyed', {
+        playerId: socket.id,
+        id: data.id
+      });
+    }
+  });
 });
 
 // Server initiation

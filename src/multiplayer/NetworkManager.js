@@ -121,6 +121,17 @@ export default class NetworkManager {
           this.triggerEvent('ninjawaveDestroyed', data);
         });
 
+        //listener for fireball events
+        this.socket.on('fireball_created', (data) => {
+          console.log('Received fireball_created event:', data);
+          this.triggerEvent('fireballCreated', data);
+        });
+
+        this.socket.on('fireball_destroyed', (data) => {
+          console.log('Received fireball_destroyed event:', data);
+          this.triggerEvent('fireballDestroyed', data);
+        });
+
         // responsible for catching any errors such as connect_error in the try block
       } catch (error) {
         console.error('Failed to connect:', error);
@@ -198,5 +209,9 @@ export default class NetworkManager {
   sendNinjawaveDestroyed(id) {
     if (!this.connected) return;
     this.socket.emit('ninjawave_destroyed', { id });
+  }
+  sendFireballDestroyed(id) {
+    if (!this.connected) return;
+    this.socket.emit('fireball_destroyed', { id });
   }
 }

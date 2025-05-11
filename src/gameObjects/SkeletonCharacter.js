@@ -8,6 +8,7 @@ export class SkeletonCharacter extends Character {
             health: 80, // TBD
             maxHealth: 80,
             attackDamage: 15, // TBD
+            attack2Damage: 35,
             invincibilityDuration: 800, // TBD
             hitboxConfig: { width: 45, height: 10 }, // TBD
             // Define custom hitbox offsets for the specific charecter sub class

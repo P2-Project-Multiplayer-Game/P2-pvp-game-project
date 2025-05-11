@@ -584,10 +584,13 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
             this.fireball.setDepth(5); // Ensure visibility
             this.fireball.hitTargets = new Set();
             this.fireball.owner = this; // Reference player for collision handling
+            this.fireball.damage = this.attack2Damage; // Use attack2 damage
             this.fireball.body.setSize(20, 30);//skal tweakes
             // Shockwave: Add to scene's shockwave group(important due to maing physics group in game)
             this.scene.fireballs.add(this.fireball);
-
+            if (this === this.scene.gameSync?.localPlayer) {
+            this.scene.combatManager.registerFireball();
+            }
             //calls destroyFireball, just when it reaches the ground
             this.scene.time.delayedCall(1150, () => {
                 if (this.fireball) {
