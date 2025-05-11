@@ -491,11 +491,10 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
             this.attack1ReadyIndicator.destroy();
         }
         
-        // Create as child of this sprite instead of scene
-        this.attack1ReadyIndicator = new Phaser.GameObjects.Text(
-            this.scene,
-            this.readyIndicatorConfig.attack1.x, // Local x offset
-            this.readyIndicatorConfig.attack1.y, // Local y offset
+        // Create the indicator as a scene object, not a child
+        this.attack1ReadyIndicator = this.scene.add.text(
+            this.x + this.readyIndicatorConfig.attack1.x,
+            this.y + this.readyIndicatorConfig.attack1.y,
             '⚔️',
             {
                 fontSize: '10px',
@@ -503,9 +502,6 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                 strokeThickness: 3
             }
         ).setOrigin(0.5);
-        
-        // Add as child instead of to scene
-        this.add(this.attack1ReadyIndicator);
         
         // Show immediately if not on cooldown
         if (!this.attack1OnCooldown) {
@@ -535,11 +531,10 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
             emojiSymbol = '🔥';
         }
         
-        // Create as child of this sprite
-        this.attack2ReadyIndicator = new Phaser.GameObjects.Text(
-            this.scene,
-            this.readyIndicatorConfig.attack2.x,
-            this.readyIndicatorConfig.attack2.y,
+        // Create as scene object, not a child
+        this.attack2ReadyIndicator = this.scene.add.text(
+            this.x + this.readyIndicatorConfig.attack2.x,
+            this.y + this.readyIndicatorConfig.attack2.y,
             emojiSymbol,
             {
                 fontSize: '10px',
@@ -547,9 +542,6 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                 strokeThickness: 3
             }
         ).setOrigin(0.5);
-        
-        // Add as child
-        this.add(this.attack2ReadyIndicator);
         
         // Show immediately if not on cooldown
         if (!this.attack2OnCooldown) {
@@ -990,6 +982,20 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
             // Update position
             this.hitbox.setPosition(this.x + offsetX, this.y + offsetY);
         } 
+        // Update indicator positions
+        if (this.attack1ReadyIndicator) {
+            this.attack1ReadyIndicator.setPosition(
+                this.x + this.readyIndicatorConfig.attack1.x,
+                this.y + this.readyIndicatorConfig.attack1.y
+            );
+        }
+        
+        if (this.attack2ReadyIndicator) {
+            this.attack2ReadyIndicator.setPosition(
+                this.x + this.readyIndicatorConfig.attack2.x,
+                this.y + this.readyIndicatorConfig.attack2.y
+            );
+        }
         // Shockwave: Log physics body position to confirm movement
         if (this.shockwave) {
             console.log(`Shockwave body position: x=${this.shockwave.body.x}, y=${this.shockwave.body.y}`);
