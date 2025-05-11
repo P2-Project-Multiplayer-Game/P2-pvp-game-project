@@ -573,7 +573,6 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
     createFireball() {
         if (!this.fireball) {
             for (let i = 0; i<12; i++){
-            //let i = 0;
             console.log('fireball has been called')
             //skal tweakes
             let randomInt = Math.floor(Math.random() * 75) + 0;
@@ -583,11 +582,12 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                 'fireball'
             );
             this.fireball.setDepth(5); // Ensure visibility
-
+            this.fireball.hitTargets = new Set();
             this.fireball.owner = this; // Reference player for collision handling
             this.fireball.body.setSize(20, 30);//skal tweakes
             // Shockwave: Add to scene's shockwave group(important due to maing physics group in game)
             this.scene.fireballs.add(this.fireball);
+
             //calls destroyFireball, just when it reaches the ground
             this.scene.time.delayedCall(1150, () => {
                 if (this.fireball) {

@@ -574,6 +574,12 @@ export class Game extends Phaser.Scene {
                 console.log("Prevented self-collision with fireball owner");
                 return;
             }
+            //handleHitboxCollision(target, hitbox) {  // Order is now target, hitbox
+        // Skip if target is invincible or already hit
+        if (target.isInvincible || fireball.hitTargets.has(target.playerId || target)) {
+            return;
+        }
+        fireball.hitTargets.add(target.playerId || target);
 
             // Get damage from arrow owner
             const damage = fireball.owner ? fireball.owner.attackDamage : 10;
