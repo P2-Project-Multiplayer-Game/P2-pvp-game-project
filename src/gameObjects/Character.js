@@ -766,7 +766,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                         crescent.body.setAllowGravity(false);
                         
                         // Make it visible for debugging
-                        //crescent.setStrokeStyle(3, 0x00ffff);
+                        crescent.setStrokeStyle(3, 0x00ffff);
                         
                         // Destroy the crescent hitbox after a short duration
                         this.scene.time.delayedCall(200, () => {
