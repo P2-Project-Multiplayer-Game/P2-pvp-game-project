@@ -21,11 +21,11 @@ export class TankCharacter extends Character {
             //  custom ready indicator positions 
             readyIndicatorConfig: {
                 attack1: {
-                    x: { left: 5, right: -5 },
+                    x: { left: 5, right: +5 },
                     y: -10
                 },
                 attack2: {
-                    x: { left: 5, right: -5 },
+                    x: { left: +5, right: 5 },
                     y: -10
                 }
             },
