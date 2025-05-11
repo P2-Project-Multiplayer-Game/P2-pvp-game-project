@@ -466,8 +466,8 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
         if (this === this.scene.gameSync?.localPlayer) {
             // Create a small indicator
             this.attack1CooldownIndicator = this.scene.add.text(
-                this.x + 10, 
-                this.y - 20,
+                this.x + 20, 
+                this.y - 10,
                 '⚔️',
                 {
                     fontSize: '10px',
@@ -519,8 +519,8 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
             }
             // Create a small indicator
             this.attack2CooldownIndicator = this.scene.add.text(
-                this.x -10, 
-                this.y - 20, // Position higher than attack1 indicator to avoid overlap
+                this.x -20, 
+                this.y - 10, // Position higher than attack1 indicator to avoid overlap
                 emojiSymbol,  // Special attack emoji
                 {
                     fontSize: '10px',
