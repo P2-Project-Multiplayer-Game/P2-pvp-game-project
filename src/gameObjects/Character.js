@@ -39,12 +39,12 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
         // Add ready indicator offset configuration
         this.readyIndicatorConfig = config.readyIndicatorConfig || {
             attack1: {
-                x: { left: 15, right: -15 }, // X offsets when facing left/right
-                y: -15                       // Y offset from character center
+                x: -15,  // Always to the left
+                y: -15   // Above character
             },
             attack2: {
-                x: { left: -15, right: 15 }, // X offsets when facing left/right
-                y: -15                       // Y offset from character center
+                x: 15,   // Always to the right
+                y: -15   // Above character
             }
         };
         // Initialize ready indicators as null 
@@ -492,15 +492,9 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
             this.attack1ReadyIndicator.destroy();
         }
         
-        // Get offset based on direction
-        const offsetX = this.flipX 
-            ? this.readyIndicatorConfig.attack1.x.left 
-            : this.readyIndicatorConfig.attack1.x.right;
-        const offsetY = this.readyIndicatorConfig.attack1.y;
-        
         this.attack1ReadyIndicator = this.scene.add.text(
-            this.x + offsetX,
-            this.y + offsetY,
+            this.x + this.readyIndicatorConfig.attack1.x,
+            this.y + this.readyIndicatorConfig.attack1.y,
             '⚔️',
             {
                 fontSize: '10px',
@@ -522,12 +516,6 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
             this.attack2ReadyIndicator.destroy();
         }
         
-        // Get offset based on direction
-        const offsetX = this.flipX 
-            ? this.readyIndicatorConfig.attack2.x.left 
-            : this.readyIndicatorConfig.attack2.x.right;
-        const offsetY = this.readyIndicatorConfig.attack2.y;
-        
         // Choose emoji based on character type
         let emojiSymbol = '✨'; // Default
         if (this.characterType === 'tank') {
@@ -543,8 +531,8 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
         }
         
         this.attack2ReadyIndicator = this.scene.add.text(
-            this.x + offsetX,
-            this.y + offsetY,
+            this.x + this.readyIndicatorConfig.attack2.x,
+            this.y + this.readyIndicatorConfig.attack2.y,
             emojiSymbol,
             {
                 fontSize: '10px',
@@ -1035,22 +1023,20 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
             // Update position
             this.hitbox.setPosition(this.x + offsetX, this.y + offsetY);
         }
-        // Update attack1 ready indicator position with proper offsets
+        // Update attack1 ready indicator position (melee) - ALWAYS LEFT
         if (this.attack1ReadyIndicator) {
-            const offsetX = this.flipX 
-                ? this.readyIndicatorConfig.attack1.x.left 
-                : this.readyIndicatorConfig.attack1.x.right;
-            const offsetY = this.readyIndicatorConfig.attack1.y;
-            this.attack1ReadyIndicator.setPosition(this.x + offsetX, this.y + offsetY);
+            this.attack1ReadyIndicator.setPosition(
+                this.x + this.readyIndicatorConfig.attack1.x, 
+                this.y + this.readyIndicatorConfig.attack1.y
+            );
         }
         
-        // Update attack2 ready indicator position with proper offsets
+        // Update attack2 ready indicator position (special) - ALWAYS RIGHT
         if (this.attack2ReadyIndicator) {
-            const offsetX = this.flipX 
-                ? this.readyIndicatorConfig.attack2.x.left 
-                : this.readyIndicatorConfig.attack2.x.right;
-            const offsetY = this.readyIndicatorConfig.attack2.y;
-            this.attack2ReadyIndicator.setPosition(this.x + offsetX, this.y + offsetY);
+            this.attack2ReadyIndicator.setPosition(
+                this.x + this.readyIndicatorConfig.attack2.x, 
+                this.y + this.readyIndicatorConfig.attack2.y
+            );
         }
         
         // Shockwave: Log physics body position to confirm movement
