@@ -15,8 +15,9 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
         this.maxHealth = config.maxHealth || 100;
         this.isInvincible = false;
         this.invincibilityDuration = config.invincibilityDuration || 1000; // cannot take damage 1 second after hit
-        this.attackDamage = config.attackDamage || 50;
-        this.attack2Damage = config.attack2Damage || 75;
+        this.attackDamage = config.attackDamage || 20;
+        this.attack2Damage = config.attack2Damage || 35;
+        this.attack3Damage = config.attack3Damage || 60; 
         this.hitboxConfig = config.hitboxConfig || { width: 40, height: 50 };
         this.hitboxOffsetConfig = config.hitboxOffsetConfig || { 
             x: { left: -40, right: 40 },  // different values for left/right facing
@@ -743,42 +744,38 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                     },
                     repeat: 30 // Log for 300ms
                 });
-                
                 // Add a delayed hitbox for the blue crescent effect (2nd part of attack)
-                this.scene.time.delayedCall(1500, () => {
+                this.scene.time.delayedCall(1700, () => {
                     if (this.stateMachine.currentState === 'ATTACK2') {
-                        // Store original hitbox config
-                        const originalWidth = this.hitboxConfig.width;
-                        const originalHeight = this.hitboxConfig.height;
-                        const originalOffsetX = {...this.hitboxOffsetConfig.x};  // Clone object
-                        const originalOffsetY = this.hitboxOffsetConfig.y;
+                        // Create a completely separate hitbox specifically for the blue crescent
+                        const crescent = this.scene.add.rectangle(
+                            this.x + (this.flipX ? -25 : 25), // Position directly where we want it
+                            this.y + 15,                           // At player's y position
+                            75,                              // Width of crescent
+                            50                                // Height of crescent
+                        );
                         
-                        // Temporarily modify hitbox config to match the blue crescent effect
-                        this.hitboxConfig.width = 120;  // Wider hitbox
-                        this.hitboxConfig.height = 80;  // Taller hitbox
+                        // Add physics and set up the hitbox properties
+                        this.scene.physics.world.enable(crescent);
+                        this.scene.hitboxes.add(crescent);
                         
-                        // Adjust position to match the blue crescent position
-                        this.hitboxOffsetConfig.x = { 
-                            left: -80,  // Position when facing left
-                            right: 80   // Position when facing right
-                        };
-                        this.hitboxOffsetConfig.y = 10;  // Slightly raised
+                        // Set properties for collision detection
+                        crescent.owner = this;
+                        crescent.damage = this.attack3Damage 
+                        crescent.hitTargets = new Set();
+                        crescent.body.setAllowGravity(false);
                         
-                        // Create the special hitbox with higher damage
-                        this.createHitbox();
+                        // Make it visible for debugging
+                        //crescent.setStrokeStyle(3, 0x00ffff);
                         
-                        // Make sure this hitbox deals full attack2 damage instead of normal attack damage
-                        if (this.hitbox) {
-                            this.hitbox.damage = this.attack2Damage;
-                        }
+                        // Destroy the crescent hitbox after a short duration
+                        this.scene.time.delayedCall(200, () => {
+                            if (crescent) {
+                                crescent.destroy();
+                            }
+                        });
                         
-                        // Restore original hitbox config
-                        this.hitboxConfig.width = originalWidth;
-                        this.hitboxConfig.height = originalHeight;
-                        this.hitboxOffsetConfig.x = originalOffsetX;
-                        this.hitboxOffsetConfig.y = originalOffsetY;
-                        
-                        console.log(`${this.characterType} created secondary hitbox for blue crescent attack`);
+                        console.log(`${this.characterType} created direct blue crescent hitbox at x=${crescent.x}, y=${crescent.y}`);
                     }
                 });
                 
