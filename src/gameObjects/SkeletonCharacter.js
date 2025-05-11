@@ -18,6 +18,17 @@ export class SkeletonCharacter extends Character {
                 x: { left: -15, right: 15 },  // Adjust these values based on chrecters attack animation
                 y: 15 // Vertical offset from character center
             },
+            //  custom ready indicator positions 
+            readyIndicatorConfig: {
+                attack1: {
+                    x: { left: 5, right: -5 },
+                    y: -10
+                },
+                attack2: {
+                    x: { left: -5, right: 5 },
+                    y: -10
+                }
+            },
             animationKeys: {
                 left: 'skeleton_left',
                 right: 'skeleton_right',

@@ -36,7 +36,20 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
         };
         this.hitbox = null;
         this.shockwave = null; // Shockwave: Track shockwave sprite for tank's ATTACK2
-
+        // Add ready indicator offset configuration
+        this.readyIndicatorConfig = config.readyIndicatorConfig || {
+            attack1: {
+                x: { left: 15, right: -15 }, // X offsets when facing left/right
+                y: -15                       // Y offset from character center
+            },
+            attack2: {
+                x: { left: -15, right: 15 }, // X offsets when facing left/right
+                y: -15                       // Y offset from character center
+            }
+        };
+        // Initialize ready indicators as null 
+        this.attack1ReadyIndicator = null;
+        this.attack2ReadyIndicator = null;
         // Movement properties
         this.moveSpeed = config.moveSpeed || 200; // Default movement speed
         this.jumpVelocity = config.jumpVelocity || 480; // Default jump velocity (negative for upward)
@@ -76,6 +89,8 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
 
         console.log(`Creating ${this.characterType} character at x=${x}, y=${y}`);
         this.initAnimations();
+        // Initialize ability indicators
+        this.initReadyIndicators();
         this.initStateMachine(scene);
         this.anims.play(this.animationKeys.turn, true); // Added this line so animations start to play the very first frame,
     }
@@ -127,6 +142,17 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
             console.log(`${this.characterType} animations created successfully`);
         } catch (error) {
             console.error(`${this.characterType} animation creation failed:`, error);
+        }
+    }
+    
+    initReadyIndicators() {
+        // Only create indicators for local player
+        if (this === this.scene.gameSync?.localPlayer) {
+            // Attack1 indicator
+            this.createAttack1ReadyIndicator();
+            
+            // Attack2 indicator
+            this.createAttack2ReadyIndicator();
         }
     }
 
@@ -461,6 +487,79 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
         }
     }
 
+    createAttack1ReadyIndicator() {
+        if (this.attack1ReadyIndicator) {
+            this.attack1ReadyIndicator.destroy();
+        }
+        
+        // Get offset based on direction
+        const offsetX = this.flipX 
+            ? this.readyIndicatorConfig.attack1.x.left 
+            : this.readyIndicatorConfig.attack1.x.right;
+        const offsetY = this.readyIndicatorConfig.attack1.y;
+        
+        this.attack1ReadyIndicator = this.scene.add.text(
+            this.x + offsetX,
+            this.y + offsetY,
+            '⚔️',
+            {
+                fontSize: '10px',
+                stroke: '#000000',
+                strokeThickness: 3
+            }
+        ).setOrigin(0.5);
+        
+        // Show immediately if not on cooldown
+        if (!this.attack1OnCooldown) {
+            this.attack1ReadyIndicator.setAlpha(1);
+        } else {
+            this.attack1ReadyIndicator.setAlpha(0);
+        }
+    }
+
+    createAttack2ReadyIndicator() {
+        if (this.attack2ReadyIndicator) {
+            this.attack2ReadyIndicator.destroy();
+        }
+        
+        // Get offset based on direction
+        const offsetX = this.flipX 
+            ? this.readyIndicatorConfig.attack2.x.left 
+            : this.readyIndicatorConfig.attack2.x.right;
+        const offsetY = this.readyIndicatorConfig.attack2.y;
+        
+        // Choose emoji based on character type
+        let emojiSymbol = '✨'; // Default
+        if (this.characterType === 'tank') {
+            emojiSymbol = '💫';
+        } else if (this.characterType === 'ninja') {
+            emojiSymbol = '🗡️';
+        } else if (this.characterType === 'archer') {
+            emojiSymbol = '🏹';
+        } else if (this.characterType === 'hero') {
+            emojiSymbol = '⚡';
+        } else if (this.characterType === 'skeleton') {
+            emojiSymbol = '🔥';
+        }
+        
+        this.attack2ReadyIndicator = this.scene.add.text(
+            this.x + offsetX,
+            this.y + offsetY,
+            emojiSymbol,
+            {
+                fontSize: '10px',
+                stroke: '#000000',
+                strokeThickness: 3
+            }
+        ).setOrigin(0.5);
+        
+        // Show immediately if not on cooldown
+        if (!this.attack2OnCooldown) {
+            this.attack2ReadyIndicator.setAlpha(1);
+        } else {
+            this.attack2ReadyIndicator.setAlpha(0);
+        }
+    }
     // Update startAttack1Cooldown to destroy existing indicator first
     startAttack1Cooldown() {
         // Destroy existing indicator when ability is used
@@ -504,16 +603,45 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
         );
     }
 
-    // Update startAttack2Cooldown with the same approach
-    startAttack2Cooldown() {
-        // Destroy existing indicator when ability is used
-        if (this.attack2ReadyIndicator) {
-            this.attack2ReadyIndicator.destroy();
-            this.attack2ReadyIndicator = null;
+    startAttack1Cooldown() {
+        this.attack1OnCooldown = true;
+        
+        // Hide the indicator during cooldown
+        if (this.attack1ReadyIndicator) {
+            this.attack1ReadyIndicator.setAlpha(0);
         }
+        
+        // Start cooldown timer
+        this.attack1CooldownTimer = this.scene.time.delayedCall(
+            this.attack1Cooldown,
+            () => {
+                this.attack1OnCooldown = false;
+                console.log(`${this.characterType} Attack1 cooldown finished`);
 
+                // Show indicator with fade-in when cooldown finishes
+                if (this.attack1ReadyIndicator) {
+                    this.scene.tweens.add({
+                        targets: this.attack1ReadyIndicator,
+                        alpha: 1,
+                        duration: 500,
+                        ease: 'Power1'
+                    });
+                } else {
+                    // Create it if it doesn't exist
+                    this.createAttack1ReadyIndicator();
+                }
+            }
+        );
+    }
+
+    startAttack2Cooldown() {
         this.attack2OnCooldown = true;
-
+        
+        // Hide the indicator during cooldown
+        if (this.attack2ReadyIndicator) {
+            this.attack2ReadyIndicator.setAlpha(0);
+        }
+        
         // Start cooldown timer
         this.attack2CooldownTimer = this.scene.time.delayedCall(
             this.attack2Cooldown,
@@ -521,41 +649,17 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                 this.attack2OnCooldown = false;
                 console.log(`${this.characterType} Attack2 cooldown finished`);
                 
-                // When cooldown finishes, show the ready indicator
-                if (this === this.scene.gameSync?.localPlayer) {
-                    // Choose emoji based on character type
-                    let emojiSymbol = '✨'; // Default
-                    if (this.characterType === 'tank') {
-                        emojiSymbol = '💫';
-                    } else if (this.characterType === 'ninja') {
-                        emojiSymbol = '🗡️';
-                    } else if (this.characterType === 'archer') {
-                        emojiSymbol = '🏹';
-                    } else if (this.characterType === 'hero') {
-                        emojiSymbol = '⚡';
-                    } else if (this.characterType === 'skeleton') {
-                        emojiSymbol = '🔥';
-                    }
-                    
-                    // Create the ready indicator
-                    this.attack2ReadyIndicator = this.scene.add.text(
-                        this.x + (this.flipX ? -5 : 5), 
-                        this.y - 15,
-                        emojiSymbol,
-                        {
-                            fontSize: '10px',
-                            stroke: '#000000',
-                            strokeThickness: 3
-                        }
-                    ).setOrigin(0.5).setAlpha(0);
-                    
-                    // Fade IN animation to show ability is ready - no float effect
+                // Show indicator with fade-in when cooldown finishes
+                if (this.attack2ReadyIndicator) {
                     this.scene.tweens.add({
                         targets: this.attack2ReadyIndicator,
                         alpha: 1,
                         duration: 700,
                         ease: 'Power1'
                     });
+                } else {
+                    // Create it if it doesn't exist
+                    this.createAttack2ReadyIndicator();
                 }
             }
         );
@@ -931,13 +1035,22 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
             // Update position
             this.hitbox.setPosition(this.x + offsetX, this.y + offsetY);
         }
-        // Update attack1 ready indicator position
+        // Update attack1 ready indicator position with proper offsets
         if (this.attack1ReadyIndicator) {
-            this.attack1ReadyIndicator.setPosition(this.x + (this.flipX ? 5 : -5), this.y - 15);
+            const offsetX = this.flipX 
+                ? this.readyIndicatorConfig.attack1.x.left 
+                : this.readyIndicatorConfig.attack1.x.right;
+            const offsetY = this.readyIndicatorConfig.attack1.y;
+            this.attack1ReadyIndicator.setPosition(this.x + offsetX, this.y + offsetY);
         }
-        // Update attack2 ready indicator position
+        
+        // Update attack2 ready indicator position with proper offsets
         if (this.attack2ReadyIndicator) {
-            this.attack2ReadyIndicator.setPosition(this.x + (this.flipX ? -5 : 5), this.y - 15);
+            const offsetX = this.flipX 
+                ? this.readyIndicatorConfig.attack2.x.left 
+                : this.readyIndicatorConfig.attack2.x.right;
+            const offsetY = this.readyIndicatorConfig.attack2.y;
+            this.attack2ReadyIndicator.setPosition(this.x + offsetX, this.y + offsetY);
         }
         
         // Shockwave: Log physics body position to confirm movement
