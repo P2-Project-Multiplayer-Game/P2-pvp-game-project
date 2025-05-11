@@ -570,35 +570,52 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
         }
     } 
     //Skeleton fireball special attack
-    createFireball() {
+    createFireball(positions = null) {
         if (!this.fireball) {
-            for (let i = 0; i<12; i++){
-            console.log('fireball has been called')
-            //skal tweakes
-            let randomInt = Math.floor(Math.random() * 75) + 0;
-            this.fireball = this.scene.physics.add.sprite(
-                randomInt+(i)*SCREEN_WIDTH/12, //needs to be semi random
-                0, // spawns at the top
-                'fireball'
-            );
-            this.fireball.setDepth(5); // Ensure visibility
-            this.fireball.hitTargets = new Set();
-            this.fireball.owner = this; // Reference player for collision handling
-            this.fireball.damage = this.attack2Damage; // Use attack2 damage
-            this.fireball.body.setSize(20, 30);//skal tweakes
-            // Shockwave: Add to scene's shockwave group(important due to maing physics group in game)
-            this.scene.fireballs.add(this.fireball);
-            if (this === this.scene.gameSync?.localPlayer) {
-            this.scene.combatManager.registerFireball();
+            console.log('fireball has been called');
+            
+            // Generate positions array if not provided (for local player)
+            let fireballPositions = positions || [];
+            if (!positions) {
+                for (let i = 0; i < 12; i++) {
+                    let randomInt = Math.floor(Math.random() * 75);
+                    fireballPositions.push({
+                        x: randomInt + (i) * SCREEN_WIDTH/12,
+                        y: 0
+                    });
+                }
             }
-            //calls destroyFireball, just when it reaches the ground
+            
+            // Store positions for networking
+            this.fireballPositions = fireballPositions;
+            
+            // Create fireballs at the specified positions
+            for (let i = 0; i < fireballPositions.length; i++) {
+                this.fireball = this.scene.physics.add.sprite(
+                    fireballPositions[i].x,
+                    fireballPositions[i].y,
+                    'fireball'
+                );
+                this.fireball.setDepth(5);
+                this.fireball.hitTargets = new Set();
+                this.fireball.owner = this;
+                this.fireball.damage = this.attack2Damage;
+                this.fireball.body.setSize(20, 30);
+                this.scene.fireballs.add(this.fireball);
+            }
+            
+            // Register with combat manager for local player
+            if (this === this.scene.gameSync?.localPlayer) {
+                this.scene.combatManager.registerFireball(fireballPositions);
+            }
+            
+            // Destroy fireballs after delay
             this.scene.time.delayedCall(1150, () => {
                 if (this.fireball) {
                     this.destroyFireball(this.fireball);
                 }
             });
         }
-    }
     }
 
     // fireball: Destroy fireball sprite

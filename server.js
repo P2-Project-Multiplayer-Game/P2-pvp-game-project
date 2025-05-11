@@ -235,19 +235,20 @@ io.on('connection', (socket) => {
   });
 
   socket.on('fireball_created', (data) => {
-    const player = players.get(socket.id);
-    
-    if (player) {
-      // broadcast fireball to other players in same room
-      socket.to(player.roomId).emit('fireball_created', {
-        playerId: socket.id,
-        x: data.x,
-        y: data.y,
-        direction: data.direction
-      });
+      const player = players.get(socket.id);
       
-      console.log(`Player ${socket.id} created fireball facing ${data.direction}`)
-    }
+      if (player) {
+          // broadcast fireball to other players in same room with positions
+          socket.to(player.roomId).emit('fireball_created', {
+              playerId: socket.id,
+              x: data.x,
+              y: data.y,
+              direction: data.direction,
+              positions: data.positions // Include the positions array
+          });
+          
+          console.log(`Player ${socket.id} created fireball facing ${data.direction} with positions:`, data.positions);
+      }
   });
 
   socket.on('fireball_destroyed', (data) => {
