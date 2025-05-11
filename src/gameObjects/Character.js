@@ -466,7 +466,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
         if (this === this.scene.gameSync?.localPlayer) {
             // Create a small indicator
             this.attack1CooldownIndicator = this.scene.add.text(
-                this.x + + (this.flipX ? -5 : 5), 
+                this.x + + (this.flipX ? 5 : -5), 
                 this.y - 10,
                 '⚔️',
                 {
@@ -519,7 +519,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
             }
             // Create a small indicator
             this.attack2CooldownIndicator = this.scene.add.text(
-                this.x + (this.flipX ? 5 : -5), 
+                this.x + (this.flipX ? -5 : 5), 
                 this.y - 10, // Position higher than attack1 indicator to avoid overlap
                 emojiSymbol,  // Special attack emoji
                 {
@@ -925,11 +925,11 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
         }
         // Update attack1 cooldown indicator position
         if (this.attack1CooldownIndicator) {
-            this.attack1CooldownIndicator.setPosition(this.x + (this.flipX ? -5 : 5), this.y - 15);
+            this.attack1CooldownIndicator.setPosition(this.x + (this.flipX ? 5 : -5), this.y - 15);
         }
         // Update attack2 cooldown indicator position
         if (this.attack2CooldownIndicator) {
-            this.attack2CooldownIndicator.setPosition(this.x + (this.flipX ? 5 : -5), this.y - 15);
+            this.attack2CooldownIndicator.setPosition(this.x + (this.flipX ? -5 : 5), this.y - 15);
         }
         
         // Shockwave: Log physics body position to confirm movement
