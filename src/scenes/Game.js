@@ -148,6 +148,12 @@ export class Game extends Phaser.Scene {
         this.herowaves = this.physics.add.group({
             allowGravity: false
         });
+
+        // Create ninjawave group with no gravity
+        this.ninjawaves = this.physics.add.group({
+            allowGravity: false
+        });
+
         // Create arrows group with gravity
         this.arrows = this.physics.add.group({
             allowGravity: false 
@@ -237,6 +243,20 @@ export class Game extends Phaser.Scene {
                 const overlap = herowave && herowave.active && target.active;
                 if (overlap) {
                     console.log(`Herowave overlap detected at x=${herowave.x}, y=${herowave.y}, target x=${target.body.x}, y=${target.body.y}`);
+                }
+                return overlap;
+            },
+            this
+        );
+        // Ninjawave: Set up ninjawave collisions with dummy target
+        this.physics.add.overlap(
+            this.dummyTarget,
+            this.ninjawaves,
+            this.handleNinjawaveCollision,
+            (target, ninjawave) => {
+                const overlap = ninjawave && ninjawave.active && target.active;
+                if (overlap) {
+                    console.log(`Ninjawave overlap detected at x=${ninjawave.x}, y=${ninjawave.y}, target x=${target.body.x}, y=${target.body.y}`);
                 }
                 return overlap;
             },
@@ -364,6 +384,20 @@ export class Game extends Phaser.Scene {
             },
             this
         );
+        // Setup ninjawave collisions with remote players
+        this.physics.add.overlap(
+            remotePlayers, 
+            this.ninjawaves,
+            this.handleNinjawaveCollision,
+            (target, ninjawave) => {
+                // CRITICAL FIX: Don't allow ninjawave to collide with its owner
+                if (ninjawave.owner === target) {
+                    return false;
+                }
+                return ninjawave && ninjawave.active && target.active;
+            },
+            this
+        );
         // Setup arrow collisions with remote players
         this.physics.add.overlap(
             remotePlayers, 
@@ -473,6 +507,35 @@ export class Game extends Phaser.Scene {
         }
     }
 
+    // new handleninjawaveCollision method
+    handleNinjawaveCollision(target, ninjawave) {
+        if (ninjawave && ninjawave.active && target && target.active && !target.isInvincible) {
+            //Double-check to prevent self-collision
+            if (ninjawave.owner === target) {
+                console.log("Prevented self-collision with ninjawave owner");
+                return;
+            }
+            
+            // Use the correct damage value from owner character
+            const damage = ninjawave.damage || (ninjawave.owner ? ninjawave.owner.attack2Damage : 10);
+          
+            console.log(`ninjawave hit: ${ninjawave.owner.characterType} dealing ${damage} damage to target at (${target.x}, ${target.y})`);
+          
+            // only process if ninjawave belongs to local player
+            if (ninjawave.owner === this.gameSync?.localPlayer && target.playerId) {
+                this.combatManager.registerHit(ninjawave.owner, target, damage);
+            } else if (!target.playerId) {
+                // for dummy targets
+                target.health = Math.max(0, target.health - damage);
+                if (target.health <= 0) {
+                console.log('target destroyed');
+                target.destroy();
+                }
+            }
+            // destroy ninjawave regardless
+            ninjawave.owner.destroyNinjawave();
+        }
+    }
 
     // Arrow: Handle collision between arrow and target
     handleArrowCollision(target, arrow) {

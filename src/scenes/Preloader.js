@@ -146,7 +146,11 @@ export class Preloader extends Phaser.Scene {
         );
         this.load.atlas(
             'ninja_attack',
-            'ninja/ninja_attack.png', 'ninja/ninja_attack.json'    
+            'ninja/ninja_attack.png', 'ninja/ninja_attack.json'
+        );
+        this.load.atlas(
+            'ninja_attack2',
+            'ninja/ninja_attack2.png', 'ninja/ninja_attack2.json'      
         );
          this.load.atlas(
             'ninja_hurt',
