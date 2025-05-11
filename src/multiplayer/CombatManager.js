@@ -39,6 +39,15 @@ export default class CombatManager {
     this.network.on('arrowDestroyed', (data) => {
       this.handleRemoteArrowDestroyed(data);
     });
+
+    // Listen for ninjawave created events
+    this.network.on('ninjawaveCreated', (data) => {
+      this.handleRemoteNinjawave(data);
+    });
+
+    this.network.on('ninjawaveDestroyed', (data) => {
+      this.handleRemoteNinjawaveDestroyed(data);
+    });   
   }
 
   // this is called when local player hits somone
@@ -95,6 +104,18 @@ export default class CombatManager {
     console.log("Sent arrow creation event to server");
   }
 
+  registerNinjawave() {
+    if (!this.gameSync.localPlayer) return;
+    
+    this.network.socket.emit('ninjawave_created', {
+      x: this.gameSync.localPlayer.x,
+      y: this.gameSync.localPlayer.y,
+      direction: this.gameSync.localPlayer.flipX ? 'left' : 'right'
+    });
+    
+    // debug log
+    console.log("Sent ninjawave creation event to server");
+  }
   // handels hit confermation from server
   handlePlayerHit(data) {
     // Find target player
@@ -256,6 +277,39 @@ export default class CombatManager {
     const remotePlayer = this.gameSync.remotePlayers.get(data.playerId);
     if (remotePlayer && remotePlayer.arrow) {
       remotePlayer.destroyArrow();
+    }
+  }
+
+  // handle remote ninjawave creation
+  handleRemoteNinjawave(data) {
+    console.log('Handling remote ninjawave creation from player:', data.playerId);
+    
+    const remotePlayer = this.gameSync.remotePlayers.get(data.playerId);
+    
+    if (!remotePlayer) {
+      console.log(`Can't create ninjawave: Player ${data.playerId} not found`);
+      return;
+    }
+    
+    // Set player direction based on data from server before creating ninjawave
+    if (data.direction === 'left') {
+      remotePlayer.flipX = true;
+    } else if (data.direction === 'right') {
+      remotePlayer.flipX = false;
+    }
+    
+    console.log(`Creating ninjawave for remote player ${data.playerId} (${remotePlayer.characterType}) facing ${data.direction}`);
+    
+    if (remotePlayer.characterType === 'ninja') {
+      remotePlayer.createNinjawave();
+      console.log(`Remote ninjawave created successfully at (${remotePlayer.x}, ${remotePlayer.y})`);
+    }
+  }
+
+  handleRemoteNinjawaveDestroyed(data) {
+    const remotePlayer = this.gameSync.remotePlayers.get(data.playerId);
+    if (remotePlayer && remotePlayer.ninjawave) {
+      remotePlayer.destroyNinjawave();
     }
   }
 }

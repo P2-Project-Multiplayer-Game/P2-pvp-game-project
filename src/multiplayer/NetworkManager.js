@@ -110,6 +110,16 @@ export default class NetworkManager {
           console.log('Received arrow_destroyed event:', data);
           this.triggerEvent('arrowDestroyed', data);
         });
+        //listener for ninjawave events
+        this.socket.on('ninjawave_created', (data) => {
+          console.log('Received ninjawave_created event:', data);
+          this.triggerEvent('ninjawaveCreated', data);
+        });
+
+        this.socket.on('ninjawave_destroyed', (data) => {
+          console.log('Received ninjawave_destroyed event:', data);
+          this.triggerEvent('ninjawaveDestroyed', data);
+        });
 
         // responsible for catching any errors such as connect_error in the try block
       } catch (error) {
@@ -184,5 +194,9 @@ export default class NetworkManager {
   sendArrowDestroyed(id) {
     if (!this.connected) return;
     this.socket.emit('arrow_destroyed', { id });
+  }
+  sendNinjawaveDestroyed(id) {
+    if (!this.connected) return;
+    this.socket.emit('ninjawave_destroyed', { id });
   }
 }

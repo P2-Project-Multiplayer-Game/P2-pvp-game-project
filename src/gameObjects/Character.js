@@ -631,7 +631,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
             }
             
             this.herowave.owner = this; // Reference player for collision handling
-            this.herowave.damage = this.attack2Damage; // Use hero's attack2 damage
+            this.herowave.damage = this.attack2Damage; // Use attack2 damage
             this.herowave.setVelocityX(this.flipX ? -250 : 250); // Slightly faster than tank's shockwave
             this.herowave.body.setAllowGravity(false);
 
@@ -699,6 +699,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                     this.ninjawave.flipX = true;
                 }
                 this.ninjawave.owner = this; // Reference player for collision handling
+                this.herowave.damage = this.attack2Damage;
                 this.ninjawave.setVelocityX(this.flipX ? -800 : 800); // ninjawave yeet
                 this.ninjawave.body.setAllowGravity(false);
                 this.ninjawave.setScale(0.9);
@@ -708,6 +709,10 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                 // Ninjawave: Ensure gravity after group addition
                 this.ninjawave.body.setAllowGravity(false);
                 this.scene.ninjawaves.setVelocityX(this.flipX ? -800 : 800);
+                // Register ninjawave with combat manager if this is local player
+                if (this === this.scene.gameSync?.localPlayer) {
+                    this.scene.combatManager.registerNinjawave();
+                }           
                 // Ninjawave: Log position and physics properties over time
                 this.scene.time.addEvent({
                     delay: 10,

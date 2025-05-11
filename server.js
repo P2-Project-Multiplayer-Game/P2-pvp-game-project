@@ -205,6 +205,34 @@ io.on('connection', (socket) => {
       });
     }
   });
+
+
+  socket.on('ninjawave_created', (data) => {
+    const player = players.get(socket.id);
+    
+    if (player) {
+      // broadcast ninjawave to other players in same room
+      socket.to(player.roomId).emit('ninjawave_created', {
+        playerId: socket.id,
+        x: data.x,
+        y: data.y,
+        direction: data.direction
+      });
+      
+      console.log(`Player ${socket.id} created ninjawave facing ${data.direction}`)
+    }
+  });
+
+  socket.on('ninjawave_destroyed', (data) => {
+    const player = players.get(socket.id);
+    if (player) {
+      // Broadcast destruction to all clients in room
+      io.to(player.roomId).emit('ninjawave_destroyed', {
+        playerId: socket.id,
+        id: data.id
+      });
+    }
+  });
 });
 
 // Server initiation
