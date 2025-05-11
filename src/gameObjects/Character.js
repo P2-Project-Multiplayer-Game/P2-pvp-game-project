@@ -925,11 +925,11 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
         }
         // Update attack1 cooldown indicator position
         if (this.attack1CooldownIndicator) {
-            this.attack1CooldownIndicator.setPosition(this.x, this.y - 30);
+            this.attack1CooldownIndicator.setPosition(this.x + 20, this.y - 10);
         }
         // Update attack2 cooldown indicator position
         if (this.attack2CooldownIndicator) {
-            this.attack2CooldownIndicator.setPosition(this.x, this.y - 45);
+            this.attack2CooldownIndicator.setPosition(this.x - 20, this.y - 10);
         }
         
         // Shockwave: Log physics body position to confirm movement
