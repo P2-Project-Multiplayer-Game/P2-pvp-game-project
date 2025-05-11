@@ -688,8 +688,8 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
             // everything else about ninja is very fast, so maybe this is good in balancing terms
             this.scene.time.delayedCall(200, () => { 
                 this.ninjawave = this.scene.physics.add.sprite(
-                    this.x + offsetX,
-                    this.y + 13, // Align with player's center
+                    this.x + offsetX+5,
+                    this.y + 15, // Align with player's center
                     'ninja_attack2',
                     'secondAttackNinjawave0000'
                 );

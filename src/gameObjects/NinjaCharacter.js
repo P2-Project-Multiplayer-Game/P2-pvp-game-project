@@ -29,6 +29,7 @@ export class NinjaCharacter extends Character {
             }
         });
         this.setScale(0.90);
+
         this.body.setSize(20, 55);
         // Store the different offsets 
         this.rightFacingOffset = { x: 10, y: 0 };
@@ -77,7 +78,7 @@ export class NinjaCharacter extends Character {
         this.anims.create({
             key: this.animationKeys.attack2,
             frames: this.anims.generateFrameNames('ninja_attack2', { prefix: 'ninjaspecial', end: 7, zeroPad: 4 }),
-            frameRate: 16, // slow attack
+            frameRate: 2, // slow attack
             repeat: 0
         });
         this.anims.create({
