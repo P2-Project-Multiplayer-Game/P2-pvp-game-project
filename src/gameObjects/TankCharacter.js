@@ -9,6 +9,7 @@ export class TankCharacter extends Character {
             maxHealth: 100,
             attackDamage: 10,       // Normal attack damage
             attack2Damage: 25,      // Shockwave damage
+            attack1Cooldown: 500, // 0.5 seconds mele attack (alredy defualt value)
             attack2Cooldown: 1000, // 1 seconds cooldown for attack2 
             invincibilityDuration: 1000,
             hitboxConfig: { width: 35, height: 45 },

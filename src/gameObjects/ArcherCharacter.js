@@ -9,6 +9,7 @@ export class ArcherCharacter extends Character {
             maxHealth: 80,
             attackDamage: 15,       // Normal attack damage
             attack2Damage: 25,      // arrow damage
+            attack1Cooldown: 500, // 0.5 seconds mele attack (alredy defualt value)
             attack2Cooldown: 1000, // 1 seconds cooldown for attack2 
             invincibilityDuration: 800, 
             hitboxConfig: { width: 20, height: 45 },

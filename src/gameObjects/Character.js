@@ -18,10 +18,16 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
         this.attackDamage = config.attackDamage || 20;
         this.attack2Damage = config.attack2Damage || 35;
         this.attack3Damage = config.attack3Damage || 60;
-        //add cooldown properties
+        //attack2 cooldown properties
         this.attack2Cooldown = config.attack2Cooldown || 3000; // Default 3 seconds cooldown
         this.attack2OnCooldown = false;
         this.attack2CooldownTimer = null;
+
+        //attack1 cooldown properties
+        this.attack1Cooldown = config.attack1Cooldown || 500; // Default 0.5 second cooldown
+        this.attack1OnCooldown = false;
+        this.attack1CooldownTimer = null;
+                
         //hitbox modularity
         this.hitboxConfig = config.hitboxConfig || { width: 40, height: 50 };
         this.hitboxOffsetConfig = config.hitboxOffsetConfig || { 
@@ -140,7 +146,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                         this.stateMachine.transition('MOVE_RIGHT');
                     } else if ((cursors.up.isDown || this.wKey.isDown) && this.body.blocked.down) {
                         this.stateMachine.transition('JUMP');
-                    } else if (Phaser.Input.Keyboard.JustDown(cursors.space)) {
+                    } else if (Phaser.Input.Keyboard.JustDown(cursors.space) && !this.attack1OnCooldown) {
                         this.stateMachine.transition('ATTACK');
                     } else if (Phaser.Input.Keyboard.JustDown(this.shiftKey) && !this.attack2OnCooldown) {
                         this.stateMachine.transition('ATTACK2');
@@ -164,7 +170,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                         }
                     } else if ((cursors.up.isDown || this.wKey.isDown) && this.body.blocked.down) {
                         this.stateMachine.transition('JUMP');
-                    } else if (Phaser.Input.Keyboard.JustDown(cursors.space)) {
+                    } else if (Phaser.Input.Keyboard.JustDown(cursors.space) && !this.attack1OnCooldown) {
                         this.stateMachine.transition('ATTACK');
                     } else if (Phaser.Input.Keyboard.JustDown(this.shiftKey) && !this.attack2OnCooldown) {
                         this.stateMachine.transition('ATTACK2');
@@ -188,7 +194,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                         }
                     } else if ((cursors.up.isDown || this.wKey.isDown) && this.body.blocked.down) {
                         this.stateMachine.transition('JUMP');
-                    } else if (Phaser.Input.Keyboard.JustDown(cursors.space)) {
+                    } else if (Phaser.Input.Keyboard.JustDown(cursors.space) && !this.attack1OnCooldown) {
                         this.stateMachine.transition('ATTACK');
                     } else if (Phaser.Input.Keyboard.JustDown(this.shiftKey) && !this.attack2OnCooldown) {
                         this.stateMachine.transition('ATTACK2');
@@ -216,7 +222,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                     }
                     // Buffer inputs during jump
                     this.inputBuffer.jump = (cursors.up.isDown || this.wKey.isDown) && this.body.blocked.down && !this.inputBuffer.jump;
-                    this.inputBuffer.attack = Phaser.Input.Keyboard.JustDown(cursors.space);
+                    this.inputBuffer.attack = Phaser.Input.Keyboard.JustDown(cursors.space) && !this.attack1OnCooldown;
                     this.inputBuffer.attack2 = Phaser.Input.Keyboard.JustDown(this.shiftKey) && !this.attack2OnCooldown;
                     this.inputBuffer.moveLeft = cursors.left.isDown || this.aKey.isDown;
                     this.inputBuffer.moveRight = cursors.right.isDown || this.dKey.isDown;
@@ -229,6 +235,9 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                     }
                     this.anims.play(this.animationKeys.attack, true);
                     console.log(`${this.characterType} entered ATTACK state`);
+
+                    // Start the cooldown
+                    this.startAttack1Cooldown();
                     // create hitbox on attack animation (this can be adjusted to the individual sprite)
                     this.scene.time.delayedCall(50, () => {
                         if (this.stateMachine.currentState === 'ATTACK') {
@@ -248,7 +257,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                     // Buffer inputs during attack
                     const cursors = scene.input.keyboard.createCursorKeys();
                     this.inputBuffer.jump = (cursors.up.isDown || this.wKey.isDown) && this.body.blocked.down && !this.inputBuffer.jump;
-                    this.inputBuffer.attack = Phaser.Input.Keyboard.JustDown(cursors.space);
+                    this.inputBuffer.attack = Phaser.Input.Keyboard.JustDown(cursors.space) && !this.attack1OnCooldown;
                     this.inputBuffer.attack2 = Phaser.Input.Keyboard.JustDown(this.shiftKey) && !this.attack2OnCooldown;
                     this.inputBuffer.moveLeft = cursors.left.isDown || this.aKey.isDown;
                     this.inputBuffer.moveRight = cursors.right.isDown || this.dKey.isDown;
@@ -323,7 +332,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                     // Buffer inputs during attack
                     const cursors = scene.input.keyboard.createCursorKeys();
                     this.inputBuffer.jump = (cursors.up.isDown || this.wKey.isDown) && this.body.blocked.down && !this.inputBuffer.jump;
-                    this.inputBuffer.attack = Phaser.Input.Keyboard.JustDown(cursors.space);
+                    this.inputBuffer.attack = Phaser.Input.Keyboard.JustDown(cursors.space) && !this.attack1OnCooldown;
                     this.inputBuffer.attack2 = Phaser.Input.Keyboard.JustDown(this.shiftKey) && !this.attack2OnCooldown;
                     this.inputBuffer.moveLeft = cursors.left.isDown || this.aKey.isDown;
                     this.inputBuffer.moveRight = cursors.right.isDown || this.dKey.isDown;
@@ -383,8 +392,8 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                     // Buffer inputs during hurt state
                     const cursors = scene.input.keyboard.createCursorKeys();
                     this.inputBuffer.jump = (cursors.up.isDown || this.wKey.isDown) && this.body.blocked.down && !this.inputBuffer.jump;
-                    this.inputBuffer.attack = Phaser.Input.Keyboard.JustDown(cursors.space);
-                    this.inputBuffer.attack2 = Phaser.Input.Keyboard.JustDown(this.shiftKey);
+                    this.inputBuffer.attack = Phaser.Input.Keyboard.JustDown(cursors.space) && !this.attack1OnCooldown;
+                    this.inputBuffer.attack2 = Phaser.Input.Keyboard.JustDown(this.shiftKey) && !this.attack2OnCooldown;
                     this.inputBuffer.moveLeft = cursors.left.isDown || this.aKey.isDown;
                     this.inputBuffer.moveRight = cursors.right.isDown || this.dKey.isDown;
                 },
@@ -451,6 +460,45 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
             //});
         }
     }
+
+    startAttack1Cooldown() {
+        this.attack1OnCooldown = true;
+        if (this === this.scene.gameSync?.localPlayer) {
+            // Create a small indicator
+            this.attack1CooldownIndicator = this.scene.add.text(
+                this.x, 
+                this.y - 30,
+                '⚔️',
+                {
+                    fontSize: '16px',
+                    stroke: '#000000',
+                    strokeThickness: 3
+                }
+            ).setOrigin(0.5).setAlpha(0.7);
+            
+            // Fade out animation
+            this.scene.tweens.add({
+                targets: this.attack1CooldownIndicator,
+                alpha: 0,
+                duration: this.attack1Cooldown,
+                onComplete: () => {
+                    if (this.attack1CooldownIndicator) {
+                        this.attack1CooldownIndicator.destroy();
+                        this.attack1CooldownIndicator = null;
+                    }
+                }
+            });
+        }
+        // Start cooldown timer
+        this.attack1CooldownTimer = this.scene.time.delayedCall(
+            this.attack1Cooldown,
+            () => {
+                this.attack1OnCooldown = false;
+                console.log(`${this.characterType} Attack1 cooldown finished`);
+            }
+        );
+    }
+
     startAttack2Cooldown() {
         this.attack2OnCooldown = true;
 
@@ -833,6 +881,10 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
 
             // Update position
             this.hitbox.setPosition(this.x + offsetX, this.y + offsetY);
+        }
+        // Update attack1 cooldown indicator position
+        if (this.attack1CooldownIndicator) {
+            this.attack1CooldownIndicator.setPosition(this.x, this.y - 30);
         }
         // Shockwave: Log physics body position to confirm movement
         if (this.shockwave) {

@@ -9,6 +9,7 @@ export class SkeletonCharacter extends Character {
             maxHealth: 80,
             attackDamage: 15, // TBD
             attack2Damage: 35,
+            attack1Cooldown: 500, // 0.5 seconds mele attack (alredy defualt value)
             attack2Cooldown: 5000, // 5 seconds cooldown for attack2 
             invincibilityDuration: 800, // TBD
             hitboxConfig: { width: 45, height: 10 }, // TBD
