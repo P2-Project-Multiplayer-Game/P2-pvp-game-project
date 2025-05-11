@@ -10,6 +10,7 @@ export class HeroCharacter extends Character {
             maxHealth: 100,
             attackDamage: 20,       // Normal attack damage
             attack2Damage: 30,      // Shockwave damage
+            attack2Cooldown: 2000, // 2 seconds cooldown for attack2 
             invincibilityDuration: 800, 
             hitboxConfig: { width: 45, height: 10 }, 
             // Define custom hitbox offsets for the specific charecter sub class

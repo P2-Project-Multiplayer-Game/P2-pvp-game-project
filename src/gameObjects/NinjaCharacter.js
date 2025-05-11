@@ -10,6 +10,7 @@ export class NinjaCharacter extends Character {
             attackDamage: 15, // Higher damage
             attack2Damage: 10, // the initial shockwave , probobly should have low damage
             attack3Damage: 30, // the delayed move probably should have a higher damage 
+            attack2Cooldown: 6000, // 6 seconds cooldown for attack2 
             moveSpeed: 350,         // Faster movement (ninja is agile)
             jumpVelocity: 500,     // Higher jump (ninja is agile)
             invincibilityDuration: 800, // Shorter invincibility

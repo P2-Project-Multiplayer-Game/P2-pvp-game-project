@@ -17,7 +17,12 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
         this.invincibilityDuration = config.invincibilityDuration || 1000; // cannot take damage 1 second after hit
         this.attackDamage = config.attackDamage || 20;
         this.attack2Damage = config.attack2Damage || 35;
-        this.attack3Damage = config.attack3Damage || 60; 
+        this.attack3Damage = config.attack3Damage || 60;
+        //add cooldown properties
+        this.attack2Cooldown = config.attack2Cooldown || 3000; // Default 3 seconds cooldown
+        this.attack2OnCooldown = false;
+        this.attack2CooldownTimer = null;
+        //hitbox modularity
         this.hitboxConfig = config.hitboxConfig || { width: 40, height: 50 };
         this.hitboxOffsetConfig = config.hitboxOffsetConfig || { 
             x: { left: -40, right: 40 },  // different values for left/right facing
@@ -137,7 +142,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                         this.stateMachine.transition('JUMP');
                     } else if (Phaser.Input.Keyboard.JustDown(cursors.space)) {
                         this.stateMachine.transition('ATTACK');
-                    } else if (Phaser.Input.Keyboard.JustDown(this.shiftKey)) {
+                    } else if (Phaser.Input.Keyboard.JustDown(this.shiftKey) && !this.attack2OnCooldown) {
                         this.stateMachine.transition('ATTACK2');
                     }
                 }
@@ -161,7 +166,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                         this.stateMachine.transition('JUMP');
                     } else if (Phaser.Input.Keyboard.JustDown(cursors.space)) {
                         this.stateMachine.transition('ATTACK');
-                    } else if (Phaser.Input.Keyboard.JustDown(this.shiftKey)) {
+                    } else if (Phaser.Input.Keyboard.JustDown(this.shiftKey) && !this.attack2OnCooldown) {
                         this.stateMachine.transition('ATTACK2');
                     }
                 }
@@ -185,7 +190,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                         this.stateMachine.transition('JUMP');
                     } else if (Phaser.Input.Keyboard.JustDown(cursors.space)) {
                         this.stateMachine.transition('ATTACK');
-                    } else if (Phaser.Input.Keyboard.JustDown(this.shiftKey)) {
+                    } else if (Phaser.Input.Keyboard.JustDown(this.shiftKey) && !this.attack2OnCooldown) {
                         this.stateMachine.transition('ATTACK2');
                     }
                 }
@@ -212,7 +217,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                     // Buffer inputs during jump
                     this.inputBuffer.jump = (cursors.up.isDown || this.wKey.isDown) && this.body.blocked.down && !this.inputBuffer.jump;
                     this.inputBuffer.attack = Phaser.Input.Keyboard.JustDown(cursors.space);
-                    this.inputBuffer.attack2 = Phaser.Input.Keyboard.JustDown(this.shiftKey);
+                    this.inputBuffer.attack2 = Phaser.Input.Keyboard.JustDown(this.shiftKey) && !this.attack2OnCooldown;
                     this.inputBuffer.moveLeft = cursors.left.isDown || this.aKey.isDown;
                     this.inputBuffer.moveRight = cursors.right.isDown || this.dKey.isDown;
                 }
@@ -244,7 +249,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                     const cursors = scene.input.keyboard.createCursorKeys();
                     this.inputBuffer.jump = (cursors.up.isDown || this.wKey.isDown) && this.body.blocked.down && !this.inputBuffer.jump;
                     this.inputBuffer.attack = Phaser.Input.Keyboard.JustDown(cursors.space);
-                    this.inputBuffer.attack2 = Phaser.Input.Keyboard.JustDown(this.shiftKey);
+                    this.inputBuffer.attack2 = Phaser.Input.Keyboard.JustDown(this.shiftKey) && !this.attack2OnCooldown;
                     this.inputBuffer.moveLeft = cursors.left.isDown || this.aKey.isDown;
                     this.inputBuffer.moveRight = cursors.right.isDown || this.dKey.isDown;
                 },
@@ -273,6 +278,8 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                     this.setVelocityX(0);
                     this.anims.play(this.animationKeys.attack2, true);
                     console.log(`${this.characterType} entered ATTACK2 state`);
+                    // Start the cooldown
+                    this.startAttack2Cooldown();
                     // Shockwave: Create shockwave for tank, hitbox for others
                     this.scene.time.delayedCall(50, () => {
                         if (this.stateMachine.currentState === 'ATTACK2') {
@@ -317,7 +324,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                     const cursors = scene.input.keyboard.createCursorKeys();
                     this.inputBuffer.jump = (cursors.up.isDown || this.wKey.isDown) && this.body.blocked.down && !this.inputBuffer.jump;
                     this.inputBuffer.attack = Phaser.Input.Keyboard.JustDown(cursors.space);
-                    this.inputBuffer.attack2 = Phaser.Input.Keyboard.JustDown(this.shiftKey);
+                    this.inputBuffer.attack2 = Phaser.Input.Keyboard.JustDown(this.shiftKey) && !this.attack2OnCooldown;
                     this.inputBuffer.moveLeft = cursors.left.isDown || this.aKey.isDown;
                     this.inputBuffer.moveRight = cursors.right.isDown || this.dKey.isDown;
                 },
@@ -443,6 +450,18 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                 this.hitbox = null;
             //});
         }
+    }
+    startAttack2Cooldown() {
+        this.attack2OnCooldown = true;
+
+        // Start cooldown timer
+        this.attack2CooldownTimer = this.scene.time.delayedCall(
+            this.attack2Cooldown,
+            () => {
+                this.attack2OnCooldown = false;
+                console.log(`${this.characterType} Attack2 cooldown finished`);
+            }
+        );
     }
 
     // Shockwave: Create shockwave sprite for tank's ATTACK2
