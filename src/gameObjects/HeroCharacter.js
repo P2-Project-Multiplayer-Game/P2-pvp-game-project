@@ -23,11 +23,11 @@ export class HeroCharacter extends Character {
             readyIndicatorConfig: {
                 attack1: {
                     x: -6,  // Always left
-                    y: -12   // Offset from center
+                    y: -15   // Offset from center
                 },
                 attack2: {
                     x: 6,   // Always right
-                    y: -12   // Offset from center
+                    y: -15   // Offset from center
                 }
             },
             animationKeys: {
