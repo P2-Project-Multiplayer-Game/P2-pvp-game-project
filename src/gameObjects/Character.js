@@ -461,8 +461,16 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
         }
     }
 
+    // Update startAttack1Cooldown to destroy existing indicator first
     startAttack1Cooldown() {
+        // Destroy existing indicator when ability is used
+        if (this.attack1ReadyIndicator) {
+            this.attack1ReadyIndicator.destroy();
+            this.attack1ReadyIndicator = null;
+        }
+
         this.attack1OnCooldown = true;
+        
         // Start cooldown timer
         this.attack1CooldownTimer = this.scene.time.delayedCall(
             this.attack1Cooldown,
@@ -489,23 +497,21 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                         targets: this.attack1ReadyIndicator,
                         alpha: 1,
                         duration: 500,
-                        ease: 'Power1',
-                        onComplete: () => {
-                            // After fully appearing, keep it visible for 1 second then remove
-                            this.scene.time.delayedCall(1000, () => {
-                                if (this.attack1ReadyIndicator) {
-                                    this.attack1ReadyIndicator.destroy();
-                                    this.attack1ReadyIndicator = null;
-                                }
-                            });
-                        }
+                        ease: 'Power1'
                     });
                 }
             }
         );
     }
 
+    // Update startAttack2Cooldown with the same approach
     startAttack2Cooldown() {
+        // Destroy existing indicator when ability is used
+        if (this.attack2ReadyIndicator) {
+            this.attack2ReadyIndicator.destroy();
+            this.attack2ReadyIndicator = null;
+        }
+
         this.attack2OnCooldown = true;
 
         // Start cooldown timer
@@ -514,6 +520,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
             () => {
                 this.attack2OnCooldown = false;
                 console.log(`${this.characterType} Attack2 cooldown finished`);
+                
                 // When cooldown finishes, show the ready indicator
                 if (this === this.scene.gameSync?.localPlayer) {
                     // Choose emoji based on character type
@@ -542,22 +549,12 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                         }
                     ).setOrigin(0.5).setAlpha(0);
                     
-                    // Fade IN animation to show ability is ready
+                    // Fade IN animation to show ability is ready - no float effect
                     this.scene.tweens.add({
                         targets: this.attack2ReadyIndicator,
                         alpha: 1,
-                        y: this.y - 25, // Add a small float-up effect
                         duration: 700,
-                        ease: 'Power1',
-                        onComplete: () => {
-                            // After fully appearing, keep it visible for 1 second then remove
-                            this.scene.time.delayedCall(1000, () => {
-                                if (this.attack2ReadyIndicator) {
-                                    this.attack2ReadyIndicator.destroy();
-                                    this.attack2ReadyIndicator = null;
-                                }
-                            });
-                        }
+                        ease: 'Power1'
                     });
                 }
             }
@@ -936,13 +933,11 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
         }
         // Update attack1 ready indicator position
         if (this.attack1ReadyIndicator) {
-            this.attack1ReadyIndicator.setPosition(this.x + (this.flipX ? 5 : -5), 
-                this.attack1ReadyIndicator.y); // Keep y from tween animation
+            this.attack1CooldownIndicator.setPosition(this.x + (this.flipX ? 5 : -5), this.y - 15);
         }
         // Update attack2 ready indicator position
         if (this.attack2ReadyIndicator) {
-            this.attack2ReadyIndicator.setPosition(this.x + (this.flipX ? -5 : 5), 
-                this.attack2ReadyIndicator.y); // Keep y from tween animation
+            this.attack2CooldownIndicator.setPosition(this.x + (this.flipX ? -5 : 5), this.y - 15);
         }
         
         // Shockwave: Log physics body position to confirm movement
