@@ -25,7 +25,7 @@ export class TankCharacter extends Character {
                     y: -10
                 },
                 attack2: {
-                    x: { left: 5, right: +5 },
+                    x: { left: +5, right: 5 },
                     y: -10
                 }
             },
