@@ -22,11 +22,11 @@ export class HeroCharacter extends Character {
             //  custom ready indicator positions 
             readyIndicatorConfig: {
                 attack1: {
-                    x: -15,  // Always left
+                    x: -5,  // Always left
                     y: -10   // Offset from center
                 },
                 attack2: {
-                    x: 15,   // Always right
+                    x: 5,   // Always right
                     y: -10   // Offset from center
                 }
             },
