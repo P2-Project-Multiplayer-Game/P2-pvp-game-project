@@ -746,6 +746,8 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
     } 
     //Skeleton fireball special attack
     createFireball(positions = null) {
+        // Initialize fireballs array
+        this.fireballs = []; 
         if (!this.fireball) {
             console.log('fireball has been called');
             
@@ -778,6 +780,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                 this.fireball.body.setSize(20, 30);
                 this.fireball.body.setAllowGravity(false);
                 this.scene.fireballs.add(this.fireball);
+                this.fireballs.push(fireball); // Add to our tracking array
             }
             // Set velocity based on configuration
             this.scene.fireballs.children.each((fireball) => {
@@ -814,6 +817,14 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
             if (this === this.scene.gameSync?.localPlayer) {
                 this.scene.networkManager.sendFireballDestroyed({ id: this.scene.networkManager.playerId });
             }
+            
+            // Destroy all fireballs in the array
+            this.fireballs.forEach(fireball => {
+                if (fireball && fireball.active) {
+                    console.log(`${this.characterType} fireball destroyed at x=${fireball.x}, y=${fireball.y}`);
+                    fireball.destroy();
+                }
+            });
             
             // Clear the array
             this.fireballs = null;
