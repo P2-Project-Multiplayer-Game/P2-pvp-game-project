@@ -13,6 +13,8 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
         //combat properties
         this.health = config.health || 100;
         this.maxHealth = config.maxHealth || 100;
+        this.healingFactor = config.healingFactor || 0; // Points healed per second
+        this.lastHealTime = 0; // Track time for healing interval
         this.isInvincible = false;
         this.invincibilityDuration = config.invincibilityDuration || 1000; // cannot take damage 1 second after hit
         this.attackDamage = config.attackDamage || 20;
@@ -1014,6 +1016,28 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                 this.x + this.readyIndicatorConfig.attack2.x,
                 this.y + this.readyIndicatorConfig.attack2.y
             );
+        }
+        // Apply passive healing if healingFactor is set
+        if (this.healingFactor > 0 && this.health < this.maxHealth) {
+            // Get current time
+            const currentTime = this.scene.time.now;
+            
+            // Calculate healing interval (heal every 500ms)
+            if (currentTime - this.lastHealTime >= 1000) {
+                // Calculate health to add (healingFactor is per second, so divide by 2 for 500ms interval)
+                const healAmount = this.healingFactor;
+                
+                // Apply healing, capped at max health
+                this.health = Math.min(this.maxHealth, this.health + healAmount);
+                
+                // Update last heal time
+                this.lastHealTime = currentTime;
+                
+                // Update health bar if it exists
+                if (this.healthBar) {
+                    this.healthBar.setHealth(this.health);
+                }
+            }
         }
         // Shockwave: Log physics body position to confirm movement
         if (this.shockwave) {
