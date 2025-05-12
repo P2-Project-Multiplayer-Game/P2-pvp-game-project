@@ -778,6 +778,17 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                 this.fireball.body.setSize(20, 30);
                 this.scene.fireballs.add(this.fireball);
             }
+            // Set velocity based on configuration
+            this.scene.fireballs.children.each((fireball) => {
+                // Apply vertical velocity
+                fireball.setVelocityY(this.projectileVelocity);
+            });
+            
+            // Calculate lifetime based on screen height and velocity
+            // Formula: time (ms) = distance (px) / velocity (px/s) * 1000
+            const fireballLifetime = Math.floor(SCREEN_HEIGHT / this.projectileVelocity * 1000);
+            
+            console.log(`Fireball velocity: ${this.projectileVelocity}, calculated lifetime: ${fireballLifetime}ms`);
             
             // Register with combat manager for local player
             if (this === this.scene.gameSync?.localPlayer) {
