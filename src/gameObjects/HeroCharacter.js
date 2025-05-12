@@ -15,15 +15,15 @@ export class HeroCharacter extends Character {
             attackDamage: 30,       // Normal attack damage
             attack2Damage: 40,      // Shockwave damage
             attack1Cooldown: 500, // 0.5 seconds mele attack (alredy defualt value)
-            attack2Cooldown: 1000, // 2 seconds cooldown for attack2 
+            attack2Cooldown: 2000, // 2 seconds cooldown for attack2 
 
             //projectile modifiers such as speed and lastability
             projectileVelocity: 250,     // Herowave speed (was 250)
-            projectileLifetime: 500,     // Herowave lifetime (was 300ms)
+            projectileLifetime: 300,     // Herowave lifetime (was 300ms)
             
             //movementspeed modifiers
-            moveSpeed: 300,        
-            jumpVelocity: 500,             
+            moveSpeed: 200,        
+            jumpVelocity: 480,             
 
             //miscellaneous modifiers 
             invincibilityDuration: 800, 
