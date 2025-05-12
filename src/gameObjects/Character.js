@@ -799,7 +799,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
             }
             
             // Destroy fireballs after delay
-            this.scene.time.delayedCall(1150, () => {
+            this.scene.time.delayedCall(fireballLifetime, () => {
                 if (this.fireball) {
                     this.destroyFireball(this.fireball);
                 }
