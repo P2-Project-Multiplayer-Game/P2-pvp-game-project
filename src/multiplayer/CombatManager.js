@@ -159,24 +159,23 @@ export default class CombatManager {
     if (targetPlayer) {
       // Apply damage
       targetPlayer.health = Math.max(0, targetPlayer.health - data.damage);
-      // Handle knockback differently for local vs remote players
+      // Apply knockback for local player only (where physics works)
       if (data.knockback) {
         if (targetPlayer === this.gameSync.localPlayer) {
-          // For local player - use physics-based knockback
+          // Local player - use physics
           targetPlayer.setVelocityX(data.knockback);
-          
-          // Add slight vertical component for more visual impact
-          if (targetPlayer.body.blocked.down) {
-            targetPlayer.setVelocityY(-150);
-          }
+          targetPlayer.setVelocityY(-50);
         } else {
-          // For remote players - use direct position shifting since physics are disabled
-          const knockbackDistance = Math.sign(data.knockback + 300) * Math.min(Math.abs(data.knockback), 50);
-          targetPlayer.x += knockbackDistance;
-          
-          console.log(`Applied visual knockback of ${knockbackDistance}px to remote player`);
+          // Remote player - simulate knockback visually using tweens
+          this.scene.tweens.add({
+            targets: targetPlayer,
+            x: targetPlayer.x + (data.knockback * 0.5), // Scale down the effect for visual consistency
+            duration: 300,
+            ease: 'Power2'
+          });
         }
       }
+      
       if (!targetPlayer.isInvincible) {
         if (targetPlayer === this.gameSync.localPlayer) {
           // For local player, use state machine
