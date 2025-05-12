@@ -5,13 +5,29 @@ export class ArcherCharacter extends Character {
         super(scene, x, y, {
             characterType: 'archer',
             idleSpriteKey: 'archer_idle', 
-            health: 80, // ninjavaerdier
-            maxHealth: 80,
+
+            //health system
+            health: 100,  
+            maxHealth: 100,
+
+            // comabt modifiers such as damage and attack cooldowns
             attackDamage: 15,       // Normal attack damage
             attack2Damage: 25,      // arrow damage
             attack1Cooldown: 500, // 0.5 seconds mele attack (alredy defualt value)
             attack2Cooldown: 1000, // 1 seconds cooldown for attack2 
+            
+            //projectile modifiers such as speed and lastability
+            projectileVelocity: 500,     // Arrow speed (was 500)
+            projectileLifetime: 1600,    // Arrow lifetime (was 1600ms)
+
+            //movementspeed modifiers
+            moveSpeed: 200,        
+            jumpVelocity: 480,
+
+            //miscellaneous modifiers 
             invincibilityDuration: 800, 
+
+            // collision and display offset modifiers
             hitboxConfig: { width: 20, height: 45 },
             // Define custom hitbox offsets for the specific charecter sub class
             hitboxOffsetConfig: {

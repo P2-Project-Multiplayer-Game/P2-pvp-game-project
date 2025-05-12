@@ -27,7 +27,11 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
         this.attack1Cooldown = config.attack1Cooldown || 500; // Default 0.5 second cooldown
         this.attack1OnCooldown = false;
         this.attack1CooldownTimer = null;
-                
+
+        //projectile modifiers
+        this.projectileVelocity = config.projectileVelocity || 200;
+        this.projectileLifetime = config.projectileLifetime || 1000;
+
         //hitbox modularity
         this.hitboxConfig = config.hitboxConfig || { width: 40, height: 50 };
         this.hitboxOffsetConfig = config.hitboxOffsetConfig || { 
@@ -689,8 +693,8 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
             }
             this.arrow.owner = this; // Reference player for collision handling
             this.arrow.damage = this.attack2Damage;
-            this.arrow.setVelocityX(this.flipX ? -200 : 200); // Move 500px/s in facing direction
-            this.arrow.body.setAllowGravity(false);
+            //this.arrow.setVelocityX(this.flipX ? -200 : 200); // Move 500px/s in facing direction
+            //this.arrow.body.setAllowGravity(false);
             this.arrow.body.setCollideWorldBounds(true);
             this.arrow.body.onWorldBounds = true;
             this.arrow.body.setSize(60, 30);
@@ -699,7 +703,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
             this.scene.arrows.add(this.arrow);
             // Shockwave: Ensure no gravity after group addition
             this.arrow.body.setAllowGravity(false);
-            this.scene.arrows.setVelocityX(this.flipX ? -500 : 500);
+            this.scene.arrows.setVelocityX(this.flipX ? -this.projectileVelocity : this.projectileVelocity);
             // Shockwave: Log position and physics properties over time
             this.scene.time.addEvent({
                 delay: 10,
@@ -715,7 +719,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                 this.scene.combatManager.registerArrow();
             }         
             // Arrow: Destroy after 300ms if no collision
-            this.scene.time.delayedCall(1600, () => {
+            this.scene.time.delayedCall(this.projectileLifetime, () => {
                 if (this.arrow) {
                     this.destroyArrow();
                 }

@@ -5,13 +5,28 @@ export class SkeletonCharacter extends Character {
         super(scene, x, y, {
             characterType: 'skeleton',
             idleSpriteKey: 'skeleton_idle',
-            health: 80, // TBD
+
+            //health system
+            health: 80, 
             maxHealth: 80,
-            attackDamage: 15, // TBD
+
+            // comabt modifiers such as damage and attack cooldowns
+            attackDamage: 15, 
             attack2Damage: 35,
             attack1Cooldown: 500, // 0.5 seconds mele attack (alredy defualt value)
             attack2Cooldown: 5000, // 5 seconds cooldown for attack2 
-            invincibilityDuration: 800, // TBD
+
+            //projectile modifiers such as speed and lastability
+            //add projectilespeed and the  this.scene.time.delayedCall(1600, ()  time modifiers
+            
+            //movementspeed modifiers
+            moveSpeed: 200,        
+            jumpVelocity: 480,
+
+            //miscellaneous modifiers 
+            invincibilityDuration: 800, 
+
+            // collision and display offset modifiers
             hitboxConfig: { width: 45, height: 10 }, // TBD
             // Define custom hitbox offsets for the specific charecter sub class
             hitboxOffsetConfig: {

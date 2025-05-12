@@ -6,13 +6,28 @@ export class HeroCharacter extends Character {
         super(scene, x, y, {
             characterType: 'hero',
             idleSpriteKey: 'hero_idle', 
+            
+            //health system
             health: 100,  
             maxHealth: 100,
+
+            // comabt modifiers such as damage and attack cooldowns
             attackDamage: 20,       // Normal attack damage
             attack2Damage: 30,      // Shockwave damage
             attack1Cooldown: 500, // 0.5 seconds mele attack (alredy defualt value)
             attack2Cooldown: 2000, // 2 seconds cooldown for attack2 
+
+            //projectile modifiers such as speed and lastability
+            //add projectilespeed and the  this.scene.time.delayedCall(1600, ()  time modifiers
+
+            //movementspeed modifiers
+            moveSpeed: 200,        
+            jumpVelocity: 480,             
+
+            //miscellaneous modifiers 
             invincibilityDuration: 800, 
+
+            // collision and display offset modifiers
             hitboxConfig: { width: 45, height: 10 }, 
             // Define custom hitbox offsets for the specific charecter sub class
             hitboxOffsetConfig: {

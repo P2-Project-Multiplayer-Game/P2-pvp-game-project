@@ -5,13 +5,28 @@ export class TankCharacter extends Character {
         super(scene, x, y, {
             characterType: 'tank',
             idleSpriteKey: 'tank_idle',
-            health: 100,
-            maxHealth: 100,
+
+            //health system
+            health: 200,
+            maxHealth: 200,
+
+            // comabt modifiers such as damage and attack cooldowns
             attackDamage: 10,       // Normal attack damage
             attack2Damage: 25,      // Shockwave damage
             attack1Cooldown: 500, // 0.5 seconds mele attack (alredy defualt value)
             attack2Cooldown: 1000, // 1 seconds cooldown for attack2 
-            invincibilityDuration: 1000,
+
+             //projectile modifiers such as speed and lastability
+            //add projectilespeed and the  this.scene.time.delayedCall(1600, ()  time modifiers
+
+            //movementspeed modifiers
+            moveSpeed: 200,        
+            jumpVelocity: 480,
+
+            //miscellaneous modifiers 
+            invincibilityDuration: 1200, 
+
+            // collision and display offset modifiers
             hitboxConfig: { width: 35, height: 45 },
             // Define custom hitbox offsets for the specific charecter sub class
             hitboxOffsetConfig: {

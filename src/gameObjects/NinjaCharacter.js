@@ -5,16 +5,29 @@ export class NinjaCharacter extends Character {
         super(scene, x, y, {
             characterType: 'ninja',
             idleSpriteKey: 'ninja_idle',
+            
+            //health system
             health: 80, // Less health than tank
             maxHealth: 80,
+
+            // comabt modifiers such as damage and attack cooldowns
             attackDamage: 15, // Higher damage
             attack2Damage: 10, // the initial shockwave , probobly should have low damage
             attack3Damage: 30, // the delayed move probably should have a higher damage 
             attack1Cooldown: 500, // 0.5 seconds mele attack (alredy defualt value)
             attack2Cooldown: 6000, // 6 seconds cooldown for attack2 
+
+            //projectile modifiers such as speed and lastability
+            //add projectilespeed and the  this.scene.time.delayedCall(1600, ()  time modifiers
+
+            //movementspeed modifiers
             moveSpeed: 350,         // Faster movement (ninja is agile)
             jumpVelocity: 500,     // Higher jump (ninja is agile)
+
+            //miscellaneous modifiers 
             invincibilityDuration: 800, // Shorter invincibility
+
+            // collision and display offset modifiers
             hitboxConfig: { width: 50, height: 45 }, // Smaller hitbox
             // Define custom hitbox offsets for the specific charecter sub class
             hitboxOffsetConfig: {
