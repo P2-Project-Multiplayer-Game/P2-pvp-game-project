@@ -782,10 +782,11 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
             this.scene.fireballs.children.each((fireball) => {
                 // Apply vertical velocity
                 fireball.setVelocityY(this.projectileVelocity);
+                this.fireball.damage = this.attack2Damage;
                 // Ensures gravity is disabled for each fireball in the group
                 fireball.body.setAllowGravity(false);
             });
-            this.scene.fireballs.damage = this.attack2Damage;
+            //this.scene.fireballs.damage = this.attack2Damage;
             // Calculate lifetime based on screen height and velocity
             // Formula: time (ms) = distance (px) / velocity (px/s) * 1000
             const fireballLifetime = Math.floor(SCREEN_HEIGHT / this.projectileVelocity * 1000);
