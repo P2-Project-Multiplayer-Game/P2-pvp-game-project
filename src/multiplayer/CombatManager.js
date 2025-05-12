@@ -171,7 +171,7 @@ export default class CombatManager {
           }
         } else {
           // For remote players - use direct position shifting since physics are disabled
-          const knockbackDistance = Math.sign(data.knockback) * Math.min(Math.abs(data.knockback), 50);
+          const knockbackDistance = Math.sign(data.knockback + 300) * Math.min(Math.abs(data.knockback), 50);
           targetPlayer.x += knockbackDistance;
           
           console.log(`Applied visual knockback of ${knockbackDistance}px to remote player`);
