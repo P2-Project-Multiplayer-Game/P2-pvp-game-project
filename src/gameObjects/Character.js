@@ -325,7 +325,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                     
 
                     this.scene.time.delayedCall(50, () => {
-                        if (this.stateMachine.currentState === 'ATTACK2' && this.attack2OnCooldown) {
+                        if (this.stateMachine.currentState === 'ATTACK2' ) {
                             if (this.characterType === 'tank') {
                                 this.createShockwave(); // SHOCKWAVE!
                                 console.log(`${this.characterType} created shockwave at frame: ${this.anims.currentFrame ? this.anims.currentFrame.index : 'unknown'}`);
@@ -637,14 +637,12 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
             }
             this.shockwave.owner = this; // Reference player for collision handling
             this.shockwave.damage = this.attack2Damage; 
-            this.shockwave.setVelocityX(this.flipX ? -200 : 200); // Move 500px/s in facing direction
-            this.shockwave.body.setAllowGravity(false);
 
             // Shockwave: Add to scene's shockwave group(important due to maing physics group in game)
             this.scene.shockwaves.add(this.shockwave);
             // Shockwave: Ensure gravity after group addition
             this.shockwave.body.setAllowGravity(false);
-            this.scene.shockwaves.setVelocityX(this.flipX ? -200 : 200);
+            this.scene.shockwaves.setVelocityX(this.flipX ?  -this.projectileVelocity : this.projectileVelocity);
             // Shockwave: Log position and physics properties over time
             this.scene.time.addEvent({
                 delay: 10,
@@ -659,7 +657,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                 this.scene.combatManager.registerShockwave();
             }
             // Shockwave: Destroy after 300ms if no collision
-            this.scene.time.delayedCall(300, () => {
+            this.scene.time.delayedCall(this.projectileLifetime, () => {
                 if (this.shockwave) {
                     this.destroyShockwave();
                 }

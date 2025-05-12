@@ -16,8 +16,9 @@ export class TankCharacter extends Character {
             attack1Cooldown: 500, // 0.5 seconds mele attack (alredy defualt value)
             attack2Cooldown: 1000, // 1 seconds cooldown for attack2 
 
-             //projectile modifiers such as speed and lastability
-            //add projectilespeed and the  this.scene.time.delayedCall(1600, ()  time modifiers
+            //projectile modifiers such as speed and lastability
+            projectileVelocity: 200,     // Shockwave speed (was 200)
+            projectileLifetime: 300,     // Shockwave lifetime (was 300ms)
 
             //movementspeed modifiers
             moveSpeed: 200,        
