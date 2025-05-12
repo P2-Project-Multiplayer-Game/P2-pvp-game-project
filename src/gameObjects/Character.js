@@ -326,6 +326,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                                 this.createShockwave(); // SHOCKWAVE!
                                 console.log(`${this.characterType} created shockwave at frame: ${this.anims.currentFrame ? this.anims.currentFrame.index : 'unknown'}`);
                             } else if (this.characterType === 'archer') {
+                                this.destroyArrow();
                                 this.createArrow(); //archer ARROW!
                                 console.log(`${this.characterType} created hitbox at frame: ${this.anims.currentFrame ? this.anims.currentFrame.index : 'unknown'}`);
                             } else if (this.characterType === 'hero') {
@@ -371,7 +372,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                     if (this.characterType === 'tank') {
                         this.destroyShockwave();
                     } else if (this.characterType === 'archer') {
-                        //nithing happens
+                        //nithing happens this.des
                     } else if (this.characterType === 'hero') {
                         this.destroyHerowave();
                     } else if (this.characterType === 'ninja') {
