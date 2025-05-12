@@ -594,12 +594,12 @@ export class Game extends Phaser.Scene {
         }
         fireball.hitTargets.add(target.playerId || target);
 
-            // Get damage from arrow owner
-            const damage = fireball.owner ? fireball.owner.attackDamage : 10;
+            // Get damage from fireball owner
+            const damage = fireball.owner ? fireball.owner.attack2Damage : 10;
 
             console.log(`Fireball hit: ${fireball.owner.characterType} dealing ${damage} damage to target at (${target.x}, ${target.y})`);
 
-            // Only process if arrow belongs to local player
+            // Only process if fireball belongs to local player
             if (fireball.owner === this.gameSync?.localPlayer && target.playerId) {
                 this.combatManager.registerHit(fireball.owner, target, damage);
             } else if (!target.playerId) {
