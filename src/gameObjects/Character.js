@@ -476,7 +476,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
             this.hitbox.hitTargets = new Set();
             //Debug: visual hitbox will/need to be removed later
             
-            this.hitbox.setStrokeStyle(2, 0xff0000); //debug
+            //this.hitbox.setStrokeStyle(2, 0xff0000); //debug
             console.log(`${this.characterType} hitbox position: x=${this.hitbox.x}, y=${this.hitbox.y}, width=${width}, height=${height}`);
             this.scene.time.delayedCall(250, () => {
                 if (this.hitbox) {
