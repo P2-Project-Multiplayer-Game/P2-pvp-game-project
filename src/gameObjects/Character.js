@@ -31,6 +31,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
         //projectile modifiers
         this.projectileVelocity = config.projectileVelocity || 200;
         this.projectileLifetime = config.projectileLifetime || 1000;
+        this.projectileKnockback = config.projectileKnockback || 0; // Add knockback power
 
         //hitbox modularity
         this.hitboxConfig = config.hitboxConfig || { width: 40, height: 50 };
