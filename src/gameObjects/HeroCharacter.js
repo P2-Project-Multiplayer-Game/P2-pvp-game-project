@@ -12,8 +12,8 @@ export class HeroCharacter extends Character {
             maxHealth: 100,
 
             // comabt modifiers such as damage and attack cooldowns
-            attackDamage: 20,       // Normal attack damage
-            attack2Damage: 30,      // Shockwave damage
+            attackDamage: 30,       // Normal attack damage
+            attack2Damage: 40,      // Shockwave damage
             attack1Cooldown: 500, // 0.5 seconds mele attack (alredy defualt value)
             attack2Cooldown: 2000, // 2 seconds cooldown for attack2 
 
