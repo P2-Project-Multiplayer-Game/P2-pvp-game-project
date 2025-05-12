@@ -22,7 +22,7 @@ export class SkeletonCharacter extends Character {
             // See Character.js for formula implementat
 
             //movementspeed modifiers
-            moveSpeed: 200,        
+            moveSpeed: 300,        
             jumpVelocity: 480,
 
             //miscellaneous modifiers 
