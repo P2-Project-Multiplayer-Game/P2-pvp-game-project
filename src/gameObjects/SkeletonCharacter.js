@@ -17,12 +17,12 @@ export class SkeletonCharacter extends Character {
             attack2Cooldown: 5000, // 5 seconds cooldown for attack2 
 
             //projectile modifiers such as speed and lastability
-            projectileVelocity: 200,     // Fireball speed (vertical speed)
+            projectileVelocity: 50,     // Fireball speed (vertical speed)
             // For fireballs we'll use a special formula to ensure they reach bottom screen
             // See Character.js for formula implementat
 
             //movementspeed modifiers
-            moveSpeed: 300,        
+            moveSpeed: 200,        
             jumpVelocity: 480,
 
             //miscellaneous modifiers 
