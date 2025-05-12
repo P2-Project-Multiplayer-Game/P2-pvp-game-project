@@ -113,8 +113,7 @@ io.on('connection', (socket) => {
       io.to(attacker.roomId).emit('player_hit', {
         attackerId: socket.id,
         targetId: data.targetId,
-        damage: data.damage,
-        knockback: data.knockback || 0 // Pass knockback info, default to 0
+        damage: data.damage
       });
       
       // Also broadcast the updated health

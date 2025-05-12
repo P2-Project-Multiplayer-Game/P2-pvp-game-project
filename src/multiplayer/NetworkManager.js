@@ -74,7 +74,7 @@ export default class NetworkManager {
 
         // listener and event trigger for player hit
         this.socket.on('player_hit', (data) => {
-          console.log(`Received player hit: ${data.attackerId} hit ${data.targetId} for ${data.damage} damage with knockback ${data.knockback || 0}`);
+          console.log(`Received player hit: ${data.attackerId} hit ${data.targetId} for ${data.damage} damage`);
           this.triggerEvent('playerHit', data);
         });
 
