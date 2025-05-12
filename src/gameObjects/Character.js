@@ -928,6 +928,12 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                     },
                     repeat: 30 // Log for 300ms
                 });
+                // Ninjawave: Destroy after delay if no collision
+                this.scene.time.delayedCall(this.projectileLifetime, () => {
+                    if (this.ninjawave) {
+                        this.destroyNinjawave();
+                    }
+                });
                 // Add a delayed hitbox for the blue crescent effect (2nd part of attack)
                 this.scene.time.delayedCall(1700, () => {
                     if (this.stateMachine.currentState === 'ATTACK2') {
@@ -963,12 +969,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                     }
                 });
                 
-                // Ninjawave: Destroy after delay if no collision
-                this.scene.time.delayedCall(this.projectileLifetime, () => {
-                    if (this.ninjawave) {
-                        this.destroyNinjawave();
-                    }
-                });
+
                 console.log(`${this.characterType} ninjawave created at x=${this.ninjawave.x}, y=${this.ninjawave.y}`);
             });
         }
