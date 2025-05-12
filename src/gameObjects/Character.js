@@ -355,7 +355,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                         }  else if (this.characterType === 'hero') {
                             this.destroyHerowave();
                         }  else if (this.characterType === 'ninja') {
-                            //this.destroyNinjawave();
+                            this.destroyNinjawave();
                         }  else if (this.characterType === 'skeleton') {
                             //this.destroyFireball();
                         }
@@ -380,7 +380,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                     } else if (this.characterType === 'hero') {
                         this.destroyHerowave();
                     } else if (this.characterType === 'ninja') {
-                        //this.destroyNinjawave();
+                        this.destroyNinjawave();
                     } else if (this.characterType === 'skeleton') {
                         //this.destroyFireball();
                     }
