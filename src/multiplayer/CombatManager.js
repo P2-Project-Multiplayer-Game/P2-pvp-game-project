@@ -72,7 +72,8 @@ export default class CombatManager {
     
       this.network.socket.emit('player_hit', {
         targetId: target.playerId,
-        damage: damage
+        damage: damage,
+        knockback: knockback //send the knockback value
       });
     }
     
