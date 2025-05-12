@@ -752,10 +752,10 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
             // Generate positions array if not provided (for local player)
             let fireballPositions = positions || [];
             if (!positions) {
-                for (let i = 0; i < 12; i++) {
-                    let randomInt = Math.floor(Math.random() * 75);
+                for (let i = 0; i < 3; i++) {
+                    let randomInt = Math.floor(Math.random() * 35);
                     fireballPositions.push({
-                        x: randomInt + (i) * SCREEN_WIDTH/12,
+                        x: randomInt + (i) * SCREEN_WIDTH/3,
                         y: 0
                     });
                 }
