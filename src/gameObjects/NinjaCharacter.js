@@ -15,7 +15,7 @@ export class NinjaCharacter extends Character {
             attack2Damage: 20, // the initial shockwave , probobly should have low damage
             attack3Damage: 30, // the delayed move probably should have a higher damage 
             attack1Cooldown: 500, // 0.5 seconds mele attack (alredy defualt value)
-            attack2Cooldown: 500, // 6 seconds cooldown for attack2 
+            attack2Cooldown: 6000, // 6 seconds cooldown for attack2 
 
             //projectile modifiers such as speed and lastability
             projectileVelocity: 800,     // Ninjawave speed (was 800)
