@@ -19,7 +19,7 @@ export class NinjaCharacter extends Character {
 
             //projectile modifiers such as speed and lastability
             projectileVelocity: 800,     // Ninjawave speed (was 800)
-            projectileLifetime: 600,    // Ninjawave lifetime (was 1800ms)
+            projectileLifetime: 300,    // Ninjawave lifetime (was 1800ms)
 
             //movementspeed modifiers
             moveSpeed: 350,         // Faster movement (ninja is agile)
