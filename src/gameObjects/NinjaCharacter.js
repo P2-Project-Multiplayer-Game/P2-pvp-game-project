@@ -7,8 +7,8 @@ export class NinjaCharacter extends Character {
             idleSpriteKey: 'ninja_idle',
 
             //health system
-            health: 100, // Less health than tank
-            maxHealth: 100,
+            health: 80, // Less health than tank
+            maxHealth: 80,
 
             // comabt modifiers such as damage and attack cooldowns
             attackDamage: 15, // Higher damage
