@@ -63,6 +63,13 @@ export default class CombatManager {
   registerHit(attacker, target, damage) {
     // only send hit if target is a player with id
     if (target.playerId) {
+      // Calculate knockback if the attacker has projectileKnockback
+      let knockback = 0;
+      if (attacker.projectileKnockback > 0) {
+        const knockbackDirection = attacker.x > target.x ? -1 : 1;
+        knockback = attacker.projectileKnockback * knockbackDirection;
+      }
+    
       this.network.socket.emit('player_hit', {
         targetId: target.playerId,
         damage: damage
@@ -151,7 +158,15 @@ export default class CombatManager {
     if (targetPlayer) {
       // Apply damage
       targetPlayer.health = Math.max(0, targetPlayer.health - data.damage);
-      
+      // Apply knockback for local player only (where physics works)
+      if (data.knockback && targetPlayer === this.gameSync.localPlayer) {
+        targetPlayer.setVelocityX(data.knockback);
+        
+        // Adds a slight vertical component to make knockback more noticeable
+        if (targetPlayer.body.blocked.down) {
+          targetPlayer.setVelocityY(-50);
+        }
+      }
       if (!targetPlayer.isInvincible) {
         if (targetPlayer === this.gameSync.localPlayer) {
           // For local player, use state machine
