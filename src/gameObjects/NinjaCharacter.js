@@ -106,7 +106,7 @@ export class NinjaCharacter extends Character {
         this.anims.create({
             key: this.animationKeys.attack2,
             frames: this.anims.generateFrameNames('ninja_attack2', { prefix: 'ninjaspecial', end: 7, zeroPad: 4 }),
-            frameRate: 2, // slow attack
+            frameRate: 6, // slow attack
             repeat: 0
         });
         this.anims.create({
