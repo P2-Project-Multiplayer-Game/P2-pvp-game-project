@@ -12,7 +12,7 @@ export class ArcherCharacter extends Character {
 
             // comabt modifiers such as damage and attack cooldowns
             attackDamage: 15,       // Normal attack damage
-            attack2Damage: 25,      // arrow damage
+            attack2Damage: 20,      // arrow damage
             attack1Cooldown: 500, // 0.5 seconds mele attack (alredy defualt value)
             attack2Cooldown: 1000, // 1 seconds cooldown for attack2 
             
