@@ -188,10 +188,10 @@ export class Game extends Phaser.Scene {
         //socket.emit('newPlayer');
 
         // Create a dummy target for hitbox testing
-        //this.dummyTarget = this.physics.add.sprite(200, 480, 'tank_idle'); // Adjusted y to align with ground
+        this.dummyTarget = this.physics.add.sprite(200, 480, 'tank_idle'); // Adjusted y to align with ground
         this.dummyTarget.setImmovable(true);
         this.dummyTarget.health = 100; // For testing damage
-        this.physics.add.collider(this.dummyTarget, ground);
+        //this.physics.add.collider(this.dummyTarget, ground);
 
         this.playersInMatch.push(this.dummyTarget);
         
