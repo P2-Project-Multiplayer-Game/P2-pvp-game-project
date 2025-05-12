@@ -19,7 +19,7 @@ export class ArcherCharacter extends Character {
             //projectile modifiers such as speed and lastability
             projectileVelocity: 500,     // Arrow speed (was 500)
             projectileLifetime: 1600,    // Arrow lifetime (was 1600ms)
-            projectileKnockback: 50, // Strong knockback TEST
+            projectileKnockback: 300, // Strong knockback TEST
 
             //movementspeed modifiers
             moveSpeed: 200,        
