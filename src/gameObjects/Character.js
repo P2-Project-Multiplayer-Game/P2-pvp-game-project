@@ -959,7 +959,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                         crescent.setStrokeStyle(3, 0x00ffff);
                         
                         // Destroy the crescent hitbox after a short duration
-                        this.scene.time.delayedCall(80, () => {
+                        this.scene.time.delayedCall(2000, () => {
                             if (crescent) {
                                 crescent.destroy();
                             }
