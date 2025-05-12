@@ -173,6 +173,11 @@ export class Preloader extends Phaser.Scene {
             'skeleton_attack',
             'skeleton/skeleton_attack.png', 'skeleton/skeleton_attack.json'    
         );
+        this.load.atlas(
+            'skeleton_attack2',
+            'skeleton/Skeleton_attack2_new.png', 'skeleton/Skeleton_attack2_new.json'    
+        );
+        
          this.load.atlas(
             'skeleton_hurt',
             'skeleton/skeleton_hurt.png', 'skeleton/skeleton_hurt.json'   
