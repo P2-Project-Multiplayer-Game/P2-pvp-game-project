@@ -563,7 +563,11 @@ export class Game extends Phaser.Scene {
             const damage = arrow.damage || (arrow.owner ? arrow.owner.attackDamage : 10);
 
             console.log(`Arrow hit: ${arrow.owner.characterType} dealing ${damage} damage to target at (${target.x}, ${target.y})`);
-
+            // Apply knockback
+            if (arrow.owner && arrow.owner.projectileKnockback > 0) {
+                const knockbackDirection = arrow.x > target.x ? -1 : 1; // Left or right based on impact direction
+                target.setVelocityX(knockbackDirection * arrow.owner.projectileKnockback);
+            }
             // Only process if arrow belongs to local player
             if (arrow.owner === this.gameSync?.localPlayer && target.playerId) {
                 this.combatManager.registerHit(arrow.owner, target, damage);
