@@ -935,7 +935,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                     }
                 });
                 // Add a delayed hitbox for the blue crescent effect (2nd part of attack)
-                this.scene.time.delayedCall(141, () => {
+                this.scene.time.delayedCall(282, () => {
                     if (this.stateMachine.currentState === 'ATTACK2') {
                         // Create a completely separate hitbox specifically for the blue crescent
                         const crescent = this.scene.add.rectangle(
