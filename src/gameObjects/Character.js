@@ -325,7 +325,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                     
 
                     this.scene.time.delayedCall(50, () => {
-                        if (this.stateMachine.currentState === 'ATTACK2' && !this.attack2OnCooldown) {
+                        if (this.stateMachine.currentState === 'ATTACK2' && this.attack2OnCooldown) {
                             if (this.characterType === 'tank') {
                                 this.createShockwave(); // SHOCKWAVE!
                                 console.log(`${this.characterType} created shockwave at frame: ${this.anims.currentFrame ? this.anims.currentFrame.index : 'unknown'}`);
