@@ -12,7 +12,7 @@ export class NinjaCharacter extends Character {
 
             // comabt modifiers such as damage and attack cooldowns
             attackDamage: 15, // Higher damage
-            attack2Damage: 10, // the initial shockwave , probobly should have low damage
+            attack2Damage: 25, // the initial shockwave , probobly should have low damage
             attack3Damage: 30, // the delayed move probably should have a higher damage 
             attack1Cooldown: 500, // 0.5 seconds mele attack (alredy defualt value)
             attack2Cooldown: 500, // 6 seconds cooldown for attack2 
