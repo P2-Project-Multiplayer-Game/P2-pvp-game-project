@@ -263,11 +263,12 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                     if (this.body.blocked.down){
                         this.setVelocityX(0);
                     }
+                    // Start the cooldown
+                    this.startAttack1Cooldown();
+
                     this.anims.play(this.animationKeys.attack, true);
                     console.log(`${this.characterType} entered ATTACK state`);
 
-                    // Start the cooldown
-                    this.startAttack1Cooldown();
                     // create hitbox on attack animation (this can be adjusted to the individual sprite)
                     this.scene.time.delayedCall(50, () => {
                         if (this.stateMachine.currentState === 'ATTACK') {
@@ -315,13 +316,16 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
             ATTACK2: {
                 enter: () => {
                     this.setVelocityX(0);
-                    this.anims.play(this.animationKeys.attack2, true);
-                    console.log(`${this.characterType} entered ATTACK2 state`);
+
                     // Start the cooldown
                     this.startAttack2Cooldown();
                     // Shockwave: Create shockwave for tank, hitbox for others
+                    this.anims.play(this.animationKeys.attack2, true);
+                    console.log(`${this.characterType} entered ATTACK2 state`);
+                    
+
                     this.scene.time.delayedCall(50, () => {
-                        if (this.stateMachine.currentState === 'ATTACK2') {
+                        if (this.stateMachine.currentState === 'ATTACK2' && !this.attack2OnCooldown) {
                             if (this.characterType === 'tank') {
                                 this.createShockwave(); // SHOCKWAVE!
                                 console.log(`${this.characterType} created shockwave at frame: ${this.anims.currentFrame ? this.anims.currentFrame.index : 'unknown'}`);
