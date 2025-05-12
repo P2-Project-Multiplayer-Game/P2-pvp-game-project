@@ -560,7 +560,7 @@ export class Game extends Phaser.Scene {
             }
 
             // Get damage from arrow owner
-            const damage = arrow.damage || (arrow.owner ? arrow.owner.attackDamage : 10);
+            const damage = arrow.damage || (arrow.owner ? arrow.owner.attack2Damage : 10);
 
             console.log(`Arrow hit: ${arrow.owner.characterType} dealing ${damage} damage to target at (${target.x}, ${target.y})`);
 
