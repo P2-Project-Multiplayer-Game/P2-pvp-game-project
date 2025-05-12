@@ -9,6 +9,7 @@ export class TankCharacter extends Character {
             //health system
             health: 200,
             maxHealth: 200,
+            healingFactor: 2,
 
             // comabt modifiers such as damage and attack cooldowns
             attackDamage: 10,       // Normal attack damage
