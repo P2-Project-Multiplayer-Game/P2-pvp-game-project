@@ -326,7 +326,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                                 this.createShockwave(); // SHOCKWAVE!
                                 console.log(`${this.characterType} created shockwave at frame: ${this.anims.currentFrame ? this.anims.currentFrame.index : 'unknown'}`);
                             } else if (this.characterType === 'archer') {
-                                this.destroyArrow();
+                                //this.destroyArrow();
                                 this.createArrow(); //archer ARROW!
                                 console.log(`${this.characterType} created hitbox at frame: ${this.anims.currentFrame ? this.anims.currentFrame.index : 'unknown'}`);
                             } else if (this.characterType === 'hero') {
