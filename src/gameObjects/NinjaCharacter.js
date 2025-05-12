@@ -5,7 +5,7 @@ export class NinjaCharacter extends Character {
         super(scene, x, y, {
             characterType: 'ninja',
             idleSpriteKey: 'ninja_idle',
-            
+
             //health system
             health: 80, // Less health than tank
             maxHealth: 80,
@@ -18,7 +18,8 @@ export class NinjaCharacter extends Character {
             attack2Cooldown: 6000, // 6 seconds cooldown for attack2 
 
             //projectile modifiers such as speed and lastability
-            //add projectilespeed and the  this.scene.time.delayedCall(1600, ()  time modifiers
+            projectileVelocity: 800,     // Ninjawave speed (was 800)
+            projectileLifetime: 1800,    // Ninjawave lifetime (was 1800ms)
 
             //movementspeed modifiers
             moveSpeed: 350,         // Faster movement (ninja is agile)

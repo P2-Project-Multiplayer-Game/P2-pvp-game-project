@@ -841,14 +841,12 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
             
             this.herowave.owner = this; // Reference player for collision handling
             this.herowave.damage = this.attack2Damage; // Use attack2 damage
-            this.herowave.setVelocityX(this.flipX ? -250 : 250); // Slightly faster than tank's shockwave
-            this.herowave.body.setAllowGravity(false);
 
             // Herowave: Add to scene's shockwave group(important due to maing physics group in game)
             this.scene.herowaves.add(this.herowave);
             // Herowave: Ensure gravity after group addition
             this.herowave.body.setAllowGravity(false);
-            this.scene.herowaves.setVelocityX(this.flipX ? -250 : 250);
+            this.scene.herowaves.setVelocityX(this.flipX ? -this.projectileVelocity : this.projectileVelocity);
 
             // Register herowave with combat manager if this is the local player
             if (this === this.scene.gameSync?.localPlayer) {
@@ -866,7 +864,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                 repeat: 30 // Log for 300ms
             });
             // Herowave: Destroy after 300ms if no collision
-            this.scene.time.delayedCall(300, () => {
+            this.scene.time.delayedCall(this.projectileLifetime, () => {
                 if (this.herowave) {
                     this.destroyHerowave();
                 }
@@ -909,15 +907,13 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                 }
                 this.ninjawave.owner = this; // Reference player for collision handling
                 this.ninjawave.damage = this.attack2Damage; 
-                this.ninjawave.setVelocityX(this.flipX ? -800 : 800); // ninjawave yeet
-                this.ninjawave.body.setAllowGravity(false);
                 this.ninjawave.setScale(0.9);
 
                 // Ninjawave: Add to scene's ninjawave group(important due to maing physics group in game)
                 this.scene.ninjawaves.add(this.ninjawave);
                 // Ninjawave: Ensure gravity after group addition
                 this.ninjawave.body.setAllowGravity(false);
-                this.scene.ninjawaves.setVelocityX(this.flipX ? -800 : 800);
+                this.scene.ninjawaves.setVelocityX(this.flipX ? -this.projectileVelocity : this.projectileVelocity);
                 // Register ninjawave with combat manager if this is local player
                 if (this === this.scene.gameSync?.localPlayer) {
                     this.scene.combatManager.registerNinjawave();
@@ -968,7 +964,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                 });
                 
                 // Ninjawave: Destroy after delay if no collision
-                this.scene.time.delayedCall(1800, () => {
+                this.scene.time.delayedCall(this.projectileLifetime, () => {
                     if (this.ninjawave) {
                         this.destroyNinjawave();
                     }
