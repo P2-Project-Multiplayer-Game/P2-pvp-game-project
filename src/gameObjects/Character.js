@@ -746,8 +746,6 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
     } 
     //Skeleton fireball special attack
     createFireball(positions = null) {
-        // Initialize fireballs array
-        this.fireballs = []; 
         if (!this.fireball) {
             console.log('fireball has been called');
             
@@ -780,7 +778,6 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                 this.fireball.body.setSize(20, 30);
                 this.fireball.body.setAllowGravity(false);
                 this.scene.fireballs.add(this.fireball);
-                this.fireballs.push(fireball); // Add to our tracking array
             }
             // Set velocity based on configuration
             this.scene.fireballs.children.each((fireball) => {
@@ -811,23 +808,17 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
     }
 
     // fireball: Destroy fireball sprite
-    destroyFireballs() {
-        if (this.fireballs && this.fireballs.length > 0) {
+    destroyFireball() {
+        if (this.fireball) {
             // If this is local player, notify network
             if (this === this.scene.gameSync?.localPlayer) {
-                this.scene.networkManager.sendFireballDestroyed({ id: this.scene.networkManager.playerId });
+              this.scene.networkManager.sendFireballDestroyed({ id: this.scene.networkManager.playerId });
             }
+            //sletter en enkel fireball, har brug for at slette alle fireballs
+            console.log(`${this.characterType} fireball destroyed at x=${this.fireball.x}, y=${this.fireball.y}`);
+            this.fireball.destroy();
+            this.fireball = null;
             
-            // Destroy all fireballs in the array
-            this.fireballs.forEach(fireball => {
-                if (fireball && fireball.active) {
-                    console.log(`${this.characterType} fireball destroyed at x=${fireball.x}, y=${fireball.y}`);
-                    fireball.destroy();
-                }
-            });
-            
-            // Clear the array
-            this.fireballs = null;
         }
     }
 
