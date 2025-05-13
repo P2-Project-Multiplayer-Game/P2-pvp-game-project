@@ -164,6 +164,14 @@ export default class GameSync {
     // Just logging to demonstrate its working
     //console.log(`Updated remote player ${data.id} to position x=${data.x}, y=${data.y}`);
 
+    // Update cooldown states
+    if (data.attack1OnCooldown !== undefined) {
+        remotePlayer.attack1OnCooldown = data.attack1OnCooldown;
+    }
+    if (data.attack2OnCooldown !== undefined) {
+        remotePlayer.attack2OnCooldown = data.attack2OnCooldown;
+    } 
+    
     // Store previous flipX state to detect changes
     const wasFlipped = remotePlayer.flipX;
     

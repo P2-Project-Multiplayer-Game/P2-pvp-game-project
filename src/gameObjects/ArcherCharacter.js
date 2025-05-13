@@ -34,17 +34,6 @@ export class ArcherCharacter extends Character {
                 x: { left: -5, right: 5 },  // Adjust these values based on chrecters attack animation
                 y: 15 // Vertical offset from character center
             }, 
-            //  custom ready indicator positions 
-            readyIndicatorConfig: {
-                attack1: {
-                    x: -6,  // Always left
-                    y: -15   // Offset from center
-                },
-                attack2: {
-                    x: 6,   // Always right
-                    y: -15   // Offset from center
-                }
-            },
             animationKeys: {
                 left: 'archer_left',
                 right: 'archer_right',

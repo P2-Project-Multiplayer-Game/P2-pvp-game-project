@@ -657,7 +657,7 @@ export class Game extends Phaser.Scene {
             console.log(`Dummy grounded: ${this.dummyTarget.body.blocked.down}`);
         }
         */
-       
+
         // Send player position updates to server if connected AND player is alive
         if (this.networkManager && this.networkManager.connected && 
             this.player1 && !this.player1.isDead) {
@@ -694,7 +694,8 @@ export class Game extends Phaser.Scene {
                 this.player1.y,
                 {
                     animation,
-                    facing
+                    facing,
+                    player: this.player1
                 }
             );
         }

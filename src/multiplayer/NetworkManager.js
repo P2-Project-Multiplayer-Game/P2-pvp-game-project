@@ -131,7 +131,7 @@ export default class NetworkManager {
           console.log('Received fireball_destroyed event:', data);
           this.triggerEvent('fireballDestroyed', data);
         });
-        
+
         this.socket.on('player_died', (data) => {
           console.log('Received player_died event:', data);
           this.triggerEvent('playerDied', data);
@@ -192,10 +192,15 @@ export default class NetworkManager {
   //Send player position update where x and y is the player position adn the extras is for animation and direction facing
   sendPlayerUpdate(x, y, extras = {}) {
     if (!this.connected) return;
-    
+
+    // Get cooldown states from the local player
+    const localPlayer = extras.player;
+
     const data = {
       x,
       y,
+      attack1OnCooldown: localPlayer?.attack1OnCooldown || false,
+      attack2OnCooldown: localPlayer?.attack2OnCooldown || false,
       ...extras
     };
     // debug purpose
