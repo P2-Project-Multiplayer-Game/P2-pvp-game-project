@@ -42,7 +42,9 @@ io.on('connection', (socket) => {
       y: playerData.y || 100,
       roomId: roomId,
       characterType: playerData.characterType || 'tank',
-      health: playerData.health || 100  
+      health: playerData.health || 100,
+      isAlive: true,  
+      rank: null      
     };
     
     players.set(socket.id, player);
@@ -261,6 +263,52 @@ io.on('connection', (socket) => {
       });
     }
   });
+  
+  // handler for player death, the event comes from combat manager.  
+  socket.on('player_died', (data) => {
+    const player = players.get(socket.id);
+    if (player && player.isAlive) {
+      console.log(`Player ${socket.id} has died, killed by ${data.killedBy}`);
+      
+      // Mark player as dead
+      player.isAlive = false;
+      
+      // Calculate rankings
+      const roomPlayers = Array.from(players.values()).filter(p => p.roomId === player.roomId);
+      const aliveCount = roomPlayers.filter(p => p.isAlive).length;
+      player.rank = roomPlayers.length - aliveCount + 1; // Higher number = better rank
+      
+      // Broadcast death to everyone in the room
+      io.to(player.roomId).emit('player_died', {
+        id: socket.id,
+        killedBy: data.killedBy,
+        rank: player.rank
+      });
+      
+      // Check if game is over (only one player left alive)
+      if (aliveCount <= 1) {
+        const lastPlayerStanding = roomPlayers.find(p => p.isAlive);
+        const finalRankings = roomPlayers.sort((a, b) => {
+          // Sort by rank (alive player is winner)
+          if (a.isAlive) return -1;
+          if (b.isAlive) return 1;
+          // Then by rank order
+          return b.rank - a.rank;
+        }).map(p => ({
+          id: p.id,
+          characterType: p.characterType,
+          rank: p.isAlive ? 1 : p.rank
+        }));
+        
+        // Send game over event
+        io.to(player.roomId).emit('game_over', {
+          winner: lastPlayerStanding ? lastPlayerStanding.id : null,
+          rankings: finalRankings
+        });
+      }
+    }
+  });
+
 });
 
 // Server initiation

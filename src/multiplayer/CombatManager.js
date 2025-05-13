@@ -57,6 +57,9 @@ export default class CombatManager {
     this.network.on('fireballDestroyed', (data) => {
       this.handleRemoteFireballDestroyed(data);
     });
+    this.network.on('player_died', (data) => {
+      this.handlePlayerDeath(data);
+    });
   }
 
   // this is called when local player hits somone
@@ -367,4 +370,80 @@ export default class CombatManager {
       remotePlayer.destroyFireball();
     }
   }
+
+  handlePlayerDeath(data) {
+    // Get the player who died
+    let deadPlayer;
+    if (data.id === this.network.playerId) {
+      deadPlayer = this.gameSync.localPlayer;
+      console.log('You have died!');
+      
+      // For local player, update UI to indicate death
+      deadPlayer.setTint(0x555555);
+      
+      // Show spectating message
+      const spectatingText = this.scene.add.text(
+        this.scene.cameras.main.centerX,
+        50,
+        'You died! Spectating...',
+        {
+          fontFamily: 'Arial',
+          fontSize: 24,
+          color: '#ff0000',
+          stroke: '#000000',
+          strokeThickness: 4
+        }
+      ).setOrigin(0.5, 0.5)
+      .setScrollFactor(0)
+      .setDepth(100);
+      
+      // Fade it in
+      spectatingText.alpha = 0;
+      this.scene.tweens.add({
+        targets: spectatingText,
+        alpha: 1,
+        duration: 500,
+        ease: 'Power2'
+      });
+    } else {
+      // Remote player died
+      deadPlayer = this.gameSync.remotePlayers.get(data.id);
+      console.log(`Player ${data.id} has died!`);
+    }
+    
+    if (deadPlayer) {
+      // Store player's rank for game over screen
+      deadPlayer.rank = data.rank;
+      
+      // Add death visual effect
+      this.scene.tweens.add({
+        targets: deadPlayer,
+        alpha: 0,
+        y: deadPlayer.y - 50,
+        duration: 1000,
+        ease: 'Power2',
+        onComplete: () => {
+          // Add player to scene's playersRanking array
+          if (!this.scene.playersRanking.includes(deadPlayer)) {
+            this.scene.playersRanking.push(deadPlayer);
+          }
+          
+          // Check if game is over
+          this.scene.checkForGameOver();
+        }
+      });
+      
+      // Disable control for local player
+      if (deadPlayer === this.gameSync.localPlayer) {
+        // Disable input for all keys
+        this.scene.input.keyboard.enabled = false;
+        
+        // Re-enable just for spectator controls if needed
+        setTimeout(() => {
+          this.scene.input.keyboard.enabled = true;
+          // Add any spectator-specific controls here
+        }, 1000);
+      }
+    }
+  } 
 }
