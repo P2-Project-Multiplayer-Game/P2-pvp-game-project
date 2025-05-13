@@ -248,7 +248,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                     this.scene.time.delayedCall(50, () => {
                         if (this.stateMachine.currentState === 'ATTACK') {
                             this.createHitbox();
-                            console.log(`${this.characterType} created hitbox at frame: ${this.anims.currentFrame ? this.anims.currentFrame.index : 'unknown'}`);
+                            //console.log(`${this.characterType} created hitbox at frame: ${this.anims.currentFrame ? this.anims.currentFrame.index : 'unknown'}`);
                         }
                     });
                     // Transition to IDLE when attack anim. is complete
@@ -256,7 +256,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                     this.once(`animationcomplete-${this.animationKeys.attack}`, () => {
                         //this.destroyHitbox();
                         this.stateMachine.transition('IDLE');
-                        console.log(`${this.characterType} attack animation complete`);
+                        //console.log(`${this.characterType} attack animation complete`);
                     });
                 },
                 execute: () => {
@@ -303,20 +303,20 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                         if (this.stateMachine.currentState === 'ATTACK2' ) {
                             if (this.characterType === 'tank') {
                                 this.createShockwave(); // SHOCKWAVE!
-                                console.log(`${this.characterType} created shockwave at frame: ${this.anims.currentFrame ? this.anims.currentFrame.index : 'unknown'}`);
+                                //console.log(`${this.characterType} created shockwave at frame: ${this.anims.currentFrame ? this.anims.currentFrame.index : 'unknown'}`);
                             } else if (this.characterType === 'archer') {
                                 //this.destroyArrow();
                                 this.createArrow(); //archer ARROW!
-                                console.log(`${this.characterType} created hitbox at frame: ${this.anims.currentFrame ? this.anims.currentFrame.index : 'unknown'}`);
+                                //console.log(`${this.characterType} created hitbox at frame: ${this.anims.currentFrame ? this.anims.currentFrame.index : 'unknown'}`);
                             } else if (this.characterType === 'hero') {
                                 this.createHerowave(); //insert attack2 for hero adjust console log
-                                console.log(`${this.characterType} created HeroWave at frame: ${this.anims.currentFrame ? this.anims.currentFrame.index : 'unknown'}`);
+                                // console.log(`${this.characterType} created HeroWave at frame: ${this.anims.currentFrame ? this.anims.currentFrame.index : 'unknown'}`);
                             } else if (this.characterType === 'ninja') {
                                 this.createNinjawave();
-                                console.log(`${this.characterType} created ninjawave at frame: ${this.anims.currentFrame ? this.anims.currentFrame.index : 'unknown'}`);
+                                //console.log(`${this.characterType} created ninjawave at frame: ${this.anims.currentFrame ? this.anims.currentFrame.index : 'unknown'}`);
                             } else if (this.characterType === 'skeleton') {
                                 this.createFireball(); //insert attack2 for skeleton
-                                console.log(`${this.characterType} created hitbox at frame: ${this.anims.currentFrame ? this.anims.currentFrame.index : 'unknown'}`);
+                                //console.log(`${this.characterType} created hitbox at frame: ${this.anims.currentFrame ? this.anims.currentFrame.index : 'unknown'}`);
                             }
                         }
                     });
@@ -335,7 +335,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                             //this.destroyFireball();
                         }
                         this.stateMachine.transition('IDLE');
-                        console.log(`${this.characterType} attack2 animation complete`);
+                        //console.log(`${this.characterType} attack2 animation complete`);
                     });
                 },
                 execute: () => {
@@ -452,7 +452,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
             //Debug: visual hitbox will/need to be removed later
             
             //this.hitbox.setStrokeStyle(2, 0xff0000); //debug
-            console.log(`${this.characterType} hitbox position: x=${this.hitbox.x}, y=${this.hitbox.y}, width=${width}, height=${height}`);
+            //console.log(`${this.characterType} hitbox position: x=${this.hitbox.x}, y=${this.hitbox.y}, width=${width}, height=${height}`);
             this.scene.time.delayedCall(250, () => {
                 if (this.hitbox) {
                     this.destroyHitbox();
@@ -463,7 +463,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
 
     destroyHitbox() {
         if (this.hitbox) {
-            console.log(`${this.characterType} destroyed hitbox at x=${this.hitbox.x}, y=${this.hitbox.y}`);
+            //console.log(`${this.characterType} destroyed hitbox at x=${this.hitbox.x}, y=${this.hitbox.y}`);
             //this.scene.time.delayedCall(300, () => {
                 this.hitbox.destroy();
                 this.hitbox = null;
@@ -479,7 +479,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
             this.attack1Cooldown,
             () => {
                 this.attack1OnCooldown = false;
-                console.log(`${this.characterType} Attack1 cooldown finished`);
+                //console.log(`${this.characterType} Attack1 cooldown finished`);
             }
         );
     }
@@ -491,7 +491,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
             this.attack2Cooldown,
             () => {
                 this.attack2OnCooldown = false;
-                console.log(`${this.characterType} Attack2 cooldown finished`);
+                //console.log(`${this.characterType} Attack2 cooldown finished`);
             }
         );
     }
@@ -524,7 +524,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                 delay: 10,
                 callback: () => {
                     if (this.shockwave) {
-                        console.log(`Shockwave position: x=${this.shockwave.x}, y=${this.shockwave.y}, velocityX=${this.shockwave.body.velocity.x}, allowGravity=${this.shockwave.body.allowGravity}`);
+                        //console.log(`Shockwave position: x=${this.shockwave.x}, y=${this.shockwave.y}, velocityX=${this.shockwave.body.velocity.x}, allowGravity=${this.shockwave.body.allowGravity}`);
                     }
                 },
                 repeat: 30 // Log for 300ms
@@ -538,7 +538,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                     this.destroyShockwave();
                 }
             });
-            console.log(`${this.characterType} shockwave created at x=${this.shockwave.x}, y=${this.shockwave.y}`);
+            //console.log(`${this.characterType} shockwave created at x=${this.shockwave.x}, y=${this.shockwave.y}`);
         }
     }
 
@@ -550,7 +550,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
               this.scene.networkManager.sendShockwaveDestroyed({ id: this.scene.networkManager.playerId });
             }
             
-            console.log(`${this.characterType} shockwave destroyed at x=${this.shockwave.x}, y=${this.shockwave.y}`);
+            //console.log(`${this.characterType} shockwave destroyed at x=${this.shockwave.x}, y=${this.shockwave.y}`);
             this.shockwave.destroy();
             this.shockwave = null;
         }
@@ -588,7 +588,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                 delay: 10,
                 callback: () => {
                     if (this.arrow) {
-                        console.log(`Arrow position: x=${this.arrow.x}, y=${this.arrow.y}, velocityX=${this.arrow.body.velocity.x}, allowGravity=${this.arrow.body.allowGravity}`);
+                        //console.log(`Arrow position: x=${this.arrow.x}, y=${this.arrow.y}, velocityX=${this.arrow.body.velocity.x}, allowGravity=${this.arrow.body.allowGravity}`);
                     }
                 },
                 repeat: 30 // Log for 300ms
@@ -603,7 +603,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                     this.destroyArrow();
                 }
             });
-            console.log(`${this.characterType} arrow created at x=${this.arrow.x}, y=${this.arrow.y}`);
+            //console.log(`${this.characterType} arrow created at x=${this.arrow.x}, y=${this.arrow.y}`);
         }
     }
 
@@ -615,7 +615,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
               this.scene.networkManager.sendArrowDestroyed({ id: this.scene.networkManager.playerId });
             }
             
-            console.log(`${this.characterType} arrow destroyed at x=${this.arrow.x}, y=${this.arrow.y}`);
+            //console.log(`${this.characterType} arrow destroyed at x=${this.arrow.x}, y=${this.arrow.y}`);
             this.arrow.destroy();
             this.arrow = null;
         }
@@ -623,7 +623,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
     //Skeleton fireball special attack
     createFireball(positions = null) {
         if (!this.fireball) {
-            console.log('fireball has been called');
+            //console.log('fireball has been called');
             
             // Generate positions array if not provided (for local player)
             let fireballPositions = positions || [];
@@ -667,7 +667,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
             // Formula: time (ms) = distance (px) / velocity (px/s) * 1000
             const fireballLifetime = Math.floor(SCREEN_HEIGHT / this.projectileVelocity * 1000);
             
-            console.log(`Fireball velocity: ${this.projectileVelocity}, calculated lifetime: ${fireballLifetime}ms`);
+            //console.log(`Fireball velocity: ${this.projectileVelocity}, calculated lifetime: ${fireballLifetime}ms`);
             
             // Register with combat manager for local player
             if (this === this.scene.gameSync?.localPlayer) {
@@ -691,7 +691,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
               this.scene.networkManager.sendFireballDestroyed({ id: this.scene.networkManager.playerId });
             }
             //sletter en enkel fireball, har brug for at slette alle fireballs
-            console.log(`${this.characterType} fireball destroyed at x=${this.fireball.x}, y=${this.fireball.y}`);
+            //console.log(`${this.characterType} fireball destroyed at x=${this.fireball.x}, y=${this.fireball.y}`);
             this.fireball.destroy();
             this.fireball = null;
             
@@ -734,7 +734,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                 delay: 10,
                 callback: () => {
                     if (this.herowave) {
-                        console.log(`Herowave position: x=${this.herowave.x}, y=${this.herowave.y}, velocityX=${this.herowave.body.velocity.x}, allowGravity=${this.herowave.body.allowGravity}`);
+                        //console.log(`Herowave position: x=${this.herowave.x}, y=${this.herowave.y}, velocityX=${this.herowave.body.velocity.x}, allowGravity=${this.herowave.body.allowGravity}`);
                     }
                 },
                 repeat: 30 // Log for 300ms
@@ -745,7 +745,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                     this.destroyHerowave();
                 }
             });
-            console.log(`${this.characterType} Herowave created at x=${this.herowave.x}, y=${this.herowave.y}`);
+            //console.log(`${this.characterType} Herowave created at x=${this.herowave.x}, y=${this.herowave.y}`);
         }
     }
 
@@ -757,7 +757,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                 this.scene.networkManager.sendHerowaveDestroyed({ id: this.scene.networkManager.playerId });
             }
             
-            console.log(`${this.characterType} Herowave destroyed at x=${this.herowave.x}, y=${this.herowave.y}`);
+            //console.log(`${this.characterType} Herowave destroyed at x=${this.herowave.x}, y=${this.herowave.y}`);
             this.herowave.destroy();
             this.herowave = null;
         }
@@ -799,7 +799,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                     delay: 10,
                     callback: () => {
                         if (this.ninjawave) {
-                            console.log(`Ninjawave position: x=${this.ninjawave.x}, y=${this.ninjawave.y}, velocityX=${this.ninjawave.body.velocity.x}, allowGravity=${this.ninjawave.body.allowGravity}`);
+                            //console.log(`Ninjawave position: x=${this.ninjawave.x}, y=${this.ninjawave.y}, velocityX=${this.ninjawave.body.velocity.x}, allowGravity=${this.ninjawave.body.allowGravity}`);
                         }
                     },
                     repeat: 30 // Log for 300ms
@@ -841,12 +841,12 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                             }
                         });
                         
-                        console.log(`${this.characterType} created direct blue crescent hitbox at x=${crescent.x}, y=${crescent.y}`);
+                        //console.log(`${this.characterType} created direct blue crescent hitbox at x=${crescent.x}, y=${crescent.y}`);
                     }
                 });
                 
 
-                console.log(`${this.characterType} ninjawave created at x=${this.ninjawave.x}, y=${this.ninjawave.y}`);
+                //console.log(`${this.characterType} ninjawave created at x=${this.ninjawave.x}, y=${this.ninjawave.y}`);
             });
         }
     }
@@ -858,7 +858,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
               this.scene.networkManager.sendNinjawaveDestroyed({ id: this.scene.networkManager.playerId });
             }
             
-            console.log(`${this.characterType} ninjawave destroyed at x=${this.ninjawave.x}, y=${this.ninjawave.y}`);
+            //console.log(`${this.characterType} ninjawave destroyed at x=${this.ninjawave.x}, y=${this.ninjawave.y}`);
             this.ninjawave.destroy();
             this.ninjawave = null;
         }
@@ -881,7 +881,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
         } 
         // Shockwave: Log physics body position to confirm movement
         if (this.shockwave) {
-            console.log(`Shockwave body position: x=${this.shockwave.body.x}, y=${this.shockwave.body.y}`);
+            //console.log(`Shockwave body position: x=${this.shockwave.body.x}, y=${this.shockwave.body.y}`);
         }
     }
 }
