@@ -320,6 +320,7 @@ export class Game extends Phaser.Scene {
                 this.healthDisplayManager = new HealthDisplayManager(this, this.gameSync, this.networkManager);
 
                 this.uiManager = new UIManager(this, this.gameSync, this.networkManager);
+                /*
                 this.networkManager.on('gameOver', (data) => {
                     console.log('Game over! Rankings:', data.rankings);
                     this.scene.start('GameOver', { 
@@ -328,6 +329,7 @@ export class Game extends Phaser.Scene {
                         playerId: this.networkManager.playerId
                     });
                 });
+                */
                 // Join the game after successful connection
                 this.networkManager.joinGame({
                     x: this.player1.x,
@@ -624,7 +626,7 @@ export class Game extends Phaser.Scene {
             fireball.owner.destroyFireball();
         }
     }
-
+    /*
     checkForGameOver() {
         // Only process game over for local testing without network
         if (!this.networkManager || !this.networkManager.connected) {
@@ -636,7 +638,7 @@ export class Game extends Phaser.Scene {
             }
         }
     }
-
+    */
     update() {
         // Update players
         this.player1.update();
