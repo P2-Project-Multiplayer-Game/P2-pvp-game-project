@@ -154,6 +154,6 @@ export class CharacterSelector extends Phaser.Scene {
     }
 
     startGame(key) {
-        this.scene.start('Lobby', { character: key });
+        this.scene.start('Game', { character: key });
     }
 }
