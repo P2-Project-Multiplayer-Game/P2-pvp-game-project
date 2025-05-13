@@ -4,25 +4,22 @@ export default class CombatManager {
     this.gameSync = gameSync;
     this.network = networkManager;
     this.setupEvents();
-    // im adding this class to handle combat sync between players
   }
 
   setupEvents() {
-    // listen for hit events from NetworManager
+    // Use the NetworkManager event system consistently
     this.network.on('playerHit', (data) => {
-        this.handlePlayerHit(data);
+      this.handlePlayerHit(data);
     });
 
-    // Use the NetworkManager event system
     this.network.on('shockwaveCreated', (data) => {
-        this.handleRemoteShockwave(data);
+      this.handleRemoteShockwave(data);
     });
 
     this.network.on('shockwaveDestroyed', (data) => {
       this.handleRemoteShockwaveDestroyed(data);
     });
 
-    // Listen for herowave created events
     this.network.on('herowaveCreated', (data) => {
       this.handleRemoteHerowave(data);
     });
@@ -31,7 +28,6 @@ export default class CombatManager {
       this.handleRemoteHerowaveDestroyed(data);
     });
 
-    // Listen for arrow created events
     this.network.on('arrowCreated', (data) => {
       this.handleRemoteArrow(data);
     });
@@ -40,7 +36,6 @@ export default class CombatManager {
       this.handleRemoteArrowDestroyed(data);
     });
 
-    // Listen for ninjawave created events
     this.network.on('ninjawaveCreated', (data) => {
       this.handleRemoteNinjawave(data);
     });
@@ -49,7 +44,6 @@ export default class CombatManager {
       this.handleRemoteNinjawaveDestroyed(data);
     });   
 
-    // Listen for fireball created events
     this.network.on('fireballCreated', (data) => {
       this.handleRemoteFireball(data);
     });
@@ -57,61 +51,56 @@ export default class CombatManager {
     this.network.on('fireballDestroyed', (data) => {
       this.handleRemoteFireballDestroyed(data);
     });
+    
     this.network.on('player_died', (data) => {
       this.handlePlayerDeath(data);
     });
   }
 
-  // this is called when local player hits somone
+  // Register hit using NetworkManager instead of direct socket access
   registerHit(attacker, target, damage) {
-    // only send hit if target is a player with id
     if (target.playerId) {
-      this.network.socket.emit('player_hit', {
-        targetId: target.playerId,
-        damage: damage
-      });
+      this.network.sendPlayerHit(target.playerId, damage);
     }
-    
-    // for debugin purposes
     console.log(`Hit registered: ${attacker.characterType} hit ${target.playerId || 'dummy'} for ${damage} damage`);
   }
 
-  // called when local player creates shockwave
+  // Register shockwave using NetworkManager
   registerShockwave() {
     if (!this.gameSync.localPlayer) return;
     
-    this.network.socket.emit('shockwave_created', {
-      x: this.gameSync.localPlayer.x,
-      y: this.gameSync.localPlayer.y,
-      direction: this.gameSync.localPlayer.flipX ? 'left' : 'right'
-    });
+    const player = this.gameSync.localPlayer;
+    this.network.sendShockwaveCreated(
+      player.x, 
+      player.y, 
+      player.flipX ? 'left' : 'right'
+    );
     
-    // debug log
     console.log("Sent shockwave creation event to server");
   }
 
   registerHerowave() {
     if (!this.gameSync.localPlayer) return;
     
-    this.network.socket.emit('herowave_created', {
-      x: this.gameSync.localPlayer.x,
-      y: this.gameSync.localPlayer.y,
-      direction: this.gameSync.localPlayer.flipX ? 'left' : 'right'
-    });
+    const player = this.gameSync.localPlayer;
+    this.network.sendHerowaveCreated(
+      player.x, 
+      player.y, 
+      player.flipX ? 'left' : 'right'
+    );
     
-    // debug log
     console.log("Sent herowave creation event to server");
   }
 
-  // method for arrow registration
   registerArrow() {
     if (!this.gameSync.localPlayer) return;
     
-    this.network.socket.emit('arrow_created', {
-      x: this.gameSync.localPlayer.x,
-      y: this.gameSync.localPlayer.y,
-      direction: this.gameSync.localPlayer.flipX ? 'left' : 'right'
-    });
+    const player = this.gameSync.localPlayer;
+    this.network.sendArrowCreated(
+      player.x, 
+      player.y, 
+      player.flipX ? 'left' : 'right'
+    );
     
     console.log("Sent arrow creation event to server");
   }
@@ -119,29 +108,31 @@ export default class CombatManager {
   registerNinjawave() {
     if (!this.gameSync.localPlayer) return;
     
-    this.network.socket.emit('ninjawave_created', {
-      x: this.gameSync.localPlayer.x,
-      y: this.gameSync.localPlayer.y,
-      direction: this.gameSync.localPlayer.flipX ? 'left' : 'right'
-    });
+    const player = this.gameSync.localPlayer;
+    this.network.sendNinjawaveCreated(
+      player.x, 
+      player.y, 
+      player.flipX ? 'left' : 'right'
+    );
     
-    // debug log
     console.log("Sent ninjawave creation event to server");
   }
 
   registerFireball(positions) {
-      if (!this.gameSync.localPlayer) return;
-      
-      this.network.socket.emit('fireball_created', {
-          x: this.gameSync.localPlayer.x,
-          y: this.gameSync.localPlayer.y,
-          direction: this.gameSync.localPlayer.flipX ? 'left' : 'right',
-          positions: positions // Add the positions array
-      });
-      
-      console.log("Sent fireball creation event to server with positions:", positions);
+    if (!this.gameSync.localPlayer) return;
+    
+    const player = this.gameSync.localPlayer;
+    this.network.sendFireballCreated(
+      player.x, 
+      player.y, 
+      player.flipX ? 'left' : 'right',
+      positions
+    );
+    
+    console.log("Sent fireball creation event to server with positions:", positions);
   }
-  // handels hit confermation from server
+
+  // Handle player hit logic
   handlePlayerHit(data) {
     // Find target player
     let targetPlayer;
@@ -164,16 +155,6 @@ export default class CombatManager {
           // This will be processed by the regular animation pipeline already in place
           targetPlayer.anims.play(targetPlayer.animationKeys.hurt, true);
         }
-        /*
-        // Flash effect helps provide immediate visual feedback
-        this.scene.tweens.add({
-          targets: targetPlayer,
-          alpha: 0.5,
-          duration: 100,
-          yoyo: true,
-          repeat: 3
-        });
-        */
       }
   
       console.log(`Player ${data.targetId} took ${data.damage} damage, health now: ${targetPlayer.health}`);
@@ -182,20 +163,14 @@ export default class CombatManager {
       if (targetPlayer.health <= 0) {
         console.log(`Player ${data.targetId} has died!`);
         
-        // If this is the local player who died
         if (targetPlayer === this.gameSync.localPlayer) {
-          // Notify server about death
-          this.network.socket.emit('player_died', { 
-            killedBy: data.attackerId 
-          });
-          console.log(`Player ${data.targetId} was killed by ${data.attackerId } `);
-          // Visual indicator for defeat
-          //targetPlayer.setTint(0x555555);
+          // Use NetworkManager for death notification
+          this.network.sendPlayerDied(data.attackerId);
+          console.log(`Player ${data.targetId} was killed by ${data.attackerId}`);
         }
       }
     }
   }
-
 
   // creates shockwave for remote player
   handleRemoteShockwave(data) {
@@ -378,37 +353,24 @@ export default class CombatManager {
       deadPlayer = this.gameSync.localPlayer;
       console.log('You have died!');
       
-      // For local player, update UI to indicate death
-      deadPlayer.setTint(0x555555);
-      
-      // Show spectating message
-      const spectatingText = this.scene.add.text(
-        this.scene.cameras.main.centerX,
-        50,
-        'You died! Spectating...',
-        {
-          fontFamily: 'Arial',
-          fontSize: 24,
-          color: '#ff0000',
-          stroke: '#000000',
-          strokeThickness: 4
-        }
-      ).setOrigin(0.5, 0.5)
-      .setScrollFactor(0)
-      .setDepth(100);
-      
-      // Fade it in
-      spectatingText.alpha = 0;
-      this.scene.tweens.add({
-        targets: spectatingText,
-        alpha: 1,
-        duration: 500,
-        ease: 'Power2'
+      // For local player, signal UI manager to show death UI
+      this.scene.events.emit('playerDeath', { 
+        local: true,
+        id: data.id,
+        rank: data.rank
       });
     } else {
       // Remote player died
       deadPlayer = this.gameSync.remotePlayers.get(data.id);
       console.log(`Player ${data.id} has died!`);
+      
+      if (deadPlayer) {
+        this.scene.events.emit('playerDeath', {
+          local: false,
+          id: data.id,
+          rank: data.rank
+        });
+      }
     }
     
     if (deadPlayer) {
@@ -432,18 +394,6 @@ export default class CombatManager {
           this.scene.checkForGameOver();
         }
       });
-      
-      // Disable control for local player
-      if (deadPlayer === this.gameSync.localPlayer) {
-        // Disable input for all keys
-        this.scene.input.keyboard.enabled = false;
-        
-        // Re-enable just for spectator controls if needed
-        setTimeout(() => {
-          this.scene.input.keyboard.enabled = true;
-          // Add any spectator-specific controls here
-        }, 1000);
-      }
     }
   } 
 }

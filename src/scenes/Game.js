@@ -8,6 +8,7 @@ import NetworkManager from '../multiplayer/NetworkManager.js';
 import GameSync from '../multiplayer/GameSync.js';
 import CombatManager from '../multiplayer/CombatManager.js';
 import HealthDisplayManager from '../multiplayer/HealthDisplayManager.js';
+import UIManager from '../multiplayer/UIManager.js'; 
 
 export class Game extends Phaser.Scene {
     constructor() {
@@ -310,14 +311,16 @@ export class Game extends Phaser.Scene {
             .then(data => {
                 console.log('Connected to server with ID:', data.id);
 
-                // Create GameSync to handle player data
+                // Creating the different managers GameSync to handle and  manipulate player data
                 this.gameSync = new GameSync(this, this.networkManager);
                 this.gameSync.setLocalPlayer(this.player1);
 
                 this.combatManager = new CombatManager(this, this.gameSync, this.networkManager);
 
-                // Create health display manager
                 this.healthDisplayManager = new HealthDisplayManager(this, this.gameSync, this.networkManager);
+
+                this.uiManager = new UIManager(this, this.gameSync, this.networkManager);
+                
                 // Join the game after successful connection
                 this.networkManager.joinGame({
                     x: this.player1.x,

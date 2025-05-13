@@ -194,6 +194,44 @@ export default class NetworkManager {
     // emmits the message of player_update for server.js 
     this.socket.emit('player_update', data);
   }
+    sendPlayerHit(targetId, damage) {
+    if (!this.connected) return;
+    this.socket.emit('player_hit', {
+      targetId: targetId,
+      damage: damage
+    });
+  }
+  
+  sendPlayerDied(killedBy) {
+    if (!this.connected) return;
+    this.socket.emit('player_died', { killedBy });
+  }
+  
+  sendShockwaveCreated(x, y, direction) {
+    if (!this.connected) return;
+    this.socket.emit('shockwave_created', { x, y, direction });
+  }
+  
+  sendHerowaveCreated(x, y, direction) {
+    if (!this.connected) return;
+    this.socket.emit('herowave_created', { x, y, direction });
+  }
+  
+  sendArrowCreated(x, y, direction) {
+    if (!this.connected) return;
+    this.socket.emit('arrow_created', { x, y, direction });
+  }
+  
+  sendNinjawaveCreated(x, y, direction) {
+    if (!this.connected) return;
+    this.socket.emit('ninjawave_created', { x, y, direction });
+  }
+  
+  sendFireballCreated(x, y, direction, positions) {
+    if (!this.connected) return;
+    this.socket.emit('fireball_created', { x, y, direction, positions });
+  }
+  
   sendShockwaveDestroyed(id) {
     if (!this.connected) return;
     this.socket.emit('shockwave_destroyed', { id });
