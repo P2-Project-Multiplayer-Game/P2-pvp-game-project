@@ -17,7 +17,7 @@ export class StateMachine {
 
         if (this.states[newState] && this.currentState !== newState) {
             this.isTransitioning = true;
-            console.log(`Transitioning from ${this.currentState} to ${newState}`);
+            //console.log(`Transitioning from ${this.currentState} to ${newState}`);
 
             // Exit current state
             if (this.states[this.currentState].exit) {

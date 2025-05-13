@@ -141,7 +141,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                 enter: () => {
                     this.setVelocityX(0);
                     this.anims.play(this.animationKeys.turn, true);
-                    console.log(`${this.characterType} entered IDLE state`);
+                    //console.log(`${this.characterType} entered IDLE state`);
                 },
                 execute: () => {
                     const cursors = scene.input.keyboard.createCursorKeys();
@@ -163,7 +163,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                     this.setVelocityX(-this.moveSpeed);
                     this.flipX = true;
                     this.anims.play(this.animationKeys.left, true);
-                    console.log(`${this.characterType} entered MOVE_LEFT state`);
+                    //console.log(`${this.characterType} entered MOVE_LEFT state`);
                 },
                 execute: () => {
                     const cursors = scene.input.keyboard.createCursorKeys();
@@ -187,7 +187,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                     this.setVelocityX(this.moveSpeed);
                     this.flipX = false;
                     this.anims.play(this.animationKeys.right, true);
-                    console.log(`${this.characterType} entered MOVE_RIGHT state`);
+                    //console.log(`${this.characterType} entered MOVE_RIGHT state`);
                 },
                 execute: () => {
                     const cursors = scene.input.keyboard.createCursorKeys();
@@ -211,7 +211,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                     this.setVelocityY(-this.jumpVelocity); // Original: 440
                     if (this.stateMachine.currentState !== 'ATTACK' && this.stateMachine.currentState !== 'ATTACK2') {
                         this.anims.play(this.animationKeys.jump, true);
-                        console.log(`${this.characterType} entered JUMP state`);
+                        //console.log(`${this.characterType} entered JUMP state`);
                     }
                 },
                 execute: () => {
@@ -242,7 +242,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                     this.startAttack1Cooldown();
 
                     this.anims.play(this.animationKeys.attack, true);
-                    console.log(`${this.characterType} entered ATTACK state`);
+                    //console.log(`${this.characterType} entered ATTACK state`);
 
                     // create hitbox on attack animation (this can be adjusted to the individual sprite)
                     this.scene.time.delayedCall(50, () => {
@@ -270,7 +270,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                 },
                 exit: () => {
                     //this.destroyHitbox();
-                    console.log(`${this.characterType} exited ATTACK state`);
+                    //console.log(`${this.characterType} exited ATTACK state`);
                     // Delay buffered input processing to next update cycle
                     this.scene.time.delayedCall(0, () => {
                         if (this.inputBuffer.attack) {
@@ -296,7 +296,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                     this.startAttack2Cooldown();
                     // Shockwave: Create shockwave for tank, hitbox for others
                     this.anims.play(this.animationKeys.attack2, true);
-                    console.log(`${this.characterType} entered ATTACK2 state`);
+                    //console.log(`${this.characterType} entered ATTACK2 state`);
                     
 
                     this.scene.time.delayedCall(50, () => {
@@ -359,7 +359,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                     } else if (this.characterType === 'skeleton') {
                         //this.destroyFireball();
                     }
-                    console.log(`${this.characterType} exited ATTACK2 state`);
+                    //console.log(`${this.characterType} exited ATTACK2 state`);
                     // Delay buffered input processing to next update cycle
                     this.scene.time.delayedCall(0, () => {
                         if (this.inputBuffer.attack) {
@@ -382,7 +382,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                     this.setVelocityX(0);
                     this.anims.play(this.animationKeys.hurt, true);
                     this.isInvincible = true;
-                    console.log(`${this.characterType} entered HURT state`);
+                    //console.log(`${this.characterType} entered HURT state`);
                     //Flash effect to show we have a hit using tweens
                     this.scene.tweens.add({
                         targets: this,
@@ -395,7 +395,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                     this.scene.time.delayedCall(this.invincibilityDuration, () => {
                         this.isInvincible = false;
                         this.stateMachine.transition('IDLE');
-                        console.log(`${this.characterType} exited HURT state`);
+                        //console.log(`${this.characterType} exited HURT state`);
                     });
                 },
                 execute: () => {
