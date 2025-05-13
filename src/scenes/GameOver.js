@@ -71,7 +71,7 @@ export class GameOver extends Phaser.Scene {
                 .setScale(2.5);
                 
             // Add rank number above player
-            this.add.text(pedestal.x + 20, pedestal.y - 110, `#${player.rank}`, {
+            this.add.text(pedestal.x + 40, pedestal.y - 130, `#${player.rank}`, {
                 fontSize: '30px',
                 fontStyle: 'bold',
                 color: player.rank === 1 ? '#FFD700' : (player.rank === 2 ? '#C0C0C0' : '#CD7F32'),
@@ -86,8 +86,8 @@ export class GameOver extends Phaser.Scene {
             
             // Add character type name
             this.add.text(pedestal.x, pedestal.y + 10, player.characterType, {
-                fontSize: 15,
-                fontStyle: 'Arial',
+                fontSize: 22,
+                fontStyle: 'Bold',
                 color: '#FFFFFF',
                 stroke: '#000000',
                 strokeThickness: 4
@@ -105,7 +105,8 @@ export class GameOver extends Phaser.Scene {
             });
             
             this.add.text(SCREEN_WIDTH / 2, SCREEN_HEIGHT * 0.9, otherRankingsText, {
-                fontSize: '18px',
+                fontSize: 22,
+                fontStyle: 'Bold',
                 color: '#FFFFFF',
                 stroke: '#000000',
                 strokeThickness: 3,
