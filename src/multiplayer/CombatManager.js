@@ -157,7 +157,7 @@ export default class CombatManager {
         }
       }
   
-      console.log(`Player ${data.targetId} took ${data.damage} damage, health now: ${targetPlayer.health}`);
+      //console.log(`Player ${data.targetId} took ${data.damage} damage, health now: ${targetPlayer.health}`);
       
       // Handle player death if health reaches 0
       if (targetPlayer.health <= 0) {

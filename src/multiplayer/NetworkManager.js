@@ -68,13 +68,13 @@ export default class NetworkManager {
 
         // player health update listener
         this.socket.on('player_health_update', (data) => {
-          console.log(`Received health update for player ${data.id}: health=${data.health}`);
+          //console.log(`Received health update for player ${data.id}: health=${data.health}`);
           this.triggerEvent('playerHealthUpdate', data);
         });
 
         // listener and event trigger for player hit
         this.socket.on('player_hit', (data) => {
-          console.log(`Received player hit: ${data.attackerId} hit ${data.targetId} for ${data.damage} damage`);
+          //console.log(`Received player hit: ${data.attackerId} hit ${data.targetId} for ${data.damage} damage`);
           this.triggerEvent('playerHit', data);
         });
 
