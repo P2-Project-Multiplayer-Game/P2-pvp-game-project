@@ -479,7 +479,7 @@ export class Game extends Phaser.Scene {
 
         // Get specific damage from the hitbox
         const damage = hitbox.damage || attacker.attackDamage; // Fall back to owner's attackDamage if not set
-        console.log(`Hitbox collision: ${attacker.characterType} hits ${target.characterType}, dealing ${damage} damage`);
+        //console.log(`Hitbox collision: ${attacker.characterType} hits ${target.characterType}, dealing ${damage} damage`);
         
         // Register hit with combat manager if attacker is local player
         if (attacker === this.gameSync?.localPlayer && target.playerId) {

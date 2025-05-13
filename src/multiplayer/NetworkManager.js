@@ -80,55 +80,55 @@ export default class NetworkManager {
 
         //listener for shockwave events
         this.socket.on('shockwave_created', (data) => {
-          console.log('Received shockwave_created event:', data);
+          //console.log('Received shockwave_created event:', data);
           this.triggerEvent('shockwaveCreated', data);
         });
 
         this.socket.on('shockwave_destroyed', (data) => {
-          console.log('Received shockwave_destroyed event:', data);
+          //console.log('Received shockwave_destroyed event:', data);
           this.triggerEvent('shockwaveDestroyed', data);
         });
 
         //listener for herowave events
         this.socket.on('herowave_created', (data) => {
-          console.log('Received herowave_created event:', data);
+          //console.log('Received herowave_created event:', data);
           this.triggerEvent('herowaveCreated', data);
         });
 
         this.socket.on('herowave_destroyed', (data) => {
-          console.log('Received herowave_destroyed event:', data);
+          //console.log('Received herowave_destroyed event:', data);
           this.triggerEvent('herowaveDestroyed', data);
         });
 
         //listener for arrow events
         this.socket.on('arrow_created', (data) => {
-          console.log('Received arrow_created event:', data);
+          //console.log('Received arrow_created event:', data);
           this.triggerEvent('arrowCreated', data);
         });
 
         this.socket.on('arrow_destroyed', (data) => {
-          console.log('Received arrow_destroyed event:', data);
+          //console.log('Received arrow_destroyed event:', data);
           this.triggerEvent('arrowDestroyed', data);
         });
         //listener for ninjawave events
         this.socket.on('ninjawave_created', (data) => {
-          console.log('Received ninjawave_created event:', data);
+          //console.log('Received ninjawave_created event:', data);
           this.triggerEvent('ninjawaveCreated', data);
         });
 
         this.socket.on('ninjawave_destroyed', (data) => {
-          console.log('Received ninjawave_destroyed event:', data);
+          //console.log('Received ninjawave_destroyed event:', data);
           this.triggerEvent('ninjawaveDestroyed', data);
         });
 
         //listener for fireball events
         this.socket.on('fireball_created', (data) => {
-          console.log('Received fireball_created event:', data);
+          //console.log('Received fireball_created event:', data);
           this.triggerEvent('fireballCreated', data);
         });
 
         this.socket.on('fireball_destroyed', (data) => {
-          console.log('Received fireball_destroyed event:', data);
+          //console.log('Received fireball_destroyed event:', data);
           this.triggerEvent('fireballDestroyed', data);
         });
 
