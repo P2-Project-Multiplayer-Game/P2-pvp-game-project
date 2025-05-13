@@ -704,7 +704,10 @@ export class Game extends Phaser.Scene {
         if (this.healthDisplayManager) {
             this.healthDisplayManager.update();
         }
-        
+        // Update ui elements displays 
+        if (this.uiManager) {
+            this.uiManager.update();
+        }
         // Update dummy target health bar
         if (this.dummyTarget && this.dummyTarget.active) {
             // Position the health text above the dummy target
