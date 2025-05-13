@@ -70,14 +70,17 @@ io.on('connection', (socket) => {
         if (data.y !== undefined) player.y = data.y;
         if (data.animation !== undefined) player.animation = data.animation;
         if (data.facing !== undefined) player.facing = data.facing;
-        
+        if (data.attack1OnCooldown !== undefined) player.attack1OnCooldown = data.attack1OnCooldown;
+        if (data.attack2OnCooldown !== undefined) player.attack2OnCooldown = data.attack2OnCooldown;
         // Broadcast to other players in the same lobby
         socket.to(player.roomId).emit('player_updated', {
           id: socket.id,
           x: player.x,
           y: player.y,
           animation: player.animation,
-          facing: player.facing
+          facing: player.facing,
+          attack1OnCooldown: player.attack1OnCooldown,
+          attack2OnCooldown: player.attack2OnCooldown
         });
       }
     });

@@ -100,7 +100,6 @@ export default class UIManager {
         )
         .setOrigin(0.5)
         .setDepth(20)         // Ensure indicators are visible above other elements
-        .setScrollFactor(1);  // Make sure indicators move with the world
     
         
         // Create attack2 indicator
@@ -116,7 +115,6 @@ export default class UIManager {
         )
         .setOrigin(0.5)
         .setDepth(20)         // Ensure indicators are visible above other elements
-        .setScrollFactor(1);  // Make sure indicators move with the world
 
         // Log initial positions for debugging
         console.log(`Created indicators for ${player.characterType} at x:${player.x}, y:${player.y}`);
