@@ -353,6 +353,13 @@ export default class CombatManager {
       deadPlayer = this.gameSync.localPlayer;
       console.log('You have died!');
       
+      // Mark player as dead
+      deadPlayer.isDead = true;
+      
+      // Completely disable physics for dead local player
+      deadPlayer.body.moves = false;
+      deadPlayer.body.enable = false;
+      
       // For local player, signal UI manager to show death UI
       this.scene.events.emit('playerDeath', { 
         local: true,
@@ -365,6 +372,9 @@ export default class CombatManager {
       console.log(`Player ${data.id} has died!`);
       
       if (deadPlayer) {
+        // Mark remote player as dead
+        deadPlayer.isDead = true;
+        
         this.scene.events.emit('playerDeath', {
           local: false,
           id: data.id,
@@ -376,6 +386,7 @@ export default class CombatManager {
     if (deadPlayer) {
       // Store player's rank for game over screen
       deadPlayer.rank = data.rank;
+      deadPlayer.isAlive = false;  // Keep this for compatibility with existing code
       
       // Add death visual effect
       this.scene.tweens.add({
@@ -389,11 +400,8 @@ export default class CombatManager {
           if (!this.scene.playersRanking.includes(deadPlayer)) {
             this.scene.playersRanking.push(deadPlayer);
           }
-          
-          // Check if game is over
-          //this.scene.checkForGameOver();
         }
       });
     }
-  } 
+  }
 }

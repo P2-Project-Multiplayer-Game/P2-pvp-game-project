@@ -54,6 +54,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
         // Initialize ready indicators as null 
         this.attack1ReadyIndicator = null;
         this.attack2ReadyIndicator = null;
+        this.isDead = false;
         // Movement properties
         this.moveSpeed = config.moveSpeed || 200; // Default movement speed
         this.jumpVelocity = config.jumpVelocity || 480; // Default jump velocity (negative for upward)
@@ -989,7 +990,10 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
     }
 
     update() {
-        this.stateMachine.update();
+        // Skip state machine update if dead
+        if (!this.isDead) {
+            this.stateMachine.update();
+        }
         // Update hitbox position so it will follow player
         if (this.hitbox) {
             const offsetX = this.flipX 

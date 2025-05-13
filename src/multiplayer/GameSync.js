@@ -77,8 +77,13 @@ export default class GameSync {
       
       // If it's the local player, don't remove them from scene
       if (data.id === this.network.playerId) {
-        // Just mark them as dead
+        // Mark local player as dead
         this.localPlayer.isAlive = false;
+        this.localPlayer.isDead = true;
+        
+        // Disable physics movement
+        this.localPlayer.body.moves = false;
+        
         return;
       }
       
@@ -87,6 +92,8 @@ export default class GameSync {
       if (remotePlayer) {
         // Mark as dead
         remotePlayer.isAlive = false;
+        remotePlayer.isDead = true;
+        
         // The actual sprite will be destroyed by CombatManager's tween
       }
     });

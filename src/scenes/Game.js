@@ -657,8 +657,10 @@ export class Game extends Phaser.Scene {
             console.log(`Dummy grounded: ${this.dummyTarget.body.blocked.down}`);
         }
         */
-        // Send player position updates to server if connected
-        if (this.networkManager && this.networkManager.connected) {
+       
+        // Send player position updates to server if connected AND player is alive
+        if (this.networkManager && this.networkManager.connected && 
+            this.player1 && !this.player1.isDead) {
             const currentState = this.player1.stateMachine.currentState;
             let animation = 'turn';
             let facing = this.player1.flipX ? 'left' : 'right';
@@ -696,6 +698,7 @@ export class Game extends Phaser.Scene {
                 }
             );
         }
+
         // Update player health displays 
         if (this.healthDisplayManager) {
             this.healthDisplayManager.update();
