@@ -391,7 +391,7 @@ export default class CombatManager {
           }
           
           // Check if game is over
-          this.scene.checkForGameOver();
+          //this.scene.checkForGameOver();
         }
       });
     }
