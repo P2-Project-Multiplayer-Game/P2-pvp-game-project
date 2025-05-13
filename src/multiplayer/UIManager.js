@@ -18,6 +18,7 @@ export default class UIManager {
     setupEvents() {
         // Listen for player death to show spectating message
         this.scene.events.on('playerDeath', (data) => {
+            this.removePlayerCooldownIndicators(data.id);
             if (data.local) {
             this.showSpectatingMessage();
             
