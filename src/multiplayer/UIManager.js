@@ -179,7 +179,6 @@ export default class UIManager {
             
             if (indicators) {
                 // Position update
-                
                 // Log position updates occasionally for debugging
                 if (Math.random() < 0.01) {  // Only log 1% of the time to avoid console spam
                     console.log(`Local player at (${localPlayer.x}, ${localPlayer.y}), indicators at (${indicators.attack1.x}, ${indicators.attack1.y})`);
