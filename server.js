@@ -276,11 +276,13 @@ io.on('connection', (socket) => {
       // Mark player as dead
       player.isAlive = false;
       
-      // Calculate rankings
+      // Calculate rankings - Traditional podium style (1st is winner, higher numbers = worse)
       const roomPlayers = Array.from(players.values()).filter(p => p.roomId === player.roomId);
       const aliveCount = roomPlayers.filter(p => p.isAlive).length;
-      player.rank = roomPlayers.length - aliveCount + 1; // Higher number = better rank
       
+      // Player rank is based on elimination order (first to die = worst rank)
+      player.rank = roomPlayers.length - aliveCount + 1;
+
       // Broadcast death to everyone in the room
       io.to(player.roomId).emit('player_died', {
         id: socket.id,
@@ -291,19 +293,22 @@ io.on('connection', (socket) => {
       // Check if game is over (only one player left alive)
       if (aliveCount <= 1) {
         const lastPlayerStanding = roomPlayers.find(p => p.isAlive);
-        const finalRankings = roomPlayers.sort((a, b) => {
-          // Sort by rank (alive player is winner)
-          if (a.isAlive) return -1;
-          if (b.isAlive) return 1;
-          // Then by rank order
-          return b.rank - a.rank;
-        }).map(p => ({
-          id: p.id,
-          characterType: p.characterType,
-          rank: p.isAlive ? 1 : p.rank
-        }));
         
-        // Send game over event
+        // If there's a winner, ensure they get rank 1
+        if (lastPlayerStanding) {
+          lastPlayerStanding.rank = 1;
+        }
+        
+        // Create final rankings sorted by rank (1st, 2nd, 3rd...)
+        const finalRankings = roomPlayers
+          .sort((a, b) => a.rank - b.rank) // Sort ascending by rank (1st, 2nd, 3rd...)
+          .map(p => ({
+            id: p.id,
+            characterType: p.characterType,
+            rank: p.rank
+          }));
+        
+        // Send game over event with rankings
         io.to(player.roomId).emit('game_over', {
           winner: lastPlayerStanding ? lastPlayerStanding.id : null,
           rankings: finalRankings

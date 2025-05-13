@@ -14,6 +14,7 @@ export class Game extends Phaser.Scene {
     constructor() {
         super('Game');
         this.networkManager = null;
+        this.playersRanking = []; // Will store players in rank order
     }
 
     init(data) {
@@ -320,16 +321,38 @@ export class Game extends Phaser.Scene {
                 this.healthDisplayManager = new HealthDisplayManager(this, this.gameSync, this.networkManager);
 
                 this.uiManager = new UIManager(this, this.gameSync, this.networkManager);
-                /*
+
+                //game over handler
                 this.networkManager.on('gameOver', (data) => {
                     console.log('Game over! Rankings:', data.rankings);
+                    
+                    // Convert network ranking data to player objects
+                    const playerRankings = [];
+                    
+                    // Process each ranked player
+                    data.rankings.forEach(rankedPlayer => {
+                        let playerObj;
+                        
+                        // Find the actual player object
+                        if (rankedPlayer.id === this.networkManager.playerId) {
+                            playerObj = this.gameSync.localPlayer;
+                        } else {
+                            playerObj = this.gameSync.remotePlayers.get(rankedPlayer.id);
+                        }
+                        
+                        // Add to rankings if player exists
+                        if (playerObj) {
+                            // Store rank on player object for reference
+                            playerObj.rank = rankedPlayer.rank;
+                            playerRankings.push(playerObj);
+                        }
+                    });
+                    
+                    // Transition to game over scene with player objects in rank order
                     this.scene.start('GameOver', { 
-                        playersRanking: data.rankings,
-                        winner: data.winner,
-                        playerId: this.networkManager.playerId
+                        playersRanking: playerRankings
                     });
                 });
-                */
                 // Join the game after successful connection
                 this.networkManager.joinGame({
                     x: this.player1.x,
