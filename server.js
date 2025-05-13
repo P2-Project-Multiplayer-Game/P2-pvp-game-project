@@ -281,7 +281,7 @@ io.on('connection', (socket) => {
       const aliveCount = roomPlayers.filter(p => p.isAlive).length;
       
       // Player rank is based on elimination order (first to die = worst rank)
-      player.rank = roomPlayers.length - aliveCount + 1;
+      player.rank = 2 + (roomPlayers.length - aliveCount - 1);
 
       // Broadcast death to everyone in the room
       io.to(player.roomId).emit('player_died', {
