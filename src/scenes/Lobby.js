@@ -9,17 +9,22 @@ export class Lobby extends Phaser.Scene {
         this.readyTexts = new Map(); // Map of player ID to ready text
         this.characterPositions = []; // Array of positions for character displays
         this.selectedCharacter = null; // Store selected character from previous screen
+        this.isDebug = true; // Set to true for debugging
     }
 
     init(data) {
         this.selectedCharacter = data.character;
+        console.log(`Lobby initialized with character: ${this.selectedCharacter}`);
     }
 
     create() {
+        this.debugLog('Creating Lobby scene');
+        
         // Add background
         this.add.image(0, 0, 'main_menu_background')
             .setOrigin(0, 0)
             .setDisplaySize(this.cameras.main.width, this.cameras.main.height);
+        this.debugLog('Background added');
 
         // Add title text
         this.add.text(this.cameras.main.centerX, 60, 'WAITING FOR PLAYERS', {
@@ -29,6 +34,7 @@ export class Lobby extends Phaser.Scene {
             stroke: '#000000',
             strokeThickness: 6
         }).setOrigin(0.5);
+        this.debugLog('Title text added');
 
         // Add ready status UI
         this.readyStatusFrame = this.add.image(this.cameras.main.centerX, 130, 'selector_character_frame')
@@ -56,55 +62,94 @@ export class Lobby extends Phaser.Scene {
 
         // Set up positions for character display
         this.setupCharacterPositions();
+        this.debugLog('Character positions set up');
 
         // Connect to server
         this.networkManager = new NetworkManager();
+        this.debugLog('NetworkManager created, attempting to connect...');
+        
         this.networkManager.connect()
             .then(data => {
-                console.log('Connected to server with ID:', data.id);
+                this.debugLog('Connected to server with ID:', data.id);
+                this.localPlayerId = this.networkManager.playerId;
+
+                // Handle gameJoined event - this was missing!
+                this.networkManager.on('gameJoined', (data) => {
+                    this.debugLog('Game joined!', data);
+                    
+                    // Process all existing players
+                    data.players.forEach(playerData => {
+                        this.addPlayerToLobby(playerData);
+                    });
+                    
+                    // Add our local player if needed
+                    const localPlayerData = {
+                        id: this.localPlayerId,
+                        characterType: this.selectedCharacter,
+                        isReady: false
+                    };
+                    
+                    // Only add if not already present
+                    if (!this.players.has(this.localPlayerId)) {
+                        this.addPlayerToLobby(localPlayerData);
+                    }
+                });
 
                 // Listen for lobby status updates
                 this.networkManager.on('lobby_status_update', (data) => {
+                    this.debugLog('Lobby status update:', data);
                     this.updateLobbyStatus(data);
                 });
                 
                 // Listen for player ready state changes
                 this.networkManager.on('player_ready_state', (data) => {
+                    this.debugLog('Player ready state change:', data);
                     this.updatePlayerReadyState(data);
                 });
                 
                 // Listen for new players joining
                 this.networkManager.on('player_joined', (data) => {
+                    this.debugLog('Player joined:', data);
                     this.addPlayerToLobby(data);
                 });
                 
                 // Listen for players leaving
                 this.networkManager.on('player_left', (data) => {
+                    this.debugLog('Player left:', data.id);
                     this.removePlayerFromLobby(data.id);
                 });
 
                 // Listen for game countdown start
                 this.networkManager.on('game_countdown_start', (data) => {
+                    this.debugLog('Game countdown started:', data);
                     this.startGameCountdown(data.countdown);
                 });
 
                 // Listen for game start
                 this.networkManager.on('game_start', (data) => {
+                    this.debugLog('Game starting:', data);
                     this.startGame(data);
                 });
 
-                // Join the game with selected character
+                // Join the game with selected character - use the proper method
+                this.debugLog('Joining game as character:', this.selectedCharacter);
                 this.networkManager.joinGame({
                     characterType: this.selectedCharacter,
                     isReady: false
                 });
-
-                // Register local player
-                this.localPlayerId = this.networkManager.playerId;
-
             })
             .catch(err => {
                 console.error('Failed to connect:', err);
+                // Show error message on screen
+                this.add.text(this.cameras.main.centerX, this.cameras.main.centerY, 
+                    'Connection failed!\nCheck your network settings.', {
+                    fontFamily: 'Arial',
+                    fontSize: 24,
+                    color: '#ff0000',
+                    stroke: '#000000',
+                    strokeThickness: 4,
+                    align: 'center'
+                }).setOrigin(0.5);
             });
 
         // Add keyboard input for ready toggle
@@ -112,9 +157,48 @@ export class Lobby extends Phaser.Scene {
         this.enterKey.on('down', () => {
             if (this.networkManager && this.networkManager.connected) {
                 const isCurrentlyReady = this.players.get(this.localPlayerId)?.isReady || false;
-                this.networkManager.socket.emit('player_ready_toggle', { isReady: !isCurrentlyReady });
+                // Use the proper method instead of direct socket access
+                this.networkManager.sendPlayerReadyToggle(!isCurrentlyReady);
+                this.debugLog(`Toggled ready state to: ${!isCurrentlyReady}`);
             }
         });
+        
+        // Add a debug text to show connection status
+        this.debugText = this.add.text(10, 10, 'Connecting...', {
+            fontSize: '16px',
+            color: '#ffffff',
+            backgroundColor: '#333333',
+            padding: { x: 5, y: 5 }
+        });
+        
+        // Update debug text periodically
+        this.time.addEvent({
+            delay: 1000,
+            callback: this.updateDebugText,
+            callbackScope: this,
+            loop: true
+        });
+    }
+
+    updateDebugText() {
+        if (!this.debugText) return;
+        
+        let status = 'Disconnected';
+        let players = 0;
+        
+        if (this.networkManager && this.networkManager.connected) {
+            status = 'Connected';
+            players = this.players.size;
+        }
+        
+        this.debugText.setText(`Status: ${status}\nPlayers: ${players}\nCharacter: ${this.selectedCharacter}`);
+    }
+
+    // Helper debug method
+    debugLog(...args) {
+        if (this.isDebug) {
+            console.log('[LOBBY]', ...args);
+        }
     }
 
     setupCharacterPositions() {
@@ -136,6 +220,8 @@ export class Lobby extends Phaser.Scene {
     }
 
     updateLobbyStatus(status) {
+        if (!this.readyStatusText) return;
+        
         // Update ready count text
         this.readyStatusText.setText(`${status.playersReady}/${status.totalPlayers} Players Ready`);
         
@@ -155,15 +241,23 @@ export class Lobby extends Phaser.Scene {
     }
     
     addPlayerToLobby(playerData) {
+        this.debugLog('Adding player to lobby:', playerData);
+        
         // Skip if player already exists
-        if (this.players.has(playerData.id)) return;
+        if (this.players.has(playerData.id)) {
+            this.debugLog('Player already exists, skipping');
+            return;
+        }
         
         // Store player data
         this.players.set(playerData.id, playerData);
         
         // Find next available position index
         const posIndex = this.findNextAvailablePosition();
-        if (posIndex === -1) return; // No positions available
+        if (posIndex === -1) {
+            this.debugLog('No positions available for player');
+            return; // No positions available
+        }
         
         const pos = this.characterPositions[posIndex];
         
@@ -178,20 +272,40 @@ export class Lobby extends Phaser.Scene {
             default: spriteKey = 'tank_idle';
         }
         
-        // Create sprite
-        const sprite = this.add.sprite(pos.x, pos.y, spriteKey)
-            .setScale(2);
-            
-        // Play idle animation if available
-        if (this.anims.exists(`${playerData.characterType}_idle`)) {
-            sprite.play(`${playerData.characterType}_idle`);
-        }
+        this.debugLog(`Creating sprite with key '${spriteKey}' at position (${pos.x}, ${pos.y})`);
         
-        // Store sprite reference
-        this.characterSprites.set(playerData.id, {
-            sprite: sprite,
-            posIndex: posIndex
-        });
+        // Check if the sprite key exists
+        if (!this.textures.exists(spriteKey)) {
+            this.debugLog(`WARNING: Texture "${spriteKey}" does not exist!`);
+            // Use fallback texture if available, or just a colored rectangle
+            const sprite = this.add.rectangle(pos.x, pos.y, 64, 96, 0xff0000)
+                .setOrigin(0.5);
+                
+            // Store sprite reference with position index
+            this.characterSprites.set(playerData.id, {
+                sprite: sprite,
+                posIndex: posIndex
+            });
+        } else {
+            // Create sprite
+            const sprite = this.add.sprite(pos.x, pos.y, spriteKey)
+                .setScale(2);
+                
+            // Attempt to play idle animation if available
+            const animKey = `${playerData.characterType}_idle`;
+            if (this.anims.exists(animKey)) {
+                this.debugLog(`Playing animation '${animKey}'`);
+                sprite.play(animKey);
+            } else {
+                this.debugLog(`WARNING: Animation "${animKey}" does not exist!`);
+            }
+            
+            // Store sprite reference with position index
+            this.characterSprites.set(playerData.id, {
+                sprite: sprite,
+                posIndex: posIndex
+            });
+        }
         
         // Add character type text
         this.add.text(pos.x, pos.y + 60, playerData.characterType, {
@@ -220,6 +334,8 @@ export class Lobby extends Phaser.Scene {
                 isReady: true
             });
         }
+        
+        this.debugLog(`Player ${playerData.id} (${playerData.characterType}) added to lobby at position index ${posIndex}`);
     }
     
     findNextAvailablePosition() {
@@ -337,7 +453,7 @@ export class Lobby extends Phaser.Scene {
     
     startGame(data) {
         // Clean up keyboard event
-        this.input.keyboard.removeKey(this.enterKey);
+        this.enterKey.removeAllListeners();
         
         // Transition to game scene
         this.scene.start('Game', {
@@ -346,15 +462,15 @@ export class Lobby extends Phaser.Scene {
     }
 
     update() {
-        
         // Play idle animations for character sprites
         this.characterSprites.forEach((data, playerId) => {
             const player = this.players.get(playerId);
-            if (player && data.sprite) {
+            if (player && data.sprite && data.sprite.play) { // Check if sprite has play method
                 // Ensure animation is playing
                 const charType = player.characterType;
-                if (!data.sprite.anims.isPlaying && this.anims.exists(`${charType}_idle`)) {
-                    data.sprite.play(`${charType}_idle`);
+                const animKey = `${charType}_idle`;
+                if (this.anims.exists(animKey) && !data.sprite.anims.isPlaying) {
+                    data.sprite.play(animKey);
                 }
             }
         });
