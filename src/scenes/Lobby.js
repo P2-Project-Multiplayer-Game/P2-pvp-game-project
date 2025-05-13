@@ -1,3 +1,5 @@
+import NetworkManager from '../multiplayer/NetworkManager.js';
+
 export class Lobby extends Phaser.Scene {
     constructor() {
         super('Lobby');
