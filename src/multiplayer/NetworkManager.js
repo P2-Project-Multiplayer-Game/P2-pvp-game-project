@@ -42,6 +42,25 @@ export default class NetworkManager {
           console.log('Disconnected from server');
         });
 
+        this.socket.on('lobby_status_update', (data) => {
+          console.log('Received lobby status update:', data);
+          this.triggerEvent('lobby_status_update', data);
+        });
+
+        this.socket.on('player_ready_state', (data) => {
+          console.log(`Player ${data.id} ready state changed to: ${data.isReady}`);
+          this.triggerEvent('player_ready_state', data);
+        });
+
+        this.socket.on('game_countdown_start', (data) => {
+          console.log('Game countdown started:', data.countdown);
+          this.triggerEvent('game_countdown_start', data);
+        });
+
+        this.socket.on('game_start', (data) => {
+          console.log('Game starting with players:', data.players.length);
+          this.triggerEvent('game_start', data);
+        });
         // creates game joint event withe the gelp og triggerEvent
         this.socket.on('game_joined', (data) => {
           this.roomId = data.roomId;
@@ -188,7 +207,11 @@ export default class NetworkManager {
       health: playerData.health || 100
     });
   }
-
+  
+  sendPlayerReadyToggle(isReady) {
+    if (!this.connected) return;
+    this.socket.emit('player_ready_toggle', { isReady });
+  }
   //Send player position update where x and y is the player position adn the extras is for animation and direction facing
   sendPlayerUpdate(x, y, extras = {}) {
     if (!this.connected) return;

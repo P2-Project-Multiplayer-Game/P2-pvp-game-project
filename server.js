@@ -3,7 +3,6 @@ const app = express();
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
 const port = process.env.PORT || 3001;
-const RoomManager = require('./server/LobbyManager');
 const LobbyManager = require('./server/LobbyManager');
 
 //module.exports = { io, server };
@@ -18,7 +17,7 @@ app.get('/', (req, res) => {
 });
 
 // Initialize room manager
-const roomManager = new LobbyManager();
+const lobbyManager = new LobbyManager();
 // Track players in rooms
 const players = new Map();
 
@@ -32,7 +31,7 @@ io.on('connection', (socket) => {
   // Handle player joining game
   socket.on('join_game', (playerData) => {
     // all players join the default room as defined in the lobbyManager
-    const roomId = roomManager.getDefaultRoom();
+    const roomId = lobbyManager.getDefaultRoom();
     socket.join(roomId);
     
     // Store player data with character type in the players map
@@ -44,17 +43,22 @@ io.on('connection', (socket) => {
       characterType: playerData.characterType || 'tank',
       health: playerData.health || 100,
       isAlive: true,  
-      rank: null      
+      rank: null,
+      isReady: false      
     };
     
     players.set(socket.id, player);
     console.log(`Player ${socket.id} joined room ${roomId} as ${player.characterType}`);
 
-    // TODO: Notify other players in the same room that a new player has joined
-    // This is probably neede to allow GameSync to create player instances
+    // Add player to lobby manager
+    lobbyManager.addPlayer(roomId, socket.id, player);
+
     // Notify other players in the same room that a new player has joined
     socket.to(roomId).emit('player_joined', player);
 
+    // Send current lobby status to all players
+    io.to(roomId).emit('lobby_status_update', lobbyManager.getLobbyStatus(roomId));
+    
     socket.to(roomId).emit('player_health_update', {
       id: socket.id,
       health: player.health
@@ -91,6 +95,49 @@ io.on('connection', (socket) => {
         .filter(p => p.roomId === roomId)
     });
   });
+  
+  // Handle player ready state toggle
+  socket.on('player_ready_toggle', (data) => {
+    const player = players.get(socket.id);
+    if (!player) return;
+    
+    // Update ready state in both players map and lobby manager
+    player.isReady = data.isReady;
+    players.set(socket.id, player);
+    
+    // Update in lobby manager
+    lobbyManager.setPlayerReady(player.roomId, socket.id, data.isReady);
+    
+    console.log(`Player ${socket.id} is ${data.isReady ? 'ready' : 'not ready'}`);
+    
+    // Broadcast updated player ready state to all players in the room
+    io.to(player.roomId).emit('player_ready_state', {
+      id: socket.id,
+      isReady: data.isReady
+    });
+    
+    // Send updated lobby status
+    io.to(player.roomId).emit('lobby_status_update', lobbyManager.getLobbyStatus(player.roomId));
+    
+    // Check if all players are ready to start the game
+    if (lobbyManager.areAllPlayersReady(player.roomId)) {
+      console.log(`All players in room ${player.roomId} are ready. Starting game...`);
+      
+      // Mark game as started in lobby manager
+      lobbyManager.setGameStarted(player.roomId, true);
+      
+      // Start game countdown
+      io.to(player.roomId).emit('game_countdown_start', { countdown: 3 });
+      
+      // Wait 3 seconds then actually start the game
+      setTimeout(() => {
+        io.to(player.roomId).emit('game_start', {
+          players: Array.from(players.values()).filter(p => p.roomId === player.roomId)
+        });
+      }, 3000);
+    }
+  });
+
   // Handle disconnection
   socket.on('disconnect', () => {
     console.log('User disconnected:', socket.id);
@@ -99,6 +146,12 @@ io.on('connection', (socket) => {
     const player = players.get(socket.id);
     if (player && player.roomId) {
       socket.to(player.roomId).emit('player_left', { id: socket.id });
+      // Remove from lobby manager
+      lobbyManager.removePlayer(player.roomId, socket.id);
+      
+      // Update lobby status
+      io.to(player.roomId).emit('lobby_status_update', 
+        lobbyManager.getLobbyStatus(player.roomId));
     }
     // Remove player from tracking
     players.delete(socket.id);
