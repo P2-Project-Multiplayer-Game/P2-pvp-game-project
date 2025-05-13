@@ -9,7 +9,10 @@ export default class UIManager {
 
         //cooldown indicator tracking
         this.cooldownIndicators = new Map(); // Map of playerId -> {attack1: object, attack2: object}
-        this.setupCooldownIndicators();
+        //  Wait a short time before setting up indicators to ensure players are positioned
+        this.scene.time.delayedCall(100, () => {
+            this.setupCooldownIndicators();
+        });
     }
   
     setupEvents() {
@@ -94,7 +97,11 @@ export default class UIManager {
                 stroke: '#000000',
                 strokeThickness: 3
             }
-        ).setOrigin(0.5);
+        )
+        .setOrigin(0.5)
+        .setDepth(20)         // Ensure indicators are visible above other elements
+        .setScrollFactor(1);  // Make sure indicators move with the world
+    
         
         // Create attack2 indicator
         const attack2Indicator = this.scene.add.text(
@@ -106,8 +113,13 @@ export default class UIManager {
                 stroke: '#000000',
                 strokeThickness: 3
             }
-        ).setOrigin(0.5);
-        
+        )
+        .setOrigin(0.5)
+        .setDepth(20)         // Ensure indicators are visible above other elements
+        .setScrollFactor(1);  // Make sure indicators move with the world
+
+        // Log initial positions for debugging
+        console.log(`Created indicators for ${player.characterType} at x:${player.x}, y:${player.y}`);
         // Set initial alpha based on cooldown state
         attack1Indicator.setAlpha(player.attack1OnCooldown ? 0 : 1);
         attack2Indicator.setAlpha(player.attack2OnCooldown ? 0 : 1);
@@ -167,6 +179,11 @@ export default class UIManager {
             
             if (indicators) {
                 // Position update
+                
+                // Log position updates occasionally for debugging
+                if (Math.random() < 0.01) {  // Only log 1% of the time to avoid console spam
+                    console.log(`Local player at (${localPlayer.x}, ${localPlayer.y}), indicators at (${indicators.attack1.x}, ${indicators.attack1.y})`);
+                }
                 indicators.attack1.setPosition(
                     localPlayer.x + indicators.config.attack1.x,
                     localPlayer.y + indicators.config.attack1.y
