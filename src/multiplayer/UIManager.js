@@ -153,8 +153,7 @@ export default class UIManager {
                 strokeThickness: 4
             }
         ).setOrigin(0.5, 0.5)
-        .setScrollFactor(0)
-        .setDepth(100);
+        .setDepth(20);
         
         // Fade it in
         spectatingText.alpha = 0;
