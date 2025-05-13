@@ -131,7 +131,16 @@ export default class NetworkManager {
           console.log('Received fireball_destroyed event:', data);
           this.triggerEvent('fireballDestroyed', data);
         });
+        
+        this.socket.on('player_died', (data) => {
+          console.log('Received player_died event:', data);
+          this.triggerEvent('playerDied', data);
+        });
 
+        this.socket.on('game_over', (data) => {
+          console.log('Received game_over event:', data);
+          this.triggerEvent('gameOver', data);
+        });
         // responsible for catching any errors such as connect_error in the try block
       } catch (error) {
         console.error('Failed to connect:', error);
@@ -231,7 +240,7 @@ export default class NetworkManager {
     if (!this.connected) return;
     this.socket.emit('fireball_created', { x, y, direction, positions });
   }
-  
+
   sendShockwaveDestroyed(id) {
     if (!this.connected) return;
     this.socket.emit('shockwave_destroyed', { id });

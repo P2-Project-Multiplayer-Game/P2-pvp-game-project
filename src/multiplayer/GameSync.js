@@ -72,7 +72,7 @@ export default class GameSync {
     });
 
 
-    this.network.on('player_died', (data) => {
+    this.network.on('playerDied', (data) => {
       console.log(`Player ${data.id} has died`);
       
       // If it's the local player, don't remove them from scene
@@ -87,8 +87,6 @@ export default class GameSync {
       if (remotePlayer) {
         // Mark as dead
         remotePlayer.isAlive = false;
-        
-        // Remove player from tracking but keep sprite for death animation
         // The actual sprite will be destroyed by CombatManager's tween
       }
     });

@@ -52,7 +52,7 @@ export default class CombatManager {
       this.handleRemoteFireballDestroyed(data);
     });
     
-    this.network.on('player_died', (data) => {
+    this.network.on('playerDied', (data) => {
       this.handlePlayerDeath(data);
     });
   }

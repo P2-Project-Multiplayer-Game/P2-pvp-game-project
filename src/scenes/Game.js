@@ -320,7 +320,14 @@ export class Game extends Phaser.Scene {
                 this.healthDisplayManager = new HealthDisplayManager(this, this.gameSync, this.networkManager);
 
                 this.uiManager = new UIManager(this, this.gameSync, this.networkManager);
-                
+                this.networkManager.on('gameOver', (data) => {
+                    console.log('Game over! Rankings:', data.rankings);
+                    this.scene.start('GameOver', { 
+                        playersRanking: data.rankings,
+                        winner: data.winner,
+                        playerId: this.networkManager.playerId
+                    });
+                });
                 // Join the game after successful connection
                 this.networkManager.joinGame({
                     x: this.player1.x,
@@ -617,29 +624,17 @@ export class Game extends Phaser.Scene {
             fireball.owner.destroyFireball();
         }
     }
+
     checkForGameOver() {
-    // Only process game over if we're connected to network
-    if (!this.networkManager || !this.networkManager.connected) {
-        // For local testing without network
-        if (this.playersInMatch.length <= 1 || 
-            this.playersRanking.length >= (this.playersInMatch.length - 1)) {
-        const winner = this.playersInMatch.find(player => !this.playersRanking.includes(player));
-        this.playersRanking.push(winner);
-        this.scene.start('GameOver', { playersRanking: this.playersRanking });
+        // Only process game over for local testing without network
+        if (!this.networkManager || !this.networkManager.connected) {
+            if (this.playersInMatch.length <= 1 || 
+                this.playersRanking.length >= (this.playersInMatch.length - 1)) {
+                const winner = this.playersInMatch.find(player => !this.playersRanking.includes(player));
+                this.playersRanking.push(winner);
+                this.scene.start('GameOver', { playersRanking: this.playersRanking });
+            }
         }
-        return;
-    }
-    
-    // In networked games, the server will determine game over
-    // We just need to listen for the game_over event
-    this.networkManager.on('game_over', (data) => {
-        console.log('Game over! Rankings:', data.rankings);
-        this.scene.start('GameOver', { 
-        playersRanking: data.rankings,
-        winner: data.winner,
-        playerId: this.networkManager.playerId
-        });
-    });
     }
 
     update() {
