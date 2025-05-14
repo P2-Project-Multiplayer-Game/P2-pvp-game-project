@@ -27,14 +27,13 @@ export class UIAnimations {
         .setOrigin(0.5)
         .setDepth(10001);  // Above the black overlay
         
-        // Add up-and-down hover animation
+        // Add scaling animation 
         scene.tweens.add({
             targets: battleText,
-            y: battleText.y - 15,  // Hover up 15 pixels
-            duration: 335,
+            scale: { from: 1, to: 1.2 },
+            duration: 800,
             yoyo: true,
-            repeat: -1,            // Continually hover
-            ease: 'Sine.easeInOut' // Smooth sine wave movement
+            repeat: -1
         });
         
         // Add the blinking animation
