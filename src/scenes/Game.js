@@ -9,6 +9,7 @@ import GameSync from '../multiplayer/GameSync.js';
 import CombatManager from '../multiplayer/CombatManager.js';
 import HealthDisplayManager from '../multiplayer/HealthDisplayManager.js';
 import UIManager from '../multiplayer/UIManager.js'; 
+import GameState from '../multiplayer/GameState.js';
 
 export class Game extends Phaser.Scene {
     constructor() {
