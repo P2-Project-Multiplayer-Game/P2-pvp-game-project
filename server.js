@@ -21,7 +21,8 @@ const lobbyManager = new LobbyManager();
 // Track players in rooms
 const players = new Map();
 
-const lobbiesWithCountdown = new Map(); 
+const countdownTimers = new Map();
+
 // Add spawn points 
 const spawnPoints = [
   { x: 100, y: 480 },  // Left side
@@ -159,16 +160,15 @@ io.on('connection', (socket) => {
     // Send updated lobby status
     io.to(player.roomId).emit('lobby_status_update', lobbyManager.getLobbyStatus(player.roomId));
 
-    // Check if a player is unreadying during countdown
-    if (!data.isReady && lobbiesWithCountdown.has(player.roomId)) {
-      // Stop the countdown
-      const countdownTimeout = lobbiesWithCountdown.get(player.roomId);
-      clearTimeout(countdownTimeout);
-      lobbiesWithCountdown.delete(player.roomId);
-      
-      // Send stop countdown event
-      io.to(player.roomId).emit('game_countdown_stop');
-      console.log(`Countdown stopped in room ${player.roomId} because player ${socket.id} unreadied`);
+    // If player unreadies, cancel countdown
+    if (!data.isReady) {
+      if (countdownTimers.has(player.roomId)) {
+        clearTimeout(countdownTimers.get(player.roomId));
+        countdownTimers.delete(player.roomId);
+        io.to(player.roomId).emit('game_countdown_stop');
+        console.log(`Countdown stopped in room ${player.roomId}`);
+      }
+      return;
     }
 
     // Check if all players are ready to start the game
@@ -177,14 +177,14 @@ io.on('connection', (socket) => {
       
       // Mark game as started in lobby manager
       lobbyManager.setGameStarted(player.roomId, true);
-      
+
+      const countdownValue = 3;
+
       // Start game countdown
       io.to(player.roomId).emit('game_countdown_start', { countdown: 3 });
       
       // Wait 3 seconds then actually start the game
-      setTimeout(() => {
-        // Clear the countdown reference now that it's done
-        lobbiesWithCountdown.delete(player.roomId);
+      const timerId = setTimeout(() => {
         // Clear used spawn points for fresh game
         usedSpawnPoints.length = 0;
         
@@ -202,7 +202,8 @@ io.on('connection', (socket) => {
         io.to(player.roomId).emit('game_start', {
           players: roomPlayers
         });
-      }, 3000);
+      }, countdownValue * 1000);
+      countdownTimers.set(player.roomId, timerId);
     }
   });
 
