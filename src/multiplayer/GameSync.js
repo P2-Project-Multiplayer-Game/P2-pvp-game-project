@@ -69,7 +69,6 @@ export default class GameSync {
       this.addRemotePlayer(data);
       this._lastJoinedPlayer = data.id;
       this._lastJoinedTime = Date.now();
-      this.addRemotePlayer(data);
     });
     
     // Handle players leaving
