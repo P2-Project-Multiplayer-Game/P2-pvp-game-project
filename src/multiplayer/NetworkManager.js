@@ -6,8 +6,20 @@ export default class NetworkManager {
     this.connected = false;
     this.eventListeners = {};
     this.roomId = null;
+
+    this.currentScene = null;
+    this.sceneSpecificEvents = {
+      'Lobby': ['lobby_status_update', 'player_ready_state'],
+      'Game': ['playerUpdated', 'playerJoined', 'playerLeft', 'playerHealthUpdate']
+    };
   }
-  
+
+  // Add this method to set the current scene
+  setCurrentScene(sceneName) {
+    console.log(`NetworkManager: Setting current scene to ${sceneName}`);
+    this.currentScene = sceneName;
+  }
+
   //Connect to the server
   connect() {
     return new Promise((resolve, reject) => {
@@ -177,13 +189,33 @@ export default class NetworkManager {
     }
     this.eventListeners[event].push(callback);
   }
-  
-  //Trigger an event
+
+  // scene-aware triggerEvent 
   triggerEvent(event, data) {
     const callbacks = this.eventListeners[event];
-    if (callbacks) {
-      callbacks.forEach(callback => callback(data));
+    if (!callbacks) return;
+
+    // Check if this is a scene-specific event
+    let isSceneSpecificEvent = false;
+    let targetScene = null;
+    
+    // Find which scene this event belongs to
+    for (const [scene, events] of Object.entries(this.sceneSpecificEvents)) {
+      if (events.includes(event)) {
+        isSceneSpecificEvent = true;
+        targetScene = scene;
+        break;
+      }
     }
+    
+    // If it's scene-specific but not for the current scene, skip it
+    if (isSceneSpecificEvent && targetScene !== this.currentScene) {
+      console.log(`Skipping event ${event} because we're in ${this.currentScene || 'unknown'} scene, not ${targetScene}`);
+      return;
+    }
+
+    // If not scene-specific or is for the current scene, trigger it
+    callbacks.forEach(callback => callback(data));
   }
   
   // Disconnect from the server
