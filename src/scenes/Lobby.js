@@ -1,6 +1,7 @@
 import { SCREEN_WIDTH, SCREEN_HEIGHT } from '../config.js';
 import NetworkManager from '../multiplayer/NetworkManager.js';
 import LobbyUIManager from '../multiplayer/LobbyUIManager.js';
+import GameState from '../multiplayer/GameState.js';
 export class Lobby extends Phaser.Scene {
     constructor() {
         super('Lobby');
@@ -96,13 +97,11 @@ export class Lobby extends Phaser.Scene {
                 console.log('Connected to server with ID:', data.id);
 
                 this.lobbyUIManager = new LobbyUIManager(this, this.networkManager);
+                this.gameState = new GameState(this, this.networkManager);
                 // Join the lobby after connection
                 this.networkManager.joinGame({
                     characterType: this.selectedCharacter,
                 });
-                
-                // Set up network event listeners
-                this.setupNetworkEvents();
             })
             .catch(err => {
                 console.error('Failed to connect:', err);
