@@ -188,12 +188,27 @@ export default class GameSync {
   updateRemotePlayer(data) {
     // Skip if we're shutting down
     if (this.isShuttingDown) return;
-    
+
     const remotePlayer = this.remotePlayers.get(data.id);
     
     if (!remotePlayer) {
         console.log(`Can't update player ${data.id} because they don't exist. Players in map: ${Array.from(this.remotePlayers.keys()).join(', ')}`);
-        return;
+        // If we get multiple updates for a player that doesn't exist, try to re-fetch them
+        if (!this._pendingPlayerFetch) {
+            this._pendingPlayerFetch = true;
+            console.log(`Attempting to re-fetch player data for ${data.id}`);
+            
+            // Add a small delay to avoid spamming the server
+            setTimeout(() => {
+                this._pendingPlayerFetch = false;
+                this.network.joinGame({
+                    x: this.localPlayer.x,
+                    y: this.localPlayer.y,
+                    characterType: this.localPlayer.characterType,
+                    health: this.localPlayer.health
+                });
+            }, 1000);
+        }return;
     }
     
     // Update players position
