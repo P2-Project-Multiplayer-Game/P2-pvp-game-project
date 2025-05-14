@@ -31,7 +31,7 @@ export class UIAnimations {
         scene.tweens.add({
             targets: battleText,
             scale: { from: 1, to: 1.2 },
-            duration: 800,
+            duration: 700,
             yoyo: true,
             repeat: -1
         });
@@ -42,7 +42,7 @@ export class UIAnimations {
             alpha: { from: 1, to: 0.5 },
             duration: 420,
             yoyo: true,
-            repeat: 2.5,  // Blink a few times
+            repeat: 2,  // Blink a few times
             onComplete: () => {
                 // Keep screen black for less then a seconds total, then fade out quickly
                 scene.time.delayedCall(400, () => {
@@ -53,8 +53,8 @@ export class UIAnimations {
                         duration: 270,  // Quick fade out (less than 1 second)
                         ease: 'Cubic.easeOut',  // Smoother fade transition
                         onComplete: () => {
-                            fadeOverlay.destroy();
                             battleText.destroy();
+                            fadeOverlay.destroy(); 
                             if (onComplete) onComplete();
                         }
                     });
