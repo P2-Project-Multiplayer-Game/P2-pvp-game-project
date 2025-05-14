@@ -28,7 +28,7 @@ export class UIAnimations {
         .setDepth(10001);  // Above the black overlay
         
         // Add scaling animation 
-        scene.tweens.add({
+        const scaleTween = scene.tweens.add({
             targets: battleText,
             scale: { from: 1, to: 1.2 },
             duration: 800,
@@ -44,20 +44,30 @@ export class UIAnimations {
             yoyo: true,
             repeat: 3,  // Blink a few times
             onComplete: () => {
-                // Keep screen black for less then a seconds total, then fade out quickly
-                scene.time.delayedCall(400, () => {
-                    // Start the fade transition - quick fade out
-                    scene.tweens.add({
-                        targets: fadeOverlay,
-                        alpha: 0,
-                        duration: 270,  // Quick fade out (less than 1 second)
-                        ease: 'Cubic.easeOut',  // Smoother fade transition
-                        onComplete: () => {
-                            fadeOverlay.destroy();
-                            battleText.destroy();
-                            if (onComplete) onComplete();
-                        }
-                    });
+                // First fade out the battle text
+                scaleTween.stop(); // Stop scaling animation
+                scene.tweens.add({
+                    targets: battleText,
+                    alpha: 0,
+                    scale: 1.5,
+                    duration: 300,
+                    onComplete: () => {
+                        battleText.destroy(); // Destroy battle text
+                        
+                        // Then fade out the black overlay after a short delay
+                        scene.time.delayedCall(100, () => {
+                            scene.tweens.add({
+                                targets: fadeOverlay,
+                                alpha: 0,
+                                duration: 270,  // Quick fade out
+                                ease: 'Cubic.easeOut',  // Smoother fade transition
+                                onComplete: () => {
+                                    fadeOverlay.destroy();
+                                    if (onComplete) onComplete();
+                                }
+                            });
+                        });
+                    }
                 });
             }
         });
