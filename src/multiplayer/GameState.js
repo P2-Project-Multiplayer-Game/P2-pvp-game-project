@@ -40,7 +40,7 @@ export default class GameState {
         });
 
         // Game start handler - will be triggered when transitioning from lobby
-        this.network.on('game_start', (data) => {
+        this.network.on('gameStart', (data) => {
             console.log('Game starting with players:', data.players.length);
             // We'll only receive this in Lobby scene
             const selectedCharacter = this.scene.selectedCharacter;

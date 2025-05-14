@@ -10,12 +10,12 @@ export default class LobbyUIManager {
     }
 
     setupEvents() {
-        this.network.on('lobby_status_update', (data) => {
+        this.network.on('lobbyStatusUpdate', (data) => {
             console.log('Received lobby_status_update:', data);
             this.updateLobbyStatus(data);
         });
         
-        this.network.on('player_ready_state', (data) => {
+        this.network.on('playerReadyState', (data) => {
             this.updatePlayerReadyState(data);
         });
         
@@ -28,7 +28,7 @@ export default class LobbyUIManager {
             this.removePlayerFromLobby(data.id);
         });
         
-        this.network.on('game_countdown_start', (data) => {
+        this.network.on('gameCountdownStart', (data) => {
             this.startCountdown(data.countdown);
         });
 

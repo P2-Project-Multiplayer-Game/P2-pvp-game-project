@@ -9,7 +9,7 @@ export default class NetworkManager {
 
     this.currentScene = null;
     this.sceneSpecificEvents = {
-      'Lobby': ['lobby_status_update', 'player_ready_state', 'gameJoined'],
+      'Lobby': ['lobbyStatusUpdate', 'playerReadyState', 'gameJoined','gameCountdownStart'],
       'Game': ['playerUpdated', 'playerHealthUpdate']
     };
   }
@@ -56,22 +56,22 @@ export default class NetworkManager {
 
         this.socket.on('lobby_status_update', (data) => {
           console.log('Received lobby status update:', data);
-          this.triggerEvent('lobby_status_update', data);
+          this.triggerEvent('lobbyStatusUpdate', data);
         });
 
         this.socket.on('player_ready_state', (data) => {
           console.log(`Player ${data.id} ready state changed to: ${data.isReady}`);
-          this.triggerEvent('player_ready_state', data);
+          this.triggerEvent('playerReadyState', data);
         });
 
         this.socket.on('game_countdown_start', (data) => {
           console.log('Game countdown started:', data.countdown);
-          this.triggerEvent('game_countdown_start', data);
+          this.triggerEvent('gameCountdownStart', data);
         });
 
         this.socket.on('game_start', (data) => {
           console.log('Game starting with players:', data.players.length);
-          this.triggerEvent('game_start', data);
+          this.triggerEvent('gameStart', data);
         });
         // creates game joint event withe the gelp og triggerEvent
         this.socket.on('game_joined', (data) => {
