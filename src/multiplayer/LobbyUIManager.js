@@ -4,6 +4,7 @@ export default class LobbyUIManager {
         this.scene = scene;
         this.network = networkManager;
         this.playerDisplays = new Map();
+        this.boundEventHandlers = new Map(); // Store references to event handlers
         this.setupEvents();
     }
 
@@ -35,8 +36,12 @@ export default class LobbyUIManager {
     }
 
     // Implementation methods
-    
+
     updateLobbyStatus(data) {
+        // Check if we're still in the Lobby scene or if UI elements exist
+        if (this.scene.scene.key !== 'Lobby' || !this.scene.readyStatusText) {
+            return; // Skip update if not in Lobby scene or text doesn't exist
+        }
         // Store the values in the scene for reference
         this.scene.totalPlayers = data.totalPlayers;
         this.scene.readyPlayers = data.playersReady;
