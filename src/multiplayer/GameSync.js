@@ -23,13 +23,11 @@ export default class GameSync {
   
   // Set up network event handlers
   setupEvents() {
-    // Create a queue for player updates until players are initialized
-    this._pendingUpdates = new Map();
     // Handle game joined with existing players
     this.network.on('gameJoined', (data) => {
       console.log('Joined game room:', data.roomId);
       console.log('Got these players from server:', data.players);
-
+      
       // Get lobby players data and create remote players
       const lobbyPlayers = this.scene.registry.get('lobbyPlayers') || [];
       console.log('Processing players from lobby:', lobbyPlayers.length);
@@ -56,27 +54,14 @@ export default class GameSync {
     });
     // Handle player updates
     this.network.on('playerUpdated', (data) => {
-      // If player exists, update immediately
-      const remotePlayer = this.remotePlayers.get(data.id);
-      if (remotePlayer) {
-        this.updateRemotePlayer(data);
-      } else {
-        // Store update for later when the player is created
-        if (!this._pendingUpdates.has(data.id)) {
-          this._pendingUpdates.set(data.id, []);
-        }
-        this._pendingUpdates.get(data.id).push(data);
-      }
+      //console.log(`Got update for player ${data.id}: x=${data.x}, y=${data.y}`);
+      this.updateRemotePlayer(data);
     });
 
     // Handle new players joining
     this.network.on('playerJoined', (data) => {
       console.log(`New player joined: ${data.id} as ${data.characterType || 'unknown'}`);
-      if (pendingUpdates) {
-        console.log(`Applying ${pendingUpdates.length} pending updates for player ${playerData.id}`);
-        pendingUpdates.forEach(data => this.updateRemotePlayer(data));
-        this._pendingUpdates.delete(playerData.id);
-      }
+      this.addRemotePlayer(data);
     });
     
     // Handle players leaving

@@ -321,7 +321,7 @@ export class Game extends Phaser.Scene {
                 this.networkManager.setCurrentScene('Game');
                 console.log('Using NetworkManager with ID:', this.networkManager.playerId);
                 
-                // Get spawn position from registry first if coming from lobby
+                // IMPORTANT: Get spawn position from registry first if coming from lobby
                 let spawnPosition = { x: this.player1.x, y: this.player1.y };
                 
                 const myPlayerData = lobbyPlayers.find(p => p.id === this.networkManager.playerId);
@@ -342,21 +342,21 @@ export class Game extends Phaser.Scene {
                 this.uiManager = new UIManager(this, this.gameSync, this.networkManager);
                 this.gameState = new GameState(this, this.networkManager, this.gameSync);
                 
-                // After everything is set up, explicitly join the game
+                // IMPORTANT: After everything is set up, explicitly join the game
                 // This will trigger gameJoined event and add remote players
                 this.networkManager.joinGame({
                     x: this.player1.x,
                     y: this.player1.y,
                     characterType: this.selectedCharacter,
                     health: this.player1.health,
-                    fromLobby:true //you can only join from lobby scene 
+                    fromLobby: fromLobby
                 });
                 
                 // Set up PvP collisions after all players are loaded
                 this.time.delayedCall(100, () => {
                     this.setupPvPCollisions();
                 });
-
+                
                 // Clean up registry data after using it
                 this.registry.remove('lobbyPlayers');   
                 
