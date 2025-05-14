@@ -2,7 +2,7 @@ import { SCREEN_WIDTH, SCREEN_HEIGHT } from '../config.js';
 import NetworkManager from '../multiplayer/NetworkManager.js';
 import LobbyUIManager from '../multiplayer/LobbyUIManager.js';
 import GameState from '../multiplayer/GameState.js';
-import NetworkService from '../server/NetworkService.js';
+import NetworkService from '../../server/NetworkService.js';
 export class Lobby extends Phaser.Scene {
     constructor() {
         super('Lobby');

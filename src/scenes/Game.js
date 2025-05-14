@@ -10,7 +10,7 @@ import CombatManager from '../multiplayer/CombatManager.js';
 import HealthDisplayManager from '../multiplayer/HealthDisplayManager.js';
 import UIManager from '../multiplayer/UIManager.js'; 
 import GameState from '../multiplayer/GameState.js';
-import NetworkService from '../server/NetworkService.js';
+import NetworkService from '../../server/NetworkService.js';
 export class Game extends Phaser.Scene {
     constructor() {
         super('Game');
@@ -312,7 +312,7 @@ export class Game extends Phaser.Scene {
         // Check if coming from Lobby
         const fromLobby = this.registry.get('fromLobby');
         console.log('Coming from lobby?', fromLobby ? 'Yes' : 'No');
-
+        
         // Get or initialize NetworkManager
         NetworkService.initialize()
             .then(networkManager => {
