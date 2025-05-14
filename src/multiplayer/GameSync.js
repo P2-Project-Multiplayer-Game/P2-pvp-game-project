@@ -187,7 +187,11 @@ export default class GameSync {
   // Update a remote player
   updateRemotePlayer(data) {
     const remotePlayer = this.remotePlayers.get(data.id);
-    
+    if (!remotePlayer) {
+      // we either just populated them above, or it's a stray update—ignore it
+      return;
+    }
+    /*
     if (!remotePlayer) {
         console.log(`Can't update player ${data.id} because they don't exist. Players in map: ${Array.from(this.remotePlayers.keys()).join(', ')}`);
         
@@ -209,7 +213,7 @@ export default class GameSync {
         }
         return;
     }
-    
+    */
     // Update players position
     remotePlayer.x = data.x;
     remotePlayer.y = data.y;
