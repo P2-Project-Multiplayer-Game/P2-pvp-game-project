@@ -196,24 +196,29 @@ export default class NetworkManager {
   }
   // properly cleaning up event listeners when switching scenes
   setCurrentScene(sceneName) {
-      console.log(`NetworkManager: Setting current scene to ${sceneName}`);
+    console.log(`NetworkManager: Transitioning from ${this.currentScene || 'none'} to ${sceneName}`);
+    
+    // Clean up previous scene's event listeners
+    if (this.currentScene && this.currentScene !== sceneName) {
+      // Get array of events for the previous scene
+      const eventsToCleanup = this.sceneSpecificEvents[this.currentScene] || [];
       
-      // Clean up previous scene's event listeners to prevent memory leaks
-      if (this.currentScene && this.sceneSpecificEvents[this.currentScene]) {
-          console.log(`Cleaning up listeners from previous scene: ${this.currentScene}`);
-          this.sceneSpecificEvents[this.currentScene].forEach(event => {
-              // Reset listeners for this event to prevent duplications
-              // We could keep non-scene-specific listeners but safer to reset completely
-              if (this.eventListeners[event]) {
-                  console.log(`Cleaned up ${this.eventListeners[event].length} listeners for event: ${event}`);
-                  this.eventListeners[event] = [];
-              }
-          });
+      if (eventsToCleanup.length > 0) {
+        console.log(`Cleaning up ${eventsToCleanup.length} event listeners from ${this.currentScene} scene`);
+        
+        // Clear each event listener for the previous scene
+        eventsToCleanup.forEach(eventName => {
+          if (this.eventListeners[eventName]) {
+            console.log(`Clearing all listeners for ${eventName}`);
+            this.eventListeners[eventName] = [];
+          }
+        });
       }
-      
-      this.currentScene = sceneName;
+    }
+    
+    this.currentScene = sceneName;
   }
-  // scene-aware triggerEvent 
+    // scene-aware triggerEvent 
   triggerEvent(event, data) {
     const callbacks = this.eventListeners[event];
     if (!callbacks) return;
