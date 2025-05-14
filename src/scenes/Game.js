@@ -309,6 +309,15 @@ export class Game extends Phaser.Scene {
         
         //this.cameras.main.startFollow(this.player);
         this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
+        // Create a black overlay but don't start fading yet
+        this.fadeOverlay = this.add.rectangle(
+            0, 0,
+            this.scale.width, this.scale.height,
+            0x000000
+        )
+        .setOrigin(0)
+        .setDepth(10000)   // ensure it's on top
+        .setAlpha(1);
         // Get players data from registry since we're always coming from lobby
         const lobbyPlayers = this.registry.get('lobbyPlayers');
         console.log('Players from lobby:', lobbyPlayers);
@@ -356,6 +365,14 @@ export class Game extends Phaser.Scene {
                         fromLobby: true
                     });
                     */
+                    // start the fade transition - AFTER network setup
+                    this.tweens.add({
+                        targets: this.fadeOverlay,
+                        alpha: 0,
+                        duration: 800, // Slightly longer duration for smoother effect
+                        ease: 'Linear',
+                        onComplete: () => this.fadeOverlay.destroy()
+                    });
                     // Set up PvP collisions after joining
                     this.time.delayedCall(100, () => {
                         this.setupPvPCollisions();
@@ -370,24 +387,18 @@ export class Game extends Phaser.Scene {
             });   
         // Debug: Log dummy grounded state and body position
         //console.log(`Dummy body: x=${this.dummyTarget.body.x}, y=${this.dummyTarget.body.y}, width=${this.dummyTarget.body.width}, height=${this.dummyTarget.body.height}`);
-        // 1) create a full-screen black overlay above everything
-        const fade = this.add.rectangle(
-        0, 0,
-        this.scale.width, this.scale.height,
-        0x000000
-        )
-        .setOrigin(0)
-        .setDepth(10000)   // ensure it’s on top
-        .setAlpha(1);
-
-        // 2) tween its alpha to 0 over half a second
-        this.tweens.add({
-        targets: fade,
-        alpha: 0,
-        duration: 500,
-        ease: 'Linear',
-        onComplete: () => fade.destroy()
-        });
+    }
+    // Helper method to handle fade transition
+    startFadeTransition() {
+        if (this.fadeOverlay) {
+            this.tweens.add({
+                targets: this.fadeOverlay,
+                alpha: 0,
+                duration: 500,
+                ease: 'Linear',
+                onComplete: () => this.fadeOverlay.destroy()
+            });
+        }
     }   
     //needed logic for the pvp 
     setupPvPCollisions() {
