@@ -195,3 +195,15 @@ export class Lobby extends Phaser.Scene {
         }
     }
 }
+/*
+1. Player enters Lobby scene
+2. Player selects character and presses "Ready" button
+3. LobbyUIManager displays ready state of all players
+4. When all players are ready:
+   a. Server sends "game_countdown_start" event with countdown value
+   b. LobbyUIManager displays countdown in Lobby scene
+   c. When countdown reaches 0, server sends "game_start" event
+   d. GameState.js receives "game_start" event and transitions to Game scene
+5. Game.js initializes with character data from Lobby scene
+6. Game begins
+*/
