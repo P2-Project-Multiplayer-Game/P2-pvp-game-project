@@ -32,11 +32,17 @@ export default class GameSync {
       data.players.forEach(player => {
         if (player.id !== this.network.playerId) {
           console.log(`Found player ${player.id} at position x=${player.x}, y=${player.y}`);
+          
+          // Skip adding player if we're coming from lobby and they're flagged
+          if (player.fromLobby && this.scene.registry.get('fromLobby')) {
+            console.log(`Skipping duplicate player ${player.id} from lobby`);
+            return;
+          }
+          
           this.addRemotePlayer(player);
         }
       });
     });
-    
     // Handle player updates
     this.network.on('playerUpdated', (data) => {
       //console.log(`Got update for player ${data.id}: x=${data.x}, y=${data.y}`);
