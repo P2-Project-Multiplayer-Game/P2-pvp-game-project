@@ -119,8 +119,6 @@ export class Game extends Phaser.Scene {
         this.playersInMatch = [];
         this.playersRanking = [];
 
-        // Get random spawn point
-        const spawnPoint = this.getRandomSpawnPoint();
 
         // Create player at random position
         if (this.selectedCharacter === 'tank') {
