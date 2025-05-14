@@ -63,7 +63,13 @@ export default class UIManager {
         if (!player) return;
         
         const playerId = player.playerId || this.network.playerId;
-        
+        // Check if indicators already exist and remove them first
+        if (this.cooldownIndicators.has(playerId)) {
+            const oldIndicators = this.cooldownIndicators.get(playerId);
+            if (oldIndicators.attack1) oldIndicators.attack1.destroy();
+            if (oldIndicators.attack2) oldIndicators.attack2.destroy();
+            console.log(`Removing existing indicators for player ${playerId}`);
+        }
         // Define indicator configuration
         const indicatorConfig = {
             attack1: {
