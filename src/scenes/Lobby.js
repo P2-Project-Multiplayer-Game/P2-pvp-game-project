@@ -22,7 +22,7 @@ export class Lobby extends Phaser.Scene {
         // Add character frame before text but after background
         this.add.image(SCREEN_WIDTH / 2, SCREEN_HEIGHT * 0.15, 'selector_character_frame')
             .setOrigin(0.5)
-            .setScale(3.2, 1.2)  // Stretch to become rectangular
+            .setScale(1, 1)  // Stretch to become rectangular
             .setDepth(1);
             
         // Add header text
