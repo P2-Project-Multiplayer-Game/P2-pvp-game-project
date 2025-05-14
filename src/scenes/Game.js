@@ -345,7 +345,7 @@ export class Game extends Phaser.Scene {
                 console.log('Setting up game with short delay to ensure proper synchronization');
                 
                 // Use a delayed call to give networking time to stabilize
-                this.time.delayedCall(200, () => {
+                this.time.delayedCall(600, () => {
                     // Create game managers
                     this.gameSync = new GameSync(this, this.networkManager);
                     this.gameSync.setLocalPlayer(this.player1);
@@ -369,7 +369,7 @@ export class Game extends Phaser.Scene {
                     this.tweens.add({
                         targets: this.fadeOverlay,
                         alpha: 0,
-                        duration: 800, // Slightly longer duration for smoother effect
+                        duration: 1500, // Slightly longer duration for smoother effect
                         ease: 'Linear',
                         onComplete: () => this.fadeOverlay.destroy()
                     });
