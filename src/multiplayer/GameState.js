@@ -50,6 +50,17 @@ export default class GameState {
                     character: selectedCharacter 
                 });
             }
+            // If we're in the Game scene, update player position
+            else if (this.scene.scene.key === 'Game') {
+                // Find our player data
+                const myPlayerData = data.players.find(p => p.id === this.network.playerId);
+                if (myPlayerData && this.gameSync && this.gameSync.localPlayer) {
+                    // Update position from server
+                    this.gameSync.localPlayer.x = myPlayerData.x;
+                    this.gameSync.localPlayer.y = myPlayerData.y;
+                    console.log(`Updated local player position to: ${myPlayerData.x}, ${myPlayerData.y}`);
+                }
+            }
         });
         
         // Countdown handler (optional - for visual countdown in lobby)

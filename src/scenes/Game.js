@@ -119,22 +119,26 @@ export class Game extends Phaser.Scene {
         this.playersInMatch = [];
         this.playersRanking = [];
 
+        // Create player at default position first
+        const defaultX = 100;
+        const defaultY = 480;
 
-        // Create player at random position
+        // Create player at first in a defualt position 
         if (this.selectedCharacter === 'tank') {
-            this.player1 = new TankCharacter(this, spawnPoint.x, spawnPoint.y);
+            this.player1 = new TankCharacter(this, defaultX, defaultY);
         } else if (this.selectedCharacter === 'ninja') {
-            this.player1 = new NinjaCharacter(this, spawnPoint.x, spawnPoint.y);
+            this.player1 = new NinjaCharacter(this, defaultX, defaultY);
         } else if (this.selectedCharacter === 'hero') {
-            this.player1 = new HeroCharacter(this, spawnPoint.x, spawnPoint.y);
+            this.player1 = new HeroCharacter(this, defaultX, defaultY);
         } else if (this.selectedCharacter === 'archer') {
-            this.player1 = new ArcherCharacter(this, spawnPoint.x, spawnPoint.y);
+            this.player1 = new ArcherCharacter(this, defaultX, defaultY);
         } else if (this.selectedCharacter === 'skeleton') {
-            this.player1 = new SkeletonCharacter(this, spawnPoint.x, spawnPoint.y);
+            this.player1 = new SkeletonCharacter(this, defaultX, defaultY);
         } else {
             // Fall back to tank as default
-            this.player1 = new TankCharacter(this, spawnPoint.x, spawnPoint.y);
+            this.player1 = new TankCharacter(this, defaultX, defaultY);
         }
+        this.playersInMatch.push(this.player1);
         this.playersInMatch.push(this.player1);
 
         // Create shockwave group with no gravity
