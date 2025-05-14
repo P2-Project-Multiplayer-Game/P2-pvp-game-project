@@ -4,7 +4,11 @@ const http = require('http').Server(app);
 const io = require('socket.io')(http);
 const port = process.env.PORT || 3001;
 const LobbyManager = require('./server/LobbyManager');
-
+process.on('warning', e => { // stack overflaww debug
+  console.warn('⚠️ MEMORY LEAK WARNING:');
+  console.warn(e.stack);
+  console.warn('----------------------');
+});
 //module.exports = { io, server };
 
 // giving directionory forfiles that the server can utilize a
