@@ -366,12 +366,46 @@ export class Game extends Phaser.Scene {
                     });
                     */
                     // start the fade transition - AFTER network setup
+                     // Add the Battle! text on top of black overlay with larger font
+                    const battleText = this.add.text(
+                        this.scale.width / 2, 
+                        this.scale.height / 2, 
+                        'BATTLE!', 
+                        {
+                            fontSize: '64px',
+                            fontFamily: 'Arial',
+                            color: '#D1B183',
+                            stroke: '#000000',
+                            strokeThickness: 6,
+                            resolution: 1
+                        }
+                    )
+                    .setOrigin(0.5)
+                    .setDepth(10001);  // Above the black overlay
+                    
+                    // Add the blinking animation to the battle text
                     this.tweens.add({
-                        targets: this.fadeOverlay,
-                        alpha: 0,
-                        duration: 30000, // Slightly longer duration for smoother effect
-                        ease: 'Linear',
-                        onComplete: () => this.fadeOverlay.destroy()
+                        targets: battleText,
+                        alpha: { from: 1, to: 0 },
+                        duration: 1250,
+                        yoyo: true,
+                        repeat: 3,  // Blink a few times
+                        onComplete: () => {
+                            // Keep screen black for 2 seconds total, then fade out quickly
+                            this.time.delayedCall(1000, () => {
+                                // Start the fade transition - quick fade out
+                                this.tweens.add({
+                                    targets: this.fadeOverlay,
+                                    alpha: 0,
+                                    duration: 800,  // Quick fade out (less than 1 second)
+                                    ease: 'Cubic.easeOut',  // Smoother fade transition
+                                    onComplete: () => {
+                                        this.fadeOverlay.destroy();
+                                        battleText.destroy();
+                                    }
+                                });
+                            });
+                        }
                     });
                     // Set up PvP collisions after joining
                     this.time.delayedCall(100, () => {
