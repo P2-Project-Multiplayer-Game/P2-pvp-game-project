@@ -14,7 +14,7 @@ class NetworkService {
 
     try {
         // Dynamic import (works in modern browsers)
-        const NetworkManagerModule = await import('../multiplayer/NetworkManager.js');
+        const NetworkManagerModule = await import('../src/multiplayer/NetworkManager.js');
         const NetworkManager = NetworkManagerModule.default;
 
         this.networkManager = new NetworkManager();
