@@ -185,8 +185,6 @@ io.on('connection', (socket) => {
       setTimeout(() => {
         // Clear the countdown reference now that it's done
         lobbiesWithCountdown.delete(player.roomId);
-        // Mark game as started in lobby manager
-        lobbyManager.setGameStarted(player.roomId, true);
         // Clear used spawn points for fresh game
         usedSpawnPoints.length = 0;
         
@@ -205,8 +203,6 @@ io.on('connection', (socket) => {
           players: roomPlayers
         });
       }, 3000);
-      // Store the timeout ID to be able to cancel it if needed
-      lobbiesWithCountdown.set(player.roomId, gameStartTimeout);
     }
   });
 
