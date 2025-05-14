@@ -9,7 +9,7 @@ export default class NetworkManager {
 
     this.currentScene = null;
     this.sceneSpecificEvents = {
-      'Lobby': ['lobby_status_update', 'player_ready_state', 'gameJoined', 'playerJoined', 'playerLeft'],
+      'Lobby': ['lobby_status_update', 'player_ready_state', 'gameJoined'],
       'Game': ['playerUpdated', 'playerJoined', 'playerLeft', 'playerHealthUpdate']
     };
   }
