@@ -15,7 +15,7 @@ export default class GameSync {
     this.remotePlayers = new Map(); // Map of player ID to player game objects
     
     // Just a demo to show we recieve player data from server
-    console.log("GameSync created! Ready to recieve player data");
+    console.log("GameSync2 created! Ready to recieve player data");
     
     // Setup network events
     this.setupEvents();
