@@ -189,115 +189,6 @@ export class Game extends Phaser.Scene {
         this.physics.add.collider(this.fireballs, this.ground);
         //this.physics.add.collider(this.fireballs, platforms);
 
-        // Create player 1
-        //this.player1 = new ArcherCharacter(this, 100, 480); // Adjusted y to align with ground
-
-        //socket.emit('newPlayer');
-
-        // Create a dummy target for hitbox testing
-        this.dummyTarget = this.physics.add.sprite(200, 480, 'tank_idle'); // Adjusted y to align with ground
-        this.dummyTarget.setImmovable(true);
-        this.dummyTarget.health = 100; // For testing damage
-        this.physics.add.collider(this.dummyTarget, ground);
-
-        this.playersInMatch.push(this.dummyTarget);
-        
-
-       // Add a floating health text for the dummy target
-        this.dummyHealthBar = this.add.text(
-            this.dummyTarget.x, 
-            this.dummyTarget.y - 40, 
-            `${this.dummyTarget.health} HP`, 
-            {
-                fontFamily: 'Arial',
-                fontSize: 17,
-                color: '#00ff00',
-                stroke: '#000000',
-                strokeThickness: 1,
-                align: 'center'
-            }
-        ).setOrigin(0.5, 0.5)
-        .setDepth(10);
-
-        // Set up hitbox collisions with dummy target
-        this.physics.add.overlap(
-            this.hitboxes,          // Use the hitboxes group instead of player
-            this.dummyTarget,
-            this.handleHitboxCollision,
-            null,                   // No need for additional checks
-            this
-        );
-        // Shockwave: Set up shockwave collisions with dummy target
-        this.physics.add.overlap(
-            this.dummyTarget,
-            this.shockwaves,
-            this.handleShockwaveCollision,
-            (target, shockwave) => {
-                const overlap = shockwave && shockwave.active && target.active;
-                if (overlap) {
-                    console.log(`Shockwave overlap detected at x=${shockwave.x}, y=${shockwave.y}, target x=${target.body.x}, y=${target.body.y}`);
-                }
-                return overlap;
-            },
-            this
-        );
-        // Setup herowave collisions with dummy target
-        this.physics.add.overlap(
-            this.dummyTarget,
-            this.herowaves,
-            this.handleHerowaveCollision,
-            (target, herowave) => {
-                const overlap = herowave && herowave.active && target.active;
-                if (overlap) {
-                    console.log(`Herowave overlap detected at x=${herowave.x}, y=${herowave.y}, target x=${target.body.x}, y=${target.body.y}`);
-                }
-                return overlap;
-            },
-            this
-        );
-        // Ninjawave: Set up ninjawave collisions with dummy target
-        this.physics.add.overlap(
-            this.dummyTarget,
-            this.ninjawaves,
-            this.handleNinjawaveCollision,
-            (target, ninjawave) => {
-                const overlap = ninjawave && ninjawave.active && target.active;
-                if (overlap) {
-                    console.log(`Ninjawave overlap detected at x=${ninjawave.x}, y=${ninjawave.y}, target x=${target.body.x}, y=${target.body.y}`);
-                }
-                return overlap;
-            },
-            this
-        );
-        // Arrow: Set up shockwave collisions with dummy target
-        this.physics.add.overlap(
-            this.dummyTarget,
-            this.arrows,
-            this.handleArrowCollision,
-            (target, arrow) => {
-                const overlap = arrow && arrow.active && target.active;
-                if (overlap) {
-                    console.log(`Arrow overlap detected at x=${arrow.x}, y=${arrow.y}, target x=${target.body.x}, y=${target.body.y}`);
-                }
-                return overlap;
-            },
-            this
-        );
-        //Dummy/fireball collision
-        this.physics.add.overlap(
-            this.dummyTarget,
-            this.fireballs,
-            this.handleFireballCollision,
-            (target, fireball) => {
-                const overlap = fireball && fireball.active && target.active;
-                if (overlap) {
-                    console.log(`Fireball overlap detected at x=${fireball.x}, y=${fireball.y}, target x=${target.body.x}, y=${target.body.y}`);
-                }
-                return overlap;
-            },
-            this
-        );
-
         // Set up collision between player and ground and platforms
         this.physics.add.collider(this.player1, ground);
         this.physics.add.collider(this.player1, platforms);
@@ -373,8 +264,6 @@ export class Game extends Phaser.Scene {
             .catch(err => {
                 console.error('Failed to get network manager:', err);
             });   
-        // Debug: Log dummy grounded state and body position
-        //console.log(`Dummy body: x=${this.dummyTarget.body.x}, y=${this.dummyTarget.body.y}, width=${this.dummyTarget.body.width}, height=${this.dummyTarget.body.height}`);
     }
     // Helper method to handle fade transition
     startFadeTransition() {
@@ -410,7 +299,7 @@ export class Game extends Phaser.Scene {
             this.shockwaves,
             this.handleShockwaveCollision,
             (target, shockwave) => {
-                // CRITICAL FIX: Don't allow shockwave to collide with its owner
+                // Don't allow shockwave to collide with its owner
                 if (shockwave.owner === target || target.isDead) {
                     return false;
                 }
@@ -610,21 +499,6 @@ export class Game extends Phaser.Scene {
         // Update players
         this.player1.update();
 
-        // Debug: Update dummy debug rectangle position
-        if (this.dummyDebug && this.dummyTarget.active) {
-            this.dummyDebug.setPosition(
-                this.dummyTarget.body.x + this.dummyTarget.body.width / 2,
-                this.dummyTarget.body.y + this.dummyTarget.body.height / 2
-            );
-        }
-
-        // Debug: Log dummy grounded state
-        /*
-        if (this.dummyTarget.active) {
-            console.log(`Dummy grounded: ${this.dummyTarget.body.blocked.down}`);
-        }
-        */
-
         // Send player position updates to server 
         if (this.gameSync) {
             this.gameSync.update();
@@ -637,30 +511,6 @@ export class Game extends Phaser.Scene {
         // Update ui elements displays 
         if (this.uiManager) {
             this.uiManager.update();
-        }
-        // Update dummy target health bar
-        if (this.dummyTarget && this.dummyTarget.active) {
-            // Position the health text above the dummy target
-            this.dummyHealthBar.setPosition(
-                this.dummyTarget.x, 
-                this.dummyTarget.y - 40
-            );
-            
-            // Update health text
-            this.dummyHealthBar.setText(`${this.dummyTarget.health} HP`);
-            
-            // Update color based on health percentage
-            const dummyHealthPercent = (this.dummyTarget.health / 100) * 100;
-            if (dummyHealthPercent > 60) {
-                this.dummyHealthBar.setColor('#00ff00'); // green
-            } else if (dummyHealthPercent > 30) {
-                this.dummyHealthBar.setColor('#ffa500'); // orange
-            } else {
-                this.dummyHealthBar.setColor('#ff0000'); // red
-            }
-        } else {
-            // Hide health text if target is destroyed
-            this.dummyHealthBar.setText('');
         }
     }
 }
