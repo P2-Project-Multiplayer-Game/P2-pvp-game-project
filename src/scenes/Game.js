@@ -347,6 +347,7 @@ export class Game extends Phaser.Scene {
                     this.gameState = new GameState(this, this.networkManager, this.gameSync);
                     
                     // Join game AFTER everything is set up
+                    /*
                     this.networkManager.joinGame({
                         x: this.player1.x,
                         y: this.player1.y,
@@ -354,7 +355,7 @@ export class Game extends Phaser.Scene {
                         health: this.player1.health,
                         fromLobby: true
                     });
-                    
+                    */
                     // Set up PvP collisions after joining
                     this.time.delayedCall(100, () => {
                         this.setupPvPCollisions();
