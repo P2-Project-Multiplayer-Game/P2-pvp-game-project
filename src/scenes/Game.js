@@ -339,7 +339,7 @@ export class Game extends Phaser.Scene {
                 this.time.delayedCall(200, () => {
                     // Create game managers
                     this.gameSync = new GameSync(this, this.networkManager);
-                    this.time.delayedCall(1000, () => {
+                    this.time.delayedCall(200, () => {
                         this.gameSync.setLocalPlayer(this.player1);
                     });
                     this.combatManager = new CombatManager(this, this.gameSync, this.networkManager);
