@@ -16,31 +16,20 @@ export default class GameState {
             
             try {
                 // Process each ranked player
-                data.rankings.forEach(rankedPlayer => {
-                    let playerObj;
-                    
-                    // Find the actual player object
-                    if (rankedPlayer.id === this.network.playerId) {
-                        playerObj = this.gameSync.localPlayer;
-                    } else {
-                        playerObj = this.gameSync.remotePlayers.get(rankedPlayer.id);
-                    }
-                    
-                    if (playerObj) {
-                        // Create a simplified data structure with just what's needed
-                        const simplifiedPlayer = {
-                            rank: rankedPlayer.rank,
-                            characterType: playerObj.characterType,
-                            texture: {
-                                key: playerObj.texture.key
-                            },
-                            animationKeys: playerObj.animationKeys,
-                            // Add other required properties
-                        };
-                        playerRankings.push(simplifiedPlayer);
-                    }
+                const playerRankings = data.rankings.map(player => {
+                    return {
+                        id: player.id,
+                        rank: player.rank,
+                        characterType: player.characterType,
+                        texture: {
+                            // Use character type as the texture key - they match in your game
+                            key: player.characterType || 'tank'
+                        }
+                    };
                 });
-                
+            
+                console.log("Transitioning to GameOver with player data:", playerRankings);
+
                 // Clean up network resources to prevent further updates
                 this.cleanupNetworkResources();
                 
@@ -51,8 +40,9 @@ export default class GameState {
             } catch (e) {
                 console.error("Error preparing GameOver transition:", e);
                 // Fallback with minimal data
+                this.cleanupNetworkResources();
                 this.scene.scene.start('GameOver', { 
-                    rawRankings: data.rankings
+                    playersRanking: data.rankings
                 });
             }
         });

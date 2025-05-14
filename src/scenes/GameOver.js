@@ -62,7 +62,7 @@ export class GameOver extends Phaser.Scene {
             if (!pedestal) return;
             
             // Get texture key and animation
-            const textureKey = player.texture ? player.texture.key : 'tank';
+            const textureKey = player.characterType || 'tank';
             const animKey = (player.animationKeys && player.animationKeys.turn) || 'turn';
             
             // Create character sprite on pedestal
