@@ -272,6 +272,48 @@ export default class CombatManager {
       });
     }
   }
+  // Generic damage handler that all collision handlers can use
+  handleCollisionDamage(attacker, target, damage, isLocalEvent = false) {
+    // Skip invincible targets
+    if (target.isInvincible) return;
+    
+    if (attacker === this.gameSync.localPlayer && target.playerId) {
+      // Network damage (send to server)
+      this.registerHit(attacker, target, damage);
+    } else if (!target.playerId || isLocalEvent) {
+      // Local damage (dummy targets or local processing)
+      this.applyLocalDamage(target, damage);
+    }
+  }
+
+  // Apply damage locally (for dummy targets or local effects)
+  applyLocalDamage(target, damage) {
+    target.health = Math.max(0, target.health - damage);
+    
+    if (target.health <= 0) {
+      this.handleEntityDeath(target);
+    }
+  }
+
+  // Handle death
+  handleEntityDeath(entity) {
+    if (entity.isDead) return;
+    
+    entity.isDead = true;
+    this.scene.playersRanking.push(entity);
+    
+    // Visual effects
+    this.scene.tweens.add({
+      targets: entity,
+      alpha: 0,
+      y: entity.y - 50,
+      duration: 1000,
+      ease: 'Power2',
+      onComplete: () => {
+        if (entity.destroy) entity.destroy();
+      }
+    });
+  }
   
   handleRemoteArrowDestroyed(data) {
     const remotePlayer = this.gameSync.remotePlayers.get(data.playerId);

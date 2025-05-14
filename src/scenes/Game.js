@@ -452,19 +452,9 @@ export class Game extends Phaser.Scene {
         // Get specific damage from the hitbox
         const damage = hitbox.damage || attacker.attackDamage; // Fall back to owner's attackDamage if not set
         //console.log(`Hitbox collision: ${attacker.characterType} hits ${target.characterType}, dealing ${damage} damage`);
-        
-        // Register hit with combat manager if attacker is local player
-        if (attacker === this.gameSync?.localPlayer && target.playerId) {
-            this.combatManager.registerHit(attacker, target, damage);
-        } else if (!target.playerId) {
-            // For non-networked entities like dummy target
-            target.health = Math.max(0, target.health - damage);
-            if (target.health <= 0) {
-                this.playersRanking.push(target);
-                console.log('target destroyed');
-                target.destroy();
-            }
-        }
+                
+        // Delegating the generic collision checker to combat manager
+        this.combatManager.handleCollisionDamage(attacker, target, damage);
     }
     // new handleShockwaveCollision method
     handleShockwaveCollision(target, shockwave) {
@@ -479,18 +469,8 @@ export class Game extends Phaser.Scene {
             const damage = shockwave.damage || (shockwave.owner ? shockwave.owner.attack2Damage : 10);
           
             console.log(`Shockwave hit: ${shockwave.owner.characterType} dealing ${damage} damage to target at (${target.x}, ${target.y})`);
-          
-            // only process if shockwave belongs to local player
-            if (shockwave.owner === this.gameSync?.localPlayer && target.playerId) {
-                this.combatManager.registerHit(shockwave.owner, target, damage);
-            } else if (!target.playerId) {
-                // for dummy targets
-                target.health = Math.max(0, target.health - damage);
-                if (target.health <= 0) {
-                console.log('target destroyed');
-                target.destroy();
-                }
-            }
+            // Delegating to combat manager 
+            this.combatManager.handleCollisionDamage(shockwave.owner, target, damage);
             // destroy shockwave regardless
             shockwave.owner.destroyShockwave();
         }
@@ -509,17 +489,8 @@ export class Game extends Phaser.Scene {
             
             console.log(`Herowave hit: ${herowave.owner.characterType} dealing ${damage} damage to target at (${target.x}, ${target.y})`);
             
-            // Only process if herowave belongs to local player
-            if (herowave.owner === this.gameSync?.localPlayer && target.playerId) {
-                this.combatManager.registerHit(herowave.owner, target, damage);
-            } else if (!target.playerId) {
-                // For dummy targets
-                target.health = Math.max(0, target.health - damage);
-                if (target.health <= 0) {
-                    console.log('target destroyed');
-                    target.destroy();
-                }
-            }
+            // Delegating to combat manager 
+            this.combatManager.handleCollisionDamage(herowave.owner, target, damage);
             
             // Destroy herowave after collision
             herowave.owner.destroyHerowave();
@@ -540,17 +511,8 @@ export class Game extends Phaser.Scene {
           
             console.log(`ninjawave hit: ${ninjawave.owner.characterType} dealing ${damage} damage to target at (${target.x}, ${target.y})`);
           
-            // only process if ninjawave belongs to local player
-            if (ninjawave.owner === this.gameSync?.localPlayer && target.playerId) {
-                this.combatManager.registerHit(ninjawave.owner, target, damage);
-            } else if (!target.playerId) {
-                // for dummy targets
-                target.health = Math.max(0, target.health - damage);
-                if (target.health <= 0) {
-                console.log('target destroyed');
-                target.destroy();
-                }
-            }
+            // Delegating to combat manager 
+            this.combatManager.handleCollisionDamage(ninjawave.owner, target, damage);
             // destroy ninjawave regardless
             ninjawave.owner.destroyNinjawave();
         }
@@ -570,17 +532,8 @@ export class Game extends Phaser.Scene {
 
             console.log(`Arrow hit: ${arrow.owner.characterType} dealing ${damage} damage to target at (${target.x}, ${target.y})`);
 
-            // Only process if arrow belongs to local player
-            if (arrow.owner === this.gameSync?.localPlayer && target.playerId) {
-                this.combatManager.registerHit(arrow.owner, target, damage);
-            } else if (!target.playerId) {
-                // For dummy targets
-                target.health = Math.max(0, target.health - damage);
-                if (target.health <= 0) {
-                    console.log('Target destroyed');
-                    target.destroy();
-                }
-            }
+            // Delegating to combat manager 
+            this.combatManager.handleCollisionDamage(arrow.owner, target, damage);
             // Destroy arrow regardless
             arrow.owner.destroyArrow();
         }
@@ -605,17 +558,8 @@ export class Game extends Phaser.Scene {
 
             console.log(`Fireball hit: ${fireball.owner.characterType} dealing ${damage} damage to target at (${target.x}, ${target.y})`);
 
-            // Only process if fireball belongs to local player
-            if (fireball.owner === this.gameSync?.localPlayer && target.playerId) {
-                this.combatManager.registerHit(fireball.owner, target, damage);
-            } else if (!target.playerId) {
-                // For dummy targets
-                target.health = Math.max(0, target.health - damage);
-                if (target.health <= 0) {
-                    console.log('Target destroyed');
-                    target.destroy();
-                }
-            }
+            // Delegating to combat manager 
+            this.combatManager.handleCollisionDamage(fireball.owner, target, damage);
             // Destroy arrow regardless
             fireball.owner.destroyFireball();
         }
