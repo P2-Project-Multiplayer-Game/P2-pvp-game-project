@@ -10,7 +10,7 @@ import CombatManager from '../multiplayer/CombatManager.js';
 import HealthDisplayManager from '../multiplayer/HealthDisplayManager.js';
 import UIManager from '../multiplayer/UIManager.js'; 
 import GameState from '../multiplayer/GameState.js';
-
+import NetworkService from '../services/NetworkService.js';
 export class Game extends Phaser.Scene {
     constructor() {
         super('Game');
@@ -309,38 +309,58 @@ export class Game extends Phaser.Scene {
         
         //this.cameras.main.startFollow(this.player);
         this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
-
-        // Connect to server
-        this.networkManager = new NetworkManager();
-        this.networkManager.connect()
-            .then(data => {
-                console.log('Connected to server with ID:', data.id);
-
-                // Creating the different managers GameSync to handle and  manipulate player data
+        // Check if coming from Lobby
+        const fromLobby = this.registry.get('fromLobby');
+        console.log('Coming from lobby?', fromLobby ? 'Yes' : 'No');
+        
+        // Get or initialize NetworkManager
+        NetworkService.initialize()
+            .then(networkManager => {
+                this.networkManager = networkManager;
+                console.log('Using NetworkManager with ID:', this.networkManager.playerId);
+                
+                // Create managers
                 this.gameSync = new GameSync(this, this.networkManager);
                 this.gameSync.setLocalPlayer(this.player1);
-
+                
                 this.combatManager = new CombatManager(this, this.gameSync, this.networkManager);
-
                 this.healthDisplayManager = new HealthDisplayManager(this, this.gameSync, this.networkManager);
-
                 this.uiManager = new UIManager(this, this.gameSync, this.networkManager);
-
                 this.gameState = new GameState(this, this.networkManager, this.gameSync);
-
-                // Join the game after successful connection
+                
+                // Get spawn position from registry if coming from lobby
+                let spawnPosition = { x: this.player1.x, y: this.player1.y };
+                
+                if (fromLobby) {
+                    const lobbyPlayers = this.registry.get('lobbyPlayers');
+                    const myPlayerData = lobbyPlayers.find(p => p.id === this.networkManager.playerId);
+                    
+                    if (myPlayerData) {
+                        spawnPosition = { x: myPlayerData.x, y: myPlayerData.y };
+                        console.log('Using spawn position from lobby:', spawnPosition);
+                    }
+                    
+                    // Clear the fromLobby flag after using it
+                    this.registry.remove('fromLobby');
+                }
+                
+                // Position player at spawn point
+                this.player1.x = spawnPosition.x;
+                this.player1.y = spawnPosition.y;
+                
+                // Sync player position
                 this.networkManager.syncPlayerPosition({
                     x: this.player1.x,
                     y: this.player1.y,
                     characterType: this.selectedCharacter,
                     health: this.player1.health
                 });
-
+                
                 this.setupPvPCollisions();
             })
             .catch(err => {
-                console.error('Failed to connect:', err);
-            });      
+                console.error('Failed to get network manager:', err);
+            });   
         // Debug: Log dummy grounded state and body position
         //console.log(`Dummy body: x=${this.dummyTarget.body.x}, y=${this.dummyTarget.body.y}, width=${this.dummyTarget.body.width}, height=${this.dummyTarget.body.height}`);
     }   

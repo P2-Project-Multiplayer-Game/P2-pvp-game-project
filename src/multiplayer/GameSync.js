@@ -116,7 +116,10 @@ export default class GameSync {
   addRemotePlayer(playerData) {
     // Skip if this is the local player or if already exists
     if (playerData.id === this.network.playerId) return;
-    if (this.remotePlayers.has(playerData.id)) return;
+    if (this.remotePlayers.has(playerData.id)) {
+        console.log(`Remote player ${playerData.id} already exists, skipping`);
+        return;
+    }
     
     console.log(`Creating remote player ${playerData.id} as ${playerData.characterType || 'tank'}`);
     

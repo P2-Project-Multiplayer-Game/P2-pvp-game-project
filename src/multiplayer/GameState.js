@@ -46,8 +46,15 @@ export default class GameState {
             // If we're in the Lobby scene, transition to Game
             if (this.scene.scene.key === 'Lobby') {
                 const selectedCharacter = this.scene.selectedCharacter;
+                
+                // Store important data in registry for the Game scene
+                this.scene.registry.set('fromLobby', true);
+                this.scene.registry.set('lobbyPlayers', data.players);
+                this.scene.registry.set('characterFromLobby', selectedCharacter);
+                
+                console.log('Transitioning from Lobby to Game with character:', selectedCharacter);
                 this.scene.scene.start('Game', { 
-                    character: selectedCharacter 
+                    character: selectedCharacter
                 });
             }
             // If we're in the Game scene, update player position

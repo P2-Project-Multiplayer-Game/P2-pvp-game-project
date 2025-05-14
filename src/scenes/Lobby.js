@@ -2,6 +2,7 @@ import { SCREEN_WIDTH, SCREEN_HEIGHT } from '../config.js';
 import NetworkManager from '../multiplayer/NetworkManager.js';
 import LobbyUIManager from '../multiplayer/LobbyUIManager.js';
 import GameState from '../multiplayer/GameState.js';
+import NetworkService from '../services/NetworkService.js';
 export class Lobby extends Phaser.Scene {
     constructor() {
         super('Lobby');
@@ -90,14 +91,15 @@ export class Lobby extends Phaser.Scene {
 
         // Listen for Enter key to toggle ready status
         this.input.keyboard.on('keydown-ENTER', this.toggleReady, this);
-        // Initialize network connection 
-        this.networkManager = new NetworkManager();
-        this.networkManager.connect()
-            .then(data => {
-                console.log('Connected to server with ID:', data.id);
+        // Initialize network connection using the singleton service
+        NetworkService.initialize()
+            .then(networkManager => {
+                this.networkManager = networkManager;
+                console.log('Connected to server with ID:', this.networkManager.playerId);
 
                 this.lobbyUIManager = new LobbyUIManager(this, this.networkManager);
                 this.gameState = new GameState(this, this.networkManager);
+                
                 // Join the lobby after connection
                 this.networkManager.joinGame({
                     characterType: this.selectedCharacter,
