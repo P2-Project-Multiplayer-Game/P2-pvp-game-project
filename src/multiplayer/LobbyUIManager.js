@@ -31,6 +31,7 @@ export default class LobbyUIManager {
 
         // Initial player data for already present players
         this.network.on('gameJoined', (data) => {
+            /*
             console.log('Game joined event received with players:', data.players.length);
             
             // Process all players except self when we join
@@ -52,6 +53,8 @@ export default class LobbyUIManager {
                 totalPlayers: data.players.length,
                 playersReady: data.players.filter(p => p.isReady).length
             });
+            */
+            this.initializeLobbyPlayers(data.players);
         });
     }
 
