@@ -9,7 +9,7 @@ export default class NetworkManager {
 
     this.currentScene = null;
     this.sceneSpecificEvents = {
-      'Lobby': ['lobbyStatusUpdate', 'playerReadyState', 'gameJoined','gameCountdownStart'],
+      'Lobby': ['lobbyStatusUpdate', 'playerReadyState', 'gameJoined','gameCountdownStart', 'gameCountdownStop'],
       'Game': ['playerUpdated', 'playerHealthUpdate']
     };
   }
@@ -67,6 +67,11 @@ export default class NetworkManager {
         this.socket.on('game_countdown_start', (data) => {
           console.log('Game countdown started:', data.countdown);
           this.triggerEvent('gameCountdownStart', data);
+        });
+        
+        this.socket.on('game_countdown_stop', () => {
+          console.log('Game countdown stopped');
+          this.triggerEvent('gameCountdownStop');
         });
 
         this.socket.on('game_start', (data) => {

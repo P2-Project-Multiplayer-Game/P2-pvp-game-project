@@ -183,10 +183,15 @@ export class Lobby extends Phaser.Scene {
 2. Player selects character and presses "Ready" button
 3. LobbyUIManager displays ready state of all players
 4. When all players are ready:
-   a. Server sends "game_countdown_start" event with countdown value
+   a. NetwrokManager sends "gameCountdownStart" event with countdown value
    b. LobbyUIManager displays countdown in Lobby scene
-   c. When countdown reaches 0, server sends "game_start" event
-   d. GameState.js receives "game_start" event and transitions to Game scene
+   c. A player can unready making their ready true/false statement again false 
+   d. LobbyUIManager stops displaying countdown in Lobby scene
+   e just like in a server/Netrokmanager sends "gameCount"downStop
+   f player can once again ready themsels doing the same logic as in a
+   g. LobbyUIManager displays countdown in Lobby scene
+  h. When countdown reaches 0, server/networkmanager sends "gameStart" event
+   i. GameState.js receives "gameStart" event and transitions to Game scene
 5. Game.js initializes with character data from Lobby scene
 6. Game begins
 */

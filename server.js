@@ -21,6 +21,7 @@ const lobbyManager = new LobbyManager();
 // Track players in rooms
 const players = new Map();
 
+const lobbiesWithCountdown = new Map(); 
 // Add spawn points 
 const spawnPoints = [
   { x: 100, y: 480 },  // Left side
@@ -145,6 +146,10 @@ io.on('connection', (socket) => {
     
     console.log(`Player ${socket.id} is ${data.isReady ? 'ready' : 'not ready'}`);
     
+    // Get updated lobby status
+    const lobbyStatus = lobbyManager.getLobbyStatus(player.roomId);
+    console.log(`Lobby status after ready toggle: ${lobbyStatus.playersReady}/${lobbyStatus.totalPlayers} ready`);
+    
     // Broadcast updated player ready state to all players in the room
     io.to(player.roomId).emit('player_ready_state', {
       id: socket.id,
@@ -153,7 +158,19 @@ io.on('connection', (socket) => {
     
     // Send updated lobby status
     io.to(player.roomId).emit('lobby_status_update', lobbyManager.getLobbyStatus(player.roomId));
-    
+
+    // Check if a player is unreadying during countdown
+    if (!data.isReady && lobbiesWithCountdown.has(player.roomId)) {
+      // Stop the countdown
+      const countdownTimeout = lobbiesWithCountdown.get(player.roomId);
+      clearTimeout(countdownTimeout);
+      lobbiesWithCountdown.delete(player.roomId);
+      
+      // Send stop countdown event
+      io.to(player.roomId).emit('game_countdown_stop');
+      console.log(`Countdown stopped in room ${player.roomId} because player ${socket.id} unreadied`);
+    }
+
     // Check if all players are ready to start the game
     if (lobbyManager.areAllPlayersReady(player.roomId)) {
       console.log(`All players in room ${player.roomId} are ready. Starting game...`);
@@ -184,6 +201,8 @@ io.on('connection', (socket) => {
           players: roomPlayers
         });
       }, 3000);
+      // Store the timeout ID to be able to cancel it if needed
+      lobbiesWithCountdown.set(player.roomId, gameStartTimeout);
     }
   });
 

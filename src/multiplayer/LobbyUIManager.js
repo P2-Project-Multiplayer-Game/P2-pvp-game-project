@@ -32,6 +32,10 @@ export default class LobbyUIManager {
             this.startCountdown(data.countdown);
         });
 
+        this.network.on('gameCountdownStop', () => {
+            this.stopCountdown();
+        });
+
         // Initial player data for already present players
         this.network.on('gameJoined', (data) => {
             console.log('Received gameJoined event with players:', data.players);
@@ -50,6 +54,30 @@ export default class LobbyUIManager {
         
         // Log for debugging
         console.log(`Lobby status updated: ${data.playersReady} out of ${data.totalPlayers} players ready`);
+    }
+    
+    // Add this new method to stop countdown
+    stopCountdown() {
+        console.log('Stopping game countdown');
+        
+        // Remove the countdown timer
+        if (this.countdownTimer) {
+            this.scene.time.removeEvent(this.countdownTimer);
+            this.countdownTimer = null;
+        }
+        
+        // Remove the countdown text with a fade effect
+        if (this.scene.countdownText) {
+            this.scene.tweens.add({
+                targets: this.scene.countdownText,
+                alpha: 0,
+                duration: 500,
+                onComplete: () => {
+                    this.scene.countdownText.destroy();
+                    this.scene.countdownText = null;
+                }
+            });
+        }
     }
 
     startCountdown(countdown) {
