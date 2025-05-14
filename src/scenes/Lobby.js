@@ -1,5 +1,6 @@
 import { SCREEN_WIDTH, SCREEN_HEIGHT } from '../config.js';
 import NetworkManager from '../multiplayer/NetworkManager.js';
+import LobbyUIManager from '../multiplayer/LobbyUIManager.js';
 export class Lobby extends Phaser.Scene {
     constructor() {
         super('Lobby');
@@ -93,7 +94,8 @@ export class Lobby extends Phaser.Scene {
         this.networkManager.connect()
             .then(data => {
                 console.log('Connected to server with ID:', data.id);
-                
+
+                this.lobbyUIManager = new LobbyUIManager(this, this.networkManager);
                 // Join the lobby after connection
                 this.networkManager.joinGame({
                     characterType: this.selectedCharacter,
@@ -166,7 +168,24 @@ export class Lobby extends Phaser.Scene {
             }
         ).setOrigin(0.5);
     }
+    toggleReady() {
+        // Toggle ready state
+        this.isReady = !this.isReady;
+        
+        // Update UI elements
+        this.readyPromptText.setText(this.isReady ? 'Press ENTER to cancel' : 'Press ENTER to ready up');
+        
+        if (this.isReady) {
+            this.characterSprite.setTint(0x00ff00);
+        } else {
+            this.characterSprite.clearTint();
+        }
+        
+        // Send ready state to server
+        this.networkManager.sendPlayerReadyToggle(this.isReady);
+    }
 
+    /* 
     toggleReady() {
         // Toggle ready state
         this.isReady = !this.isReady;
@@ -194,6 +213,7 @@ export class Lobby extends Phaser.Scene {
             });
         }
     }
+    */
 }
 /*
 1. Player enters Lobby scene
