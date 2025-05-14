@@ -10,7 +10,7 @@ class LobbyManager {
       players: new Map(), // Map of playerId -> player data with ready state
       isGameStarted: false,
       minPlayers: 1, // Minimum players required
-      maxPlayers: 6  // Maximum players allowed
+      maxPlayers: 5  // Maximum players allowed
     });
   }
   
