@@ -3,6 +3,7 @@ import NetworkManager from '../multiplayer/NetworkManager.js';
 import LobbyUIManager from '../multiplayer/LobbyUIManager.js';
 import GameState from '../multiplayer/GameState.js';
 import NetworkService from '../services/NetworkService.js';
+import { CHARACTER_DATA } from '../config.js';
 export class Lobby extends Phaser.Scene {
     constructor() {
         super('Lobby');
@@ -114,35 +115,9 @@ export class Lobby extends Phaser.Scene {
 
     displaySelectedCharacter() {
         // Character display settings - matching CharacterSelector
-        const characterData = {
-            'tank': {
-                textureKey: 'tank_idle',
-                animKey: 'tank_turn',
-                name: 'Tank'
-            },
-            'ninja': {
-                textureKey: 'ninja_idle',
-                animKey: 'ninja_turn',
-                name: 'Ninja'
-            },
-            'hero': {
-                textureKey: 'hero_idle',
-                animKey: 'hero_turn',
-                name: 'Hero'
-            },
-            'archer': {
-                textureKey: 'archer_idle',
-                animKey: 'archer_turn',
-                name: 'Archer'
-            },
-            'skeleton': {
-                textureKey: 'skeleton_idle',
-                animKey: 'skeleton_turn',
-                name: 'Skeleton'
-            }
-        };
 
-        const data = characterData[this.selectedCharacter] || characterData.tank;
+        // Use the imported CHARACTER_DATA instead
+        const data = CHARACTER_DATA[this.selectedCharacter] || CHARACTER_DATA.tank;
 
         // Create character sprite - matching CharacterSelector position
         this.characterSprite = this.add.sprite(

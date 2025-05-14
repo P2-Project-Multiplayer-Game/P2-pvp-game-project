@@ -1,4 +1,5 @@
 import { SCREEN_WIDTH, SCREEN_HEIGHT } from '../config.js';
+import { CHARACTER_DATA } from '../config.js';
 export default class LobbyUIManager {
     constructor(scene, networkManager) {
         this.scene = scene;
@@ -10,6 +11,7 @@ export default class LobbyUIManager {
 
     setupEvents() {
         this.network.on('lobby_status_update', (data) => {
+            console.log('Received lobby_status_update:', data);
             this.updateLobbyStatus(data);
         });
         
@@ -18,6 +20,7 @@ export default class LobbyUIManager {
         });
         
         this.network.on('playerJoined', (data) => {
+            console.log('Received playerJoined event:', data);
             this.addPlayerToLobby(data);
         });
         
@@ -31,6 +34,7 @@ export default class LobbyUIManager {
 
         // Initial player data for already present players
         this.network.on('gameJoined', (data) => {
+            console.log('Received gameJoined event with players:', data.players);
             this.initializeLobbyPlayers(data.players);
         });
     }
@@ -161,36 +165,8 @@ export default class LobbyUIManager {
         }
         
         // Character data matching the same format used in Lobby.js
-        const characterData = {
-            'tank': {
-                textureKey: 'tank_idle',
-                animKey: 'tank_turn',
-                name: 'Tank'
-            },
-            'ninja': {
-                textureKey: 'ninja_idle',
-                animKey: 'ninja_turn',
-                name: 'Ninja'
-            },
-            'hero': {
-                textureKey: 'hero_idle',
-                animKey: 'hero_turn',
-                name: 'Hero'
-            },
-            'archer': {
-                textureKey: 'archer_idle',
-                animKey: 'archer_turn',
-                name: 'Archer'
-            },
-            'skeleton': {
-                textureKey: 'skeleton_idle',
-                animKey: 'skeleton_turn',
-                name: 'Skeleton'
-            }
-        };
-
-        // Get character data for this player
-        const data = characterData[playerData.characterType] || characterData.tank;
+        // Use the imported CHARACTER_DATA 
+        const data = CHARACTER_DATA[this.selectedCharacter] || CHARACTER_DATA.tank;
         
         // Create character sprite for this remote player
         const sprite = this.scene.add.sprite(
@@ -250,6 +226,10 @@ export default class LobbyUIManager {
     }
 
     repositionAllPlayers() {
+        // Get screen dimensions directly from the scene
+        const SCREEN_WIDTH = this.scene.sys.game.config.width;
+        const SCREEN_HEIGHT = this.scene.sys.game.config.height;
+        
         // Get all players - remote and local
         const remotePlayers = Array.from(this.playerDisplays.keys());
         const totalPlayers = remotePlayers.length + 1; // +1 for local player
@@ -272,6 +252,7 @@ export default class LobbyUIManager {
         // Position remote players
         remotePlayers.forEach((playerId, index) => {
             const display = this.playerDisplays.get(playerId);
+            // Calculate position with index+1 to place after local player
             const xPos = startX + spacing * (index + 1);
             
             // Update positions
