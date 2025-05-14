@@ -640,46 +640,9 @@ export class Game extends Phaser.Scene {
         }
         */
 
-        // Send player position updates to server if connected AND player is alive
-        if (this.networkManager && this.networkManager.connected && 
-            this.player1 && !this.player1.isDead) {
-            const currentState = this.player1.stateMachine.currentState;
-            let animation = 'turn';
-            let facing = this.player1.flipX ? 'left' : 'right';
-
-            switch (currentState) {
-                case 'IDLE':
-                    animation = 'turn';
-                    break;
-                case 'MOVE_LEFT':
-                    animation = 'left';
-                    break;
-                case 'MOVE_RIGHT':
-                    animation = 'right';
-                    break;
-                case 'JUMP':
-                    animation = 'jump';
-                    break;
-                case 'ATTACK':
-                    animation = 'attack';
-                    break;
-                case 'ATTACK2':
-                    animation = 'attack2';
-                    break;    
-                case 'HURT':     
-                    animation = 'hurt';
-                    break;
-            }
-
-            this.networkManager.sendPlayerUpdate(
-                this.player1.x,
-                this.player1.y,
-                {
-                    animation,
-                    facing,
-                    player: this.player1
-                }
-            );
+        // Send player position updates to server 
+        if (this.gameSync) {
+            this.gameSync.update();
         }
 
         // Update player health displays 

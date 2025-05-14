@@ -171,7 +171,7 @@ export default class GameSync {
     if (data.attack2OnCooldown !== undefined) {
         remotePlayer.attack2OnCooldown = data.attack2OnCooldown;
     } 
-    
+
     // Store previous flipX state to detect changes
     const wasFlipped = remotePlayer.flipX;
     
@@ -204,5 +204,38 @@ export default class GameSync {
       this.remotePlayers.delete(playerId);
       console.log(`Removed remote player ${playerId}`);
     }
+  }
+  // Updates the server with local player state
+  update() {
+    // Skip if no local player or not connected
+    if (!this.localPlayer || !this.network || !this.network.connected || this.localPlayer.isDead) {
+      return;
+    }
+    
+    const currentState = this.localPlayer.stateMachine.currentState;
+    let animation = 'turn';
+    let facing = this.localPlayer.flipX ? 'left' : 'right';
+
+    // Map state machine states to animations
+    switch (currentState) {
+      case 'IDLE': animation = 'turn'; break;
+      case 'MOVE_LEFT': animation = 'left'; break;
+      case 'MOVE_RIGHT': animation = 'right'; break;
+      case 'JUMP': animation = 'jump'; break;
+      case 'ATTACK': animation = 'attack'; break;
+      case 'ATTACK2': animation = 'attack2'; break;
+      case 'HURT': animation = 'hurt'; break;
+    }
+
+    // Send update to server
+    this.network.sendPlayerUpdate(
+      this.localPlayer.x,
+      this.localPlayer.y,
+      {
+        animation,
+        facing,
+        player: this.localPlayer
+      }
+    );
   }
 }
