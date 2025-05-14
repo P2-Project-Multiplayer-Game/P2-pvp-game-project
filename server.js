@@ -30,8 +30,8 @@ const spawnPoints = [
   { x: 700, y: 480 },  // Middle
   { x: 1000, y: 480 }, // Middle-right
   { x: 1300, y: 480 }, // Right side
-  { x: 250, y: 250 },  // Upper platforms
-  { x: 850, y: 250 }   // Upper platforms
+  { x: 138, y: 210 },  // Upper Left platform
+  { x: 452, y:123 }   // Upper  right platform
 ];
 //list of used spawned points
 const usedSpawnPoints = [];
