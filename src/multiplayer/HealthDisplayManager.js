@@ -129,7 +129,7 @@ export default class HealthDisplayManager {
     }
 
     updateHealthDisplay(playerId, health) {
-        if (this.isShuttingDown || !player || !player.active || !displayObj) return;
+        if (this.isShuttingDown) return;
 
         if (displayObj.healthText && displayObj.healthText.active) {
             // Safe update of health text
