@@ -130,23 +130,6 @@ export default class HealthDisplayManager {
 
     updateHealthDisplay(playerId, health) {
         if (this.isShuttingDown) return;
-
-        if (displayObj.healthText && displayObj.healthText.active) {
-            // Safe update of health text
-            try {
-                displayObj.healthText.setText(`${player.health}/100`);
-                // Change color based on health
-                if (player.health < 30) {
-                    displayObj.healthText.setColor('#FF0000');
-                } else if (player.health < 70) {
-                    displayObj.healthText.setColor('#FFFF00');
-                } else {
-                    displayObj.healthText.setColor('#FFFFFF');
-                }
-            } catch (e) {
-                console.error("Error updating health display:", e);
-            }
-        }
         
         const display = this.healthDisplays.get(playerId);
         if (!display) return;
