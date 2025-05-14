@@ -1,4 +1,3 @@
-import { SCREEN_HEIGHT, SCREEN_WIDTH } from '../config.js';
 import { SCREEN_HEIGHT, SCREEN_WIDTH, CHARACTER_DATA } from '../config.js';
 export class GameOver extends Phaser.Scene {
     constructor() {
