@@ -31,7 +31,30 @@ export default class LobbyUIManager {
 
         // Initial player data for already present players
         this.network.on('gameJoined', (data) => {
-            this.initializeLobbyPlayers(data.players);
+            /*
+            console.log('Game joined event received with players:', data.players.length);
+            
+            // Process all players except self when we join
+            const remotePlayers = data.players.filter(p => p.id !== this.network.playerId);
+            console.log('Remote players to add:', remotePlayers.length);
+            
+            // Add each player individually 
+            remotePlayers.forEach(player => {
+                // Make sure the player has the required data
+                if (!player.characterType) {
+                    console.warn('Missing characterType for player in gameJoined:', player.id);
+                    player.characterType = 'tank';
+                }
+                this.addPlayerToLobby(player);
+            });
+            
+            // Update lobby status with initial values
+            this.updateLobbyStatus({
+                totalPlayers: data.players.length,
+                playersReady: data.players.filter(p => p.isReady).length
+            });
+            */
+            //this.initializeLobbyPlayers(data.players);
         });
     }
 
@@ -144,19 +167,6 @@ export default class LobbyUIManager {
         }
     }
 
-    addPlayerToLobby(playerData) {
-        // Skip if this is the local player or player already exists
-        if (playerData.id === this.network.playerId || this.playerDisplays.has(playerData.id)) {
-            return;
-        }
-        
-        const SCREEN_WIDTH = this.scene.sys.game.config.width;
-        const SCREEN_HEIGHT = this.scene.sys.game.config.height;
-        
-        // Currently we'll just update the lobby count
-        // In a more advanced implementation, we would show remote player characters
-        console.log(`Player ${playerData.id} joined the lobby as ${playerData.characterType}`);
-    }
     
     removePlayerFromLobby(playerId) {
         if (this.playerDisplays.has(playerId)) {
