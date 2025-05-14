@@ -339,25 +339,9 @@ export class Game extends Phaser.Scene {
                 this.time.delayedCall(200, () => {
                     // Create game managers
                     this.gameSync = new GameSync(this, this.networkManager);
-                    lobbyPlayers.forEach(p => {
-                        if (p.id === this.networkManager.playerId) {
-                        // Local
-                        const Cls = {
-                            tank: TankCharacter,
-                            ninja: NinjaCharacter,
-                            hero: HeroCharacter,
-                            archer: ArcherCharacter,
-                            skeleton: SkeletonCharacter
-                        }[p.characterType] || TankCharacter;
-                        this.player1 = new Cls(this, p.x, p.y);
+                    this.time.delayedCall(200, () => {
                         this.gameSync.setLocalPlayer(this.player1);
-                        this.playersInMatch.push(this.player1);
-                        } else {
-                        // Remote
-                        this.gameSync.addRemotePlayer(p);
-                        }
                     });
-                    
                     this.combatManager = new CombatManager(this, this.gameSync, this.networkManager);
                     this.healthDisplayManager = new HealthDisplayManager(this, this.gameSync, this.networkManager);
                     this.uiManager = new UIManager(this, this.gameSync, this.networkManager);
