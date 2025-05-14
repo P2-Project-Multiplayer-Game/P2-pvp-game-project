@@ -104,15 +104,6 @@ io.on('connection', (socket) => {
   socket.on('join_game', (playerData) => {
     // all players join the default room as defined in the lobbyManager
     const roomId = lobbyManager.getDefaultRoom();
-    // Check if lobby is full before joining
-    const lobby = lobbyManager.lobbies.get(roomId);
-    if (lobby && lobby.players.size >= lobby.maxPlayers) {
-      // Lobby is full - reject join
-      socket.emit('join_rejected', { reason: 'Lobby is full' });
-      console.log(`Player ${socket.id} rejected - lobby ${roomId} is full`);
-      return;
-    }
-  
     socket.join(roomId);
     
     // Store player data with character type in the players map
