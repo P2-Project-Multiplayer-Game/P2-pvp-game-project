@@ -153,8 +153,9 @@ export default class LobbyUIManager {
         if (this.playerDisplays.has(playerId)) {
             const display = this.playerDisplays.get(playerId);
             if (display.sprite) display.sprite.destroy();
-            if (display.text) display.text.destroy();
             this.playerDisplays.delete(playerId);
+            // Reposition remaining players
+            this.repositionAllPlayers();
         }
     }
 
@@ -188,7 +189,6 @@ export default class LobbyUIManager {
         // Store the display objects
         this.playerDisplays.set(playerData.id, {
             sprite: sprite,
-            text: nameText,
             characterType: playerData.characterType
         });
         
@@ -242,7 +242,6 @@ export default class LobbyUIManager {
             
             // Update positions
             display.sprite.setPosition(xPos, SCREEN_HEIGHT * 0.72);
-            display.text.setPosition(xPos, SCREEN_HEIGHT * 0.85);
         });
         
         console.log(`Repositioned ${totalPlayers} players in the lobby`);

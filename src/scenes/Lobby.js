@@ -130,7 +130,6 @@ export class Lobby extends Phaser.Scene {
 
         // Play idle animation
         this.characterSprite.play(data.animKey);
-
     }
     toggleReady() {
         // Toggle ready state
