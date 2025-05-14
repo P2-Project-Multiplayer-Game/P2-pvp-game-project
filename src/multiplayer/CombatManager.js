@@ -416,7 +416,10 @@ export default class CombatManager {
       if (deadPlayer) {
         // Mark remote player as dead
         deadPlayer.isDead = true;
-        
+        deadPlayer.isAlive = false;
+        if (deadPlayer.body) {
+          deadPlayer.body.enable = false;
+        }
         this.scene.events.emit('playerDeath', {
           local: false,
           id: data.id,

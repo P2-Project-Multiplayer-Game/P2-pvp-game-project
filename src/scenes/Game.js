@@ -399,7 +399,7 @@ export class Game extends Phaser.Scene {
             this.handleShockwaveCollision,
             (target, shockwave) => {
                 // CRITICAL FIX: Don't allow shockwave to collide with its owner
-                if (shockwave.owner === target) {
+                if (shockwave.owner === target || target.isDead) {
                     return false;
                 }
                 return shockwave && shockwave.active && target.active;
@@ -413,7 +413,7 @@ export class Game extends Phaser.Scene {
             this.handleHerowaveCollision,
             (target, herowave) => {
                 // Only need to check owner collision now, no need to filter by character type
-                if (herowave.owner === target) {
+                if (herowave.owner === target|| target.isDead) {
                     return false;
                 }
                 return herowave && herowave.active && target.active;
@@ -427,7 +427,7 @@ export class Game extends Phaser.Scene {
             this.handleNinjawaveCollision,
             (target, ninjawave) => {
                 // CRITICAL FIX: Don't allow ninjawave to collide with its owner
-                if (ninjawave.owner === target) {
+                if (ninjawave.owner === target || target.isDead) {
                     return false;
                 }
                 return ninjawave && ninjawave.active && target.active;
@@ -441,7 +441,7 @@ export class Game extends Phaser.Scene {
             this.handleArrowCollision,
             (target, arrow) => {
                 // Don't allow arrow to collide with its owner
-                if (arrow.owner === target) {
+                if (arrow.owner === target || target.isDead) {
                 return false;
                 }
                 return arrow && arrow.active && target.active;
@@ -455,7 +455,7 @@ export class Game extends Phaser.Scene {
         this.handleFireballCollision,
         (target, fireball) => {
             // Don't allow fireball to collide with its owner
-            if (fireball.owner === target) {
+            if (fireball.owner === target || target.isDead) {
             return false;
             }
             return fireball && fireball.active && target.active;
