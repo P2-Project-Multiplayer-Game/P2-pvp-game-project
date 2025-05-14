@@ -55,7 +55,7 @@ export class Lobby extends Phaser.Scene {
 
         // Ready prompt at bottom
         this.add.image(SCREEN_WIDTH / 2, SCREEN_HEIGHT * 0.922, 'blank_ui_board')
-            .setScale(1.2, 0.35)
+            .setScale(1.5, 0.35)
             .setOrigin(0.5);
 
         this.readyPromptText = this.add.text(
