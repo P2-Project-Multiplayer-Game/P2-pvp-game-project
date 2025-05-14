@@ -1,5 +1,5 @@
 import { SCREEN_WIDTH, SCREEN_HEIGHT } from '../config.js';
-
+import NetworkManager from '../multiplayer/NetworkManager.js';
 export class Lobby extends Phaser.Scene {
     constructor() {
         super('Lobby');
@@ -24,7 +24,7 @@ export class Lobby extends Phaser.Scene {
             .setOrigin(0.5)
             .setScale(0.6, 0.3)  // Stretch to become rectangular
             .setDepth(1);
-            
+
         // Add header text
         this.add.text(
             SCREEN_WIDTH / 2,
@@ -88,6 +88,23 @@ export class Lobby extends Phaser.Scene {
 
         // Listen for Enter key to toggle ready status
         this.input.keyboard.on('keydown-ENTER', this.toggleReady, this);
+                // Initialize network connection 
+        this.networkManager = new NetworkManager();
+        this.networkManager.connect()
+            .then(data => {
+                console.log('Connected to server with ID:', data.id);
+                
+                // Join the lobby after connection
+                this.networkManager.joinGame({
+                    characterType: this.selectedCharacter,
+                });
+                
+                // Set up network event listeners
+                this.setupNetworkEvents();
+            })
+            .catch(err => {
+                console.error('Failed to connect:', err);
+            });
     }
 
     displaySelectedCharacter() {
