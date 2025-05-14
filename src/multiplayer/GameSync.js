@@ -186,34 +186,27 @@ export default class GameSync {
   
   // Update a remote player
   updateRemotePlayer(data) {
+    // Skip if we're shutting down
+    if (this.isShuttingDown) return;
+    
     const remotePlayer = this.remotePlayers.get(data.id);
     
     if (!remotePlayer) {
         console.log(`Can't update player ${data.id} because they don't exist. Players in map: ${Array.from(this.remotePlayers.keys()).join(', ')}`);
-        
-        // If we get multiple updates for a player that doesn't exist, try to re-fetch them
-        if (!this._pendingPlayerFetch) {
-            this._pendingPlayerFetch = true;
-            console.log(`Attempting to re-fetch player data for ${data.id}`);
-            
-            // Add a small delay to avoid spamming the server
-            setTimeout(() => {
-                this._pendingPlayerFetch = false;
-                this.network.joinGame({
-                    x: this.localPlayer.x,
-                    y: this.localPlayer.y,
-                    characterType: this.localPlayer.characterType,
-                    health: this.localPlayer.health
-                });
-            }, 1000);
-        }
         return;
     }
     
     // Update players position
     remotePlayer.x = data.x;
     remotePlayer.y = data.y;
-    
+
+    // Skip animation updates if shutting down or animations not available
+    if (data.animation && remotePlayer.animationKeys && remotePlayer.anims && remotePlayer.active) {
+        const animKey = remotePlayer.animationKeys[data.animation];
+        if (animKey && remotePlayer.anims.exists(animKey)) {
+            remotePlayer.anims.play(animKey, true);
+        }
+    }
     // Just logging to demonstrate its working
     //console.log(`Updated remote player ${data.id} to position x=${data.x}, y=${data.y}`);
 
@@ -260,6 +253,13 @@ export default class GameSync {
   }
   // Updates the server with local player state
   update() {
+
+    // Skip if shutting down or no local player
+    if (this.isShuttingDown || !this.localPlayer || !this.network || 
+        !this.network.connected || this.localPlayer.isDead || this.network.isTransitioning) {
+        return;
+    }
+    
     // Skip if no local player or not connected
     if (!this.localPlayer || !this.network || !this.network.connected || this.localPlayer.isDead) {
       return;

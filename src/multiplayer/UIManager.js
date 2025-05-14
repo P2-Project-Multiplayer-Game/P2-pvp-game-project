@@ -4,7 +4,7 @@ export default class UIManager {
         this.gameSync = gameSync;
         this.network = networkManager;
         this.uiElements = new Map();
-
+        this.isShuttingDown = false;
         this.setupEvents();
 
         //cooldown indicator tracking
@@ -172,6 +172,7 @@ export default class UIManager {
     }
 
     updateCooldownIndicators() {
+        if (this.isShuttingDown) return;
         // Update local player indicators
         if (this.gameSync.localPlayer) {
             const localPlayerId = this.network.playerId;
@@ -258,8 +259,13 @@ export default class UIManager {
             }
         });
     }
-
+    // method to handle shutdown
+    shutdown() {
+        this.isShuttingDown = true;
+        this.clearUI();
+    }
     update() {
+        if (this.isShuttingDown) return;
         // Update cooldown indicators for all players
         this.updateCooldownIndicators();
     }

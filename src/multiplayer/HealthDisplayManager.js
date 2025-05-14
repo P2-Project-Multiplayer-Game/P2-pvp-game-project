@@ -3,6 +3,7 @@ export default class HealthDisplayManager {
         this.scene = scene;
         this.gameSync = gameSync;
         this.network = networkManager;
+        this.isShuttingDown = false;
         this.healthDisplays = new Map(); // Maps playerId -> text object
         this.corners = [
             { x: 20, y: 0, origin: { x: 0, y: 0 } },           // Top left
@@ -128,6 +129,25 @@ export default class HealthDisplayManager {
     }
 
     updateHealthDisplay(playerId, health) {
+        if (this.isShuttingDown || !player || !player.active || !displayObj) return;
+
+        if (displayObj.healthText && displayObj.healthText.active) {
+            // Safe update of health text
+            try {
+                displayObj.healthText.setText(`${player.health}/100`);
+                // Change color based on health
+                if (player.health < 30) {
+                    displayObj.healthText.setColor('#FF0000');
+                } else if (player.health < 70) {
+                    displayObj.healthText.setColor('#FFFF00');
+                } else {
+                    displayObj.healthText.setColor('#FFFFFF');
+                }
+            } catch (e) {
+                console.error("Error updating health display:", e);
+            }
+        }
+        
         const display = this.healthDisplays.get(playerId);
         if (!display) return;
         
@@ -139,7 +159,7 @@ export default class HealthDisplayManager {
             player = this.gameSync.remotePlayers.get(playerId);
         }
         
-        if (!player) return;
+        if (!player || !player.active) return;
         
         // Calculate health percentage relative to max health
         const maxHealth = player.maxHealth || 100;
@@ -196,6 +216,7 @@ export default class HealthDisplayManager {
     }
 
     update() {
+        if (this.isShuttingDown) return;
         // Update local player's health display every frame
         // (useful for health changes not triggered by network events)
         if (this.gameSync.localPlayer) {

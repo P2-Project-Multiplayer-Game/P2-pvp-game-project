@@ -6,6 +6,7 @@ export default class NetworkManager {
     this.connected = false;
     this.eventListeners = {};
     this.roomId = null;
+    this.isTransitioning = false;
 
     this.currentScene = null;
     this.sceneSpecificEvents = {
@@ -218,32 +219,51 @@ export default class NetworkManager {
     
     this.currentScene = sceneName;
   }
-    // scene-aware triggerEvent 
-  triggerEvent(event, data) {
-    const callbacks = this.eventListeners[event];
-    if (!callbacks) return;
 
-    // Check if this is a scene-specific event
-    let isSceneSpecificEvent = false;
-    let targetScene = null;
-    
-    // Find which scene this event belongs to
-    for (const [scene, events] of Object.entries(this.sceneSpecificEvents)) {
-      if (events.includes(event)) {
-        isSceneSpecificEvent = true;
-        targetScene = scene;
-        break;
+  removeAllListeners(eventName) {
+      if (this.eventListeners[eventName]) {
+          this.eventListeners[eventName] = [];
       }
-    }
+  }
 
-    // If it's scene-specific but not for the current scene, skip it
-    if (isSceneSpecificEvent && targetScene !== this.currentScene) {
-      console.log(`Skipping event ${event} because we're in ${this.currentScene || 'unknown'} scene, not ${targetScene}`);
-      return;
-    }
+  // scene-transition-aware triggerEvent 
+  triggerEvent(event, data) {
+      // Skip specific events during transition to GameOver
+      if (this.isTransitioning && 
+          (event === 'playerUpdated' || event === 'playerHealthUpdate')) {
+          return; // Skip player updates during transition
+      }
+      
+      const callbacks = this.eventListeners[event];
+      if (!callbacks) return;
 
-    // If not scene-specific or is for the current scene, trigger it
-    callbacks.forEach(callback => callback(data));
+      // Check if this is a scene-specific event
+      let isSceneSpecificEvent = false;
+      let targetScene = null;
+      
+      // Find which scene this event belongs to
+      for (const [scene, events] of Object.entries(this.sceneSpecificEvents)) {
+        if (events.includes(event)) {
+          isSceneSpecificEvent = true;
+          targetScene = scene;
+          break;
+        }
+      }
+
+      // If it's scene-specific but not for the current scene, skip it
+      if (isSceneSpecificEvent && targetScene !== this.currentScene) {
+        console.log(`Skipping event ${event} because we're in ${this.currentScene || 'unknown'} scene, not ${targetScene}`);
+        return;
+      }
+
+      // If not scene-specific or is for the current scene, trigger it
+      callbacks.forEach(callback => {
+        try {
+          callback(data);
+        } catch (e) {
+          console.error(`Error in ${event} event handler:`, e);
+        }
+      });
   }
   
   // Disconnect from the server

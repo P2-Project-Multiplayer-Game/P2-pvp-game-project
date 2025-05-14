@@ -62,7 +62,7 @@ export class GameOver extends Phaser.Scene {
             if (!pedestal) return;
             
             // Get texture key and animation
-            const textureKey = player.texture.key;
+            const textureKey = player.texture ? player.texture.key : 'tank';
             const animKey = (player.animationKeys && player.animationKeys.turn) || 'turn';
             
             // Create character sprite on pedestal
@@ -79,13 +79,17 @@ export class GameOver extends Phaser.Scene {
                 strokeThickness: 4
             }).setOrigin(0.5);
                 
-            // Play idle animation if it exists
-            if (this.anims.exists(animKey)) {
-                playerSprite.play(animKey, true);
+            // Play idle animation only if it exists
+            if (animKey && this.anims.exists(animKey)) {
+                try {
+                    playerSprite.play(animKey, true);
+                } catch (e) {
+                    console.warn(`Could not play animation ${animKey}:`, e);
+                }
             }
-            
+
             // Add character type name
-            this.add.text(pedestal.x, pedestal.y + 10, player.characterType, {
+            this.add.text(pedestal.x, pedestal.y + 10, player.characterType || "Unknown", {
                 fontSize: 22,
                 fontStyle: 'Bold',
                 color: '#FFFFFF',

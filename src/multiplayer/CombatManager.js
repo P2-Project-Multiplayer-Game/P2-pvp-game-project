@@ -3,6 +3,7 @@ export default class CombatManager {
     this.scene = scene;
     this.gameSync = gameSync;
     this.network = networkManager;
+    this.isShuttingDown = false;
     this.setupEvents();
   }
 
@@ -134,6 +135,7 @@ export default class CombatManager {
 
   // Handle player hit logic
   handlePlayerHit(data) {
+    if (this.isShuttingDown) return;
     // Find target player
     let targetPlayer;
     if (data.targetId === this.network.playerId) {
@@ -174,6 +176,7 @@ export default class CombatManager {
 
   // creates shockwave for remote player
   handleRemoteShockwave(data) {
+    if (this.isShuttingDown) return;
     console.log('Handling remote shockwave creation from player:', data.playerId);
     
     const remotePlayer = this.gameSync.remotePlayers.get(data.playerId);
@@ -207,6 +210,7 @@ export default class CombatManager {
   
   // handle remote herowave creation
   handleRemoteHerowave(data) {
+    if (this.isShuttingDown) return;
     console.log('Handling remote herowave creation from player:', data.playerId);
     
     const remotePlayer = this.gameSync.remotePlayers.get(data.playerId);
@@ -232,6 +236,7 @@ export default class CombatManager {
   }
 
   handleRemoteHerowaveDestroyed(data) {
+    if (this.isShuttingDown) return;
     const remotePlayer = this.gameSync.remotePlayers.get(data.playerId);
     if (remotePlayer && remotePlayer.herowave) {
       remotePlayer.destroyHerowave();
@@ -240,6 +245,7 @@ export default class CombatManager {
 
   // handle remote arrows
   handleRemoteArrow(data) {
+    if (this.isShuttingDown) return;
     console.log('Handling remote arrow creation from player:', data.playerId);
     
     const remotePlayer = this.gameSync.remotePlayers.get(data.playerId);
@@ -274,6 +280,7 @@ export default class CombatManager {
   }
   // Generic damage handler that all collision handlers can use
   handleCollisionDamage(attacker, target, damage, isLocalEvent = false) {
+    if (this.isShuttingDown) return;
     // Skip invincible targets
     if (target.isInvincible) return;
     
@@ -324,6 +331,7 @@ export default class CombatManager {
 
   // handle remote ninjawave creation
   handleRemoteNinjawave(data) {
+    if (this.isShuttingDown) return;
     console.log('Handling remote ninjawave creation from player:', data.playerId);
     
     const remotePlayer = this.gameSync.remotePlayers.get(data.playerId);
@@ -357,6 +365,7 @@ export default class CombatManager {
 
   // handle remote fireball creation
   handleRemoteFireball(data) {
+    if (this.isShuttingDown) return;
       console.log('Handling remote fireball creation from player:', data.playerId);
       
       const remotePlayer = this.gameSync.remotePlayers.get(data.playerId);
@@ -389,6 +398,7 @@ export default class CombatManager {
   }
 
   handlePlayerDeath(data) {
+    if (this.isShuttingDown) return;
     // Get the player who died
     let deadPlayer;
     if (data.id === this.network.playerId) {
