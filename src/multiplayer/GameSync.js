@@ -54,7 +54,7 @@ export default class GameSync {
     });
     // Handle player updates
     this.network.on('playerUpdated', (data) => {
-      //console.log(`Got update for player ${data.id}: x=${data.x}, y=${data.y}`);
+      console.log(`Got update for player ${data.id}: x=${data.x}, y=${data.y}`);
       this.updateRemotePlayer(data);
     });
 

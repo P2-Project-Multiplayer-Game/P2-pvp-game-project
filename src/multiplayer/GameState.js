@@ -13,7 +13,15 @@ export default class GameState {
             
             // Convert network ranking data to player objects
             const playerRankings = [];
-            
+            // Check if gameSync exists before trying to use it
+            if (!this.gameSync) {
+                console.warn('GameSync is undefined during game over. Using fallback transition.');
+                // Fallback: Just transition to GameOver with the raw ranking data
+                this.scene.scene.start('GameOver', { 
+                    rawRankings: data.rankings
+                });
+                return;
+            }
             // Process each ranked player
             data.rankings.forEach(rankedPlayer => {
                 let playerObj;
