@@ -183,6 +183,8 @@ io.on('connection', (socket) => {
       
       // Wait 3 seconds then actually start the game
       setTimeout(() => {
+        // Clear the countdown reference now that it's done
+        lobbiesWithCountdown.delete(player.roomId);
         // Clear used spawn points for fresh game
         usedSpawnPoints.length = 0;
         
