@@ -5,6 +5,7 @@ import { Lobby } from './scenes/Lobby.js';
 import { Game } from './scenes/Game.js';
 import { GameOver } from './scenes/GameOver.js';
 import { Preloader } from './scenes/Preloader.js';
+import { Tutorial } from './scenes/Tutorial.js';
 
 const config = {
     type: Phaser.AUTO,
@@ -29,6 +30,7 @@ const config = {
         Preloader,
         CharacterSelector,
         Lobby,
+        Tutorial,
         Game,
         GameOver
     ]
