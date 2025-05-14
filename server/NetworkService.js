@@ -1,6 +1,6 @@
-// client side Socket.IO code
+
 class NetworkService {
-  constructor() {
+    constructor() {
         this.networkManager = null;
         this.initialized = false;
     }
@@ -8,21 +8,26 @@ class NetworkService {
     getNetworkManager() {
         return this.networkManager;
     }
-  
-    initialize() {
-        if (this.initialized) return Promise.resolve(this.networkManager);
-        
-        // Create new NetworkManager if one doesn't exist
-        const NetworkManager = require('../multiplayer/NetworkManager.js').default;
+
+    async initialize() {
+    if (this.initialized) return Promise.resolve(this.networkManager);
+
+    try {
+        // Dynamic import (works in modern browsers)
+        const NetworkManagerModule = await import('../multiplayer/NetworkManager.js');
+        const NetworkManager = NetworkManagerModule.default;
+
         this.networkManager = new NetworkManager();
-        
+
         // Connect and mark as initialized
-        return this.networkManager.connect()
-            .then(data => {
-                this.initialized = true;
-                console.log('NetworkService initialized with ID:', data.id);
-                return this.networkManager;
-            });
+        const data = await this.networkManager.connect();
+        this.initialized = true;
+        console.log('NetworkService initialized with ID:', data.id);
+        return this.networkManager;
+    } catch (error) {
+        console.error('Failed to initialize NetworkService:', error);
+        throw error;
+    }
     }
 }
 
