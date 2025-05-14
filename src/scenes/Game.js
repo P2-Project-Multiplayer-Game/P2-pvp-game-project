@@ -18,28 +18,6 @@ export class Game extends Phaser.Scene {
         this.playersRanking = []; // Will store players in rank order
     }
 
-    getRandomSpawnPoint() {
-    // Filter out already used spawn points
-    const availablePoints = this.spawnPoints.filter(
-        point => !this.usedSpawnPoints.some(used => 
-        used.x === point.x && used.y === point.y
-        )
-    );
-  
-  // If all spawn points are used, reset and use any
-  if (availablePoints.length === 0) {
-    this.usedSpawnPoints = [];
-    return this.spawnPoints[Math.floor(Math.random() * this.spawnPoints.length)];
-  }
-  
-  // Get random available point
-  const randomPoint = availablePoints[Math.floor(Math.random() * availablePoints.length)];
-  
-  // Mark as used
-  this.usedSpawnPoints.push(randomPoint);
-  
-  return randomPoint;
-}
     init(data) {
         this.selectedCharacter = data.character || 'tank';
     }
