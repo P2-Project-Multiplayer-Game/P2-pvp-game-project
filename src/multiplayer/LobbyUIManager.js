@@ -54,7 +54,7 @@ export default class LobbyUIManager {
                 playersReady: data.players.filter(p => p.isReady).length
             });
             */
-            //this.initializeLobbyPlayers(data.players);
+            this.initializeLobbyPlayers(data.players);
         });
     }
 
