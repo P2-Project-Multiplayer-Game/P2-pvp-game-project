@@ -336,31 +336,31 @@ export class Game extends Phaser.Scene {
                 console.log('Setting up game with short delay to ensure proper synchronization');
                 
                 // Use a delayed call to give networking time to stabilize
-                this.time.delayedCall(200, () => {
-                    // Create game managers
-                    this.gameSync = new GameSync(this, this.networkManager);
-                    this.gameSync.setLocalPlayer(this.player1);
-                    
-                    this.combatManager = new CombatManager(this, this.gameSync, this.networkManager);
-                    this.healthDisplayManager = new HealthDisplayManager(this, this.gameSync, this.networkManager);
-                    this.uiManager = new UIManager(this, this.gameSync, this.networkManager);
-                    this.gameState = new GameState(this, this.networkManager, this.gameSync);
-                    
-                    // Join game AFTER everything is set up
-                    /*
-                    this.networkManager.joinGame({
-                        x: this.player1.x,
-                        y: this.player1.y,
-                        characterType: this.selectedCharacter,
-                        health: this.player1.health,
-                        fromLobby: true
-                    });
-                    */
-                    // Set up PvP collisions after joining
-                    this.time.delayedCall(100, () => {
-                        this.setupPvPCollisions();
-                    });
+                //this.time.delayedCall(200, () => {
+                // Create game managers
+                this.gameSync = new GameSync(this, this.networkManager);
+                this.gameSync.setLocalPlayer(this.player1);
+                
+                this.combatManager = new CombatManager(this, this.gameSync, this.networkManager);
+                this.healthDisplayManager = new HealthDisplayManager(this, this.gameSync, this.networkManager);
+                this.uiManager = new UIManager(this, this.gameSync, this.networkManager);
+                this.gameState = new GameState(this, this.networkManager, this.gameSync);
+                
+                // Join game AFTER everything is set up
+                /*
+                this.networkManager.joinGame({
+                    x: this.player1.x,
+                    y: this.player1.y,
+                    characterType: this.selectedCharacter,
+                    health: this.player1.health,
+                    fromLobby: true
                 });
+                */
+                // Set up PvP collisions after joining
+                this.time.delayedCall(100, () => {
+                    this.setupPvPCollisions();
+                });
+                //});
                 
                 // Clean up registry data after using it
                 this.registry.remove('lobbyPlayers');
