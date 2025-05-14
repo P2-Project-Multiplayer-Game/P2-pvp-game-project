@@ -60,7 +60,15 @@ export default class GameSync {
 
     // Handle new players joining
     this.network.on('playerJoined', (data) => {
+      // Prevent processing duplicates in rapid succession
+      if (this._lastJoinedPlayer === data.id && 
+          Date.now() - this._lastJoinedTime < 5000) {
+        return;
+      }
       console.log(`New player joined: ${data.id} as ${data.characterType || 'unknown'}`);
+      this.addRemotePlayer(data);
+      this._lastJoinedPlayer = data.id;
+      this._lastJoinedTime = Date.now();
       this.addRemotePlayer(data);
     });
     
