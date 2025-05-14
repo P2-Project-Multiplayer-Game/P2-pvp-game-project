@@ -180,21 +180,6 @@ export default class LobbyUIManager {
         // Play idle animation
         sprite.play(data.animKey);
         
-        // Add character name
-        const nameText = this.scene.add.text(
-            0, // Position will be set by repositionAllPlayers
-            SCREEN_HEIGHT * 0.85,
-            data.name,
-            {
-                fontSize: '28px',
-                fontFamily: 'monoSpace',
-                fontStyle: 'bold',
-                color: '#CFAF82',
-                stroke: '#000000',
-                strokeThickness: 4
-            }
-        ).setOrigin(0.5);
-        
         // Apply ready state if player is already ready
         if (playerData.isReady) {
             sprite.setTint(0x00ff00);

@@ -131,20 +131,6 @@ export class Lobby extends Phaser.Scene {
         // Play idle animation
         this.characterSprite.play(data.animKey);
 
-        // Add character name - positioning below character
-        this.add.text(
-            SCREEN_WIDTH / 2,
-            SCREEN_HEIGHT * 0.85, // Adjusted to match screenshot
-            data.name,
-            {
-                fontSize: '28px',
-                fontFamily: 'monoSpace',
-                fontStyle: 'bold',
-                color: '#CFAF82',
-                stroke: '#000000',
-                strokeThickness: 4
-            }
-        ).setOrigin(0.5);
     }
     toggleReady() {
         // Toggle ready state
