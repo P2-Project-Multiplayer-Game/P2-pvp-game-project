@@ -8,6 +8,7 @@ export default class HealthDisplayManager {
             { x: 20, y: 0, origin: { x: 0, y: 0 } },           // Top left
             { x: this.scene.scale.width - 20, y: 0, origin: { x: 1, y: 0 } },            // Top right
             { x: 20, y: this.scene.scale.height - 5, origin: { x: 0, y: 1 } },           // Bottom left
+            { x: this.scene.scale.width / 2, y: this.scene.scale.height - 5, origin: { x: 0.5, y: 1 } }, // Bottom center (5th player)
             { x: this.scene.scale.width - 20, y: this.scene.scale.height - 5, origin: { x: 1, y: 1 } }  // Bottom right
         ];
         this.usedCorners = new Map(); // Maps playerId -> corner index
