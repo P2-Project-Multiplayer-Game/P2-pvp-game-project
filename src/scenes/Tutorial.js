@@ -4,7 +4,6 @@ import { NinjaCharacter } from '../gameObjects/NinjaCharacter.js';
 import { ArcherCharacter } from '../gameObjects/ArcherCharacter.js';
 import { HeroCharacter } from '../gameObjects/HeroCharacter.js';
 import { SkeletonCharacter } from '../gameObjects/SkeletonCharacter.js';
-import { UIAnimations } from '../utils/UIAnimations.js';
 
 export class Tutorial extends Phaser.Scene {
     constructor() {
@@ -91,12 +90,8 @@ export class Tutorial extends Phaser.Scene {
                         
                         image.setScale(scale);
                     }
-                } else {
-                    console.warn(`No valid image key for background object: ${object.name}, gid: ${object.gid}`);
                 }
             });
-        } else {
-            console.warn('Background layer not found in tilemap');
         }
 
         // Create ground layer and set collisions
@@ -165,8 +160,8 @@ export class Tutorial extends Phaser.Scene {
         // Set up fireball collisions
         this.physics.add.collider(this.fireballs, ground);
 
-        // Create dummy targets for practice
-        this.createDummyTargets();
+        // Create dummy target for practice
+        this.createDummyTargets(ground, platforms);
 
         // Set up collision between player and environment
         this.physics.add.collider(this.player, ground);
@@ -176,40 +171,37 @@ export class Tutorial extends Phaser.Scene {
         this.physics.world.setBounds(0, 0, scaledWidth, scaledHeight);
         this.cameras.main.setBounds(0, 0, scaledWidth, scaledHeight);
         
-        // Add tutorial instructions
+        // Add tutorial instructions - positioned to avoid overlap
         this.createTutorialText();
-        
-        // Create battle intro animation
-        UIAnimations.createBattleIntro(this, () => {
-            console.log("Tutorial intro complete");
-        });
     }
     
-    createDummyTargets() {
-        // Create a primary practice dummy
-        this.dummyTarget = this.physics.add.sprite(300, 480, 'tank_idle');
+    createDummyTargets(ground, platforms) {
+        // Create practice dummy at a visible position
+        this.dummyTarget = this.physics.add.sprite(400, 450, 'tank_idle');
         this.dummyTarget.setImmovable(true);
-        this.dummyTarget.health = 100;
-        this.dummyTarget.maxHealth = 100;
+        this.dummyTarget.health = 9999;
+        this.dummyTarget.maxHealth = 9999;
         this.dummyTarget.characterType = 'dummy';
+        this.dummyTarget.setTint(0xaaaaaa); // Gray tint to distinguish from player
         
         // Add floating health text for the dummy target
         this.dummyHealthBar = this.add.text(
             this.dummyTarget.x, 
-            this.dummyTarget.y - 40, 
+            this.dummyTarget.y - 50, 
             `${this.dummyTarget.health} HP`, 
             {
                 fontFamily: 'Arial',
                 fontSize: 17,
                 color: '#00ff00',
                 stroke: '#000000',
-                strokeThickness: 1,
+                strokeThickness: 2,
                 align: 'center'
             }
         ).setOrigin(0.5, 0.5).setDepth(10);
         
-        // Set up collision between dummy and ground
-        this.physics.add.collider(this.dummyTarget, this.ground);
+        // Set up collision between dummy and ground layers
+        this.physics.add.collider(this.dummyTarget, ground);
+        this.physics.add.collider(this.dummyTarget, platforms);
         
         // Set up attack collisions with dummy target
         this.setupDummyCollisions();
@@ -272,38 +264,40 @@ export class Tutorial extends Phaser.Scene {
     }
     
     createTutorialText() {
-        // Instructions text
+        // Instructions text - positioned on the right side to avoid overlap
         const instructions = [
             "Welcome to the Tutorial!",
             "",
             "Controls:",
-            "- WASD: Move and Jump",
-            "- Left Click: Basic Attack",
-            "- Right Click: Special Attack",
+            "- WASD or ARROW KEYS: Move and Jump",
+            "- LEFT CLICK: Basic Attack",
+            "- RIGHT CLICK: Special Attack",
             "",
-            "Practice your attacks on the dummy target."
+            "Practice your attacks on the target dummy"
         ];
         
-        this.add.text(20, 20, instructions.join('\n'), {
+        // Position instructions on the right side
+        this.add.text(SCREEN_WIDTH - 300, 80, instructions.join('\n'), {
             fontFamily: 'Arial',
             fontSize: 18,
             color: '#ffffff',
             stroke: '#000000',
-            strokeThickness: 3
-        });
+            strokeThickness: 3,
+            align: 'left'
+        }).setOrigin(0, 0);
         
         // Add text to show damage dealt
-        this.damageText = this.add.text(20, 200, "", {
+        this.damageText = this.add.text(SCREEN_WIDTH/2, SCREEN_HEIGHT - 100, "", {
             fontFamily: 'Arial',
-            fontSize: 20,
+            fontSize: 24,
             color: '#ffff00',
             stroke: '#000000',
             strokeThickness: 3
-        });
+        }).setOrigin(0.5);
     }
 
     handleHitboxCollision(target, hitbox) {
-        // Skip if target is already hit or invulnerable
+        // Skip if target is already hit
         if (hitbox.hitTargets && hitbox.hitTargets.has(target)) {
             return;
         }
@@ -317,46 +311,54 @@ export class Tutorial extends Phaser.Scene {
         const attacker = hitbox.owner;
         
         // Get damage from the hitbox
-        const damage = hitbox.damage || attacker.attackDamage;
+        const damage = hitbox.damage || (attacker ? attacker.attackDamage : 10);
         
         // Apply damage
         this.applyDamageToTarget(target, damage, attacker);
     }
 
     handleShockwaveCollision(target, shockwave) {
-        if (shockwave.active && target.active) {
+        if (shockwave && shockwave.active && target && target.active) {
             const damage = shockwave.damage || (shockwave.owner ? shockwave.owner.attack2Damage : 10);
             this.applyDamageToTarget(target, damage, shockwave.owner);
-            shockwave.owner.destroyShockwave();
+            if (shockwave.owner && shockwave.owner.destroyShockwave) {
+                shockwave.owner.destroyShockwave();
+            }
         }
     }
 
     handleHerowaveCollision(target, herowave) {
-        if (herowave.active && target.active) {
+        if (herowave && herowave.active && target && target.active) {
             const damage = herowave.damage || (herowave.owner ? herowave.owner.attack2Damage : 30);
             this.applyDamageToTarget(target, damage, herowave.owner);
-            herowave.owner.destroyHerowave();
+            if (herowave.owner && herowave.owner.destroyHerowave) {
+                herowave.owner.destroyHerowave();
+            }
         }
     }
 
     handleNinjawaveCollision(target, ninjawave) {
-        if (ninjawave.active && target.active) {
+        if (ninjawave && ninjawave.active && target && target.active) {
             const damage = ninjawave.damage || (ninjawave.owner ? ninjawave.owner.attack2Damage : 10);
             this.applyDamageToTarget(target, damage, ninjawave.owner);
-            ninjawave.owner.destroyNinjawave();
+            if (ninjawave.owner && ninjawave.owner.destroyNinjawave) {
+                ninjawave.owner.destroyNinjawave();
+            }
         }
     }
 
     handleArrowCollision(target, arrow) {
-        if (arrow.active && target.active) {
+        if (arrow && arrow.active && target && target.active) {
             const damage = arrow.damage || (arrow.owner ? arrow.owner.attack2Damage : 10);
             this.applyDamageToTarget(target, damage, arrow.owner);
-            arrow.owner.destroyArrow();
+            if (arrow.owner && arrow.owner.destroyArrow) {
+                arrow.owner.destroyArrow();
+            }
         }
     }
 
     handleFireballCollision(target, fireball) {
-        if (fireball.active && target.active) {
+        if (fireball && fireball.active && target && target.active) {
             if (fireball.hitTargets && fireball.hitTargets.has(target)) {
                 return;
             }
@@ -366,7 +368,9 @@ export class Tutorial extends Phaser.Scene {
             
             const damage = fireball.damage || (fireball.owner ? fireball.owner.attack2Damage : 10);
             this.applyDamageToTarget(target, damage, fireball.owner);
-            fireball.owner.destroyFireball();
+            if (fireball.owner && fireball.owner.destroyFireball) {
+                fireball.owner.destroyFireball();
+            }
         }
     }
 
@@ -404,14 +408,16 @@ export class Tutorial extends Phaser.Scene {
 
     update() {
         // Update player
-        this.player.update();
+        if (this.player) {
+            this.player.update();
+        }
         
         // Update dummy target health bar
         if (this.dummyTarget && this.dummyTarget.active) {
             // Position the health text above the dummy target
             this.dummyHealthBar.setPosition(
                 this.dummyTarget.x, 
-                this.dummyTarget.y - 40
+                this.dummyTarget.y - 50
             );
             
             // Update health text
