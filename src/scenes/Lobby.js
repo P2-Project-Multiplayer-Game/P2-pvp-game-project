@@ -18,52 +18,6 @@ export class Lobby extends Phaser.Scene {
     }
 
     create() {
-        this.networkManager.on('joinRejected', (data) => {
-        // Create a rejection message popup
-        const rejectPopup = this.add.container(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
-        
-        // Background for the popup
-        const popupBg = this.add.rectangle(0, 0, 400, 200, 0x000000, 0.8)
-            .setOrigin(0.5);
-        rejectPopup.add(popupBg);
-        
-        // Error message text
-        const message = this.add.text(0, -20, 'Cannot join game:', {
-            fontSize: '24px',
-            fontFamily: 'monoSpace',
-            color: '#FF0000'
-        }).setOrigin(0.5);
-        rejectPopup.add(message);
-        
-        // Reason text
-        const reason = this.add.text(0, 20, data.reason, {
-            fontSize: '20px',
-            fontFamily: 'monoSpace',
-            color: '#FFFFFF'
-        }).setOrigin(0.5);
-        rejectPopup.add(reason);
-        
-        // Back button
-        const backButton = this.add.text(0, 70, 'Back to Menu', {
-            fontSize: '18px',
-            fontFamily: 'monoSpace',
-            color: '#CFAF82',
-            backgroundColor: '#333333',
-            padding: { x: 10, y: 5 }
-        })
-        .setOrigin(0.5)
-        .setInteractive({ useHandCursor: true });
-        
-        backButton.on('pointerdown', () => {
-            // Return to main menu or character select
-            this.scene.start('CharacterSelector');
-        });
-        
-        rejectPopup.add(backButton);
-        
-        // Add to scene with high depth
-        rejectPopup.setDepth(100);
-        });
         // Add background
         this.add.image(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 'menu_background')
             .setOrigin(0.5, 0.57)
