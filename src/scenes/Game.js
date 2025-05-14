@@ -369,7 +369,7 @@ export class Game extends Phaser.Scene {
                     this.tweens.add({
                         targets: this.fadeOverlay,
                         alpha: 0,
-                        duration: 10000, // Slightly longer duration for smoother effect
+                        duration: 30000, // Slightly longer duration for smoother effect
                         ease: 'Linear',
                         onComplete: () => this.fadeOverlay.destroy()
                     });
