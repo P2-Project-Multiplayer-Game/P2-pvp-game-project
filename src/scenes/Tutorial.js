@@ -277,7 +277,7 @@ export class Tutorial extends Phaser.Scene {
         ];
         
         // Position instructions on the right side
-        this.add.text(SCREEN_WIDTH - 300, 80, instructions.join('\n'), {
+        this.add.text(SCREEN_WIDTH - 400, 80, instructions.join('\n'), {
             fontFamily: 'Arial',
             fontSize: 18,
             color: '#ffffff',
