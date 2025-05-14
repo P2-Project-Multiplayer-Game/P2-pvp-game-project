@@ -207,7 +207,27 @@ export default class NetworkManager {
       health: playerData.health || 100
     });
   }
-  
+
+  syncPlayerPosition(playerData) {
+    if (!this.connected) return;
+    
+    //send a position update instead off rejoining the game
+    this.sendPlayerUpdate(
+      playerData.x,
+      playerData.y,
+      {
+        animation: 'turn',
+        facing: 'right',
+        player: {
+          characterType: playerData.characterType,
+          health: playerData.health,
+          attack1OnCooldown: false,
+          attack2OnCooldown: false
+        }
+      }
+    );
+  }
+
   sendPlayerReadyToggle(isReady) {
     if (!this.connected) return;
     this.socket.emit('player_ready_toggle', { isReady });

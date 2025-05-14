@@ -114,24 +114,34 @@ export default class GameSync {
     
     console.log(`Creating remote player ${playerData.id} as ${playerData.characterType || 'tank'}`);
     
+    // Get a random spawn point if no position provided
+    let spawnX = playerData.x;
+    let spawnY = playerData.y;
+
+    if (!spawnX || !spawnY) {
+      const spawnPoint = this.scene.getRandomSpawnPoint();
+      spawnX = spawnPoint.x;
+      spawnY = spawnPoint.y;
+    }
+  
     // Create the correct character type based on data from server
     let remotePlayer;
     switch (playerData.characterType) {
       case 'ninja':
-        remotePlayer = new NinjaCharacter(this.scene, playerData.x, playerData.y);
+        remotePlayer = new NinjaCharacter(this.scene, spawnX, spawnY);
         break;
       case 'archer':
-        remotePlayer = new ArcherCharacter(this.scene, playerData.x, playerData.y);
+        remotePlayer = new ArcherCharacter(this.scene, spawnX, spawnY);
         break;
       case 'hero':
-        remotePlayer = new HeroCharacter(this.scene, playerData.x, playerData.y);
+        remotePlayer = new HeroCharacter(this.scene, spawnX, spawnY);
         break;
       case 'skeleton':
-        remotePlayer = new SkeletonCharacter(this.scene, playerData.x, playerData.y);
+        remotePlayer = new SkeletonCharacter(this.scene, spawnX, spawnY);
         break;
       case 'tank':
       default:
-        remotePlayer = new TankCharacter(this.scene, playerData.x, playerData.y);
+        remotePlayer = new TankCharacter(this.scene, spawnX, spawnY);
     }
 
     remotePlayer.body.setAllowGravity(false);

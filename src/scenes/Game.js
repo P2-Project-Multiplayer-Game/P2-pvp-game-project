@@ -17,7 +17,42 @@ export class Game extends Phaser.Scene {
         this.networkManager = null;
         this.playersRanking = []; // Will store players in rank order
     }
+    // Define spawn points    
+    spawnPoints = [
+    { x: 100, y: 480 },  // Left side
+    { x: 400, y: 480 },  // Middle-left
+    { x: 700, y: 480 },  // Middle
+    { x: 1000, y: 480 }, // Middle-right
+    { x: 1300, y: 480 }, // Right side
+    { x: 250, y: 250 },  // Upper platforms
+    { x: 850, y: 250 }   // Upper platforms
+    ];
 
+    // Track used spawn points
+    usedSpawnPoints = [];
+
+    getRandomSpawnPoint() {
+    // Filter out already used spawn points
+    const availablePoints = this.spawnPoints.filter(
+        point => !this.usedSpawnPoints.some(used => 
+        used.x === point.x && used.y === point.y
+        )
+    );
+  
+  // If all spawn points are used, reset and use any
+  if (availablePoints.length === 0) {
+    this.usedSpawnPoints = [];
+    return this.spawnPoints[Math.floor(Math.random() * this.spawnPoints.length)];
+  }
+  
+  // Get random available point
+  const randomPoint = availablePoints[Math.floor(Math.random() * availablePoints.length)];
+  
+  // Mark as used
+  this.usedSpawnPoints.push(randomPoint);
+  
+  return randomPoint;
+}
     init(data) {
         this.selectedCharacter = data.character || 'tank';
     }
@@ -118,24 +153,25 @@ export class Game extends Phaser.Scene {
 
         this.playersInMatch = [];
         this.playersRanking = [];
+        
+        // Get random spawn point
+        const spawnPoint = this.getRandomSpawnPoint();
 
-        // Create player 1
-        // Selecting character based on the key passed from CharacterSelector.js
+        // Create player at random position
         if (this.selectedCharacter === 'tank') {
-            this.player1 = new TankCharacter(this, PLAYER1_SPAWN_X, PLAYER1_SPAWN_Y);
+            this.player1 = new TankCharacter(this, spawnPoint.x, spawnPoint.y);
         } else if (this.selectedCharacter === 'ninja') {
-            this.player1 = new NinjaCharacter(this, PLAYER1_SPAWN_X, PLAYER1_SPAWN_Y);
+            this.player1 = new NinjaCharacter(this, spawnPoint.x, spawnPoint.y);
         } else if (this.selectedCharacter === 'hero') {
-            this.player1 = new HeroCharacter(this, PLAYER1_SPAWN_X, PLAYER1_SPAWN_Y);
+            this.player1 = new HeroCharacter(this, spawnPoint.x, spawnPoint.y);
         } else if (this.selectedCharacter === 'archer') {
-            this.player1 = new ArcherCharacter(this, PLAYER1_SPAWN_X, PLAYER1_SPAWN_Y);
+            this.player1 = new ArcherCharacter(this, spawnPoint.x, spawnPoint.y);
         } else if (this.selectedCharacter === 'skeleton') {
-            this.player1 = new SkeletonCharacter(this, PLAYER1_SPAWN_X, PLAYER1_SPAWN_Y);
+            this.player1 = new SkeletonCharacter(this, spawnPoint.x, spawnPoint.y);
         } else {
             // Fall back to tank as default
-            this.player1 = new TankCharacter(this, PLAYER1_SPAWN_X, PLAYER1_SPAWN_Y);
+            this.player1 = new TankCharacter(this, spawnPoint.x, spawnPoint.y);
         }
-
         this.playersInMatch.push(this.player1);
 
         // Create shockwave group with no gravity
@@ -326,11 +362,11 @@ export class Game extends Phaser.Scene {
                 this.gameState = new GameState(this, this.networkManager, this.gameSync);
 
                 // Join the game after successful connection
-                this.networkManager.joinGame({
+                this.networkManager.syncPlayerPosition({
                     x: this.player1.x,
                     y: this.player1.y,
-                    characterType: this.selectedCharacter, 
-                    health: this.player1.health 
+                    characterType: this.selectedCharacter,
+                    health: this.player1.health
                 });
 
                 this.setupPvPCollisions();
