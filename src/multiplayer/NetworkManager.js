@@ -54,6 +54,11 @@ export default class NetworkManager {
           console.log('Disconnected from server');
         });
 
+        this.socket.on('join_rejected', (data) => {
+          console.log('Join request rejected:', data.reason);
+          this.triggerEvent('joinRejected', data);
+        });
+        
         this.socket.on('lobby_status_update', (data) => {
           console.log('Received lobby status update:', data);
           this.triggerEvent('lobbyStatusUpdate', data);
