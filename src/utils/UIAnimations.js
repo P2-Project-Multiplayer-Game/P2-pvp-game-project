@@ -44,6 +44,7 @@ export class UIAnimations {
             yoyo: true,
             repeat: 2,  // Blink a few times
             onComplete: () => {
+                battleText.destroy();
                 // Keep screen black for less then a seconds total, then fade out quickly
                 scene.time.delayedCall(400, () => {
                     // Start the fade transition - quick fade out
@@ -53,7 +54,6 @@ export class UIAnimations {
                         duration: 270,  // Quick fade out (less than 1 second)
                         ease: 'Cubic.easeOut',  // Smoother fade transition
                         onComplete: () => {
-                            battleText.destroy();
                             fadeOverlay.destroy(); 
                             if (onComplete) onComplete();
                         }
