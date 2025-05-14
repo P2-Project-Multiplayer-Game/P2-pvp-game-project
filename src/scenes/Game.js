@@ -10,7 +10,7 @@ import CombatManager from '../multiplayer/CombatManager.js';
 import HealthDisplayManager from '../multiplayer/HealthDisplayManager.js';
 import UIManager from '../multiplayer/UIManager.js'; 
 import GameState from '../multiplayer/GameState.js';
-import NetworkService from '../../server/NetworkService.js';
+import NetworkService from '../services/NetworkService.js';
 export class Game extends Phaser.Scene {
     constructor() {
         super('Game');
@@ -319,20 +319,13 @@ export class Game extends Phaser.Scene {
                 this.networkManager = networkManager;
                 console.log('Using NetworkManager with ID:', this.networkManager.playerId);
                 
-                // Create managers
-                this.gameSync = new GameSync(this, this.networkManager);
-                this.gameSync.setLocalPlayer(this.player1);
-                
-                this.combatManager = new CombatManager(this, this.gameSync, this.networkManager);
-                this.healthDisplayManager = new HealthDisplayManager(this, this.gameSync, this.networkManager);
-                this.uiManager = new UIManager(this, this.gameSync, this.networkManager);
-                this.gameState = new GameState(this, this.networkManager, this.gameSync);
-                
-                // Get spawn position from registry if coming from lobby
+                // IMPORTANT: Get spawn position from registry first if coming from lobby
                 let spawnPosition = { x: this.player1.x, y: this.player1.y };
                 
                 if (fromLobby) {
                     const lobbyPlayers = this.registry.get('lobbyPlayers');
+                    console.log('Players from lobby:', lobbyPlayers);
+                    
                     const myPlayerData = lobbyPlayers.find(p => p.id === this.networkManager.playerId);
                     
                     if (myPlayerData) {
@@ -340,23 +333,41 @@ export class Game extends Phaser.Scene {
                         console.log('Using spawn position from lobby:', spawnPosition);
                     }
                     
-                    // Clear the fromLobby flag after using it
-                    this.registry.remove('fromLobby');
+                    // Position player at spawn point before creating GameSync
+                    this.player1.x = spawnPosition.x;
+                    this.player1.y = spawnPosition.y;
                 }
                 
-                // Position player at spawn point
-                this.player1.x = spawnPosition.x;
-                this.player1.y = spawnPosition.y;
+                // Create GameSync with the properly positioned player
+                this.gameSync = new GameSync(this, this.networkManager);
+                this.gameSync.setLocalPlayer(this.player1);
                 
-                // Sync player position
-                this.networkManager.syncPlayerPosition({
+                // Create other managers
+                this.combatManager = new CombatManager(this, this.gameSync, this.networkManager);
+                this.healthDisplayManager = new HealthDisplayManager(this, this.gameSync, this.networkManager);
+                this.uiManager = new UIManager(this, this.gameSync, this.networkManager);
+                this.gameState = new GameState(this, this.networkManager, this.gameSync);
+                
+                // IMPORTANT: After everything is set up, explicitly join the game
+                // This will trigger gameJoined event and add remote players
+                this.networkManager.joinGame({
                     x: this.player1.x,
                     y: this.player1.y,
                     characterType: this.selectedCharacter,
-                    health: this.player1.health
+                    health: this.player1.health,
+                    fromLobby: fromLobby
                 });
                 
-                this.setupPvPCollisions();
+                // Set up PvP collisions after all players are loaded
+                this.time.delayedCall(100, () => {
+                    this.setupPvPCollisions();
+                });
+                
+                // Manually clear the fromLobby flag after using it
+                if (fromLobby) {
+                    this.registry.remove('fromLobby');
+                    this.registry.remove('lobbyPlayers');
+                }
             })
             .catch(err => {
                 console.error('Failed to get network manager:', err);

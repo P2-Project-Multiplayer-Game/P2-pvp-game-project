@@ -27,18 +27,30 @@ export default class GameSync {
     this.network.on('gameJoined', (data) => {
       console.log('Joined game room:', data.roomId);
       console.log('Got these players from server:', data.players);
+
+      // Check if we're coming from lobby to avoid duplicate players
+      const fromLobby = this.scene.registry.get('fromLobby');
+      const lobbyPlayers = fromLobby ? this.scene.registry.get('lobbyPlayers') || [] : [];
+
+      // Store player IDs we've already processed from lobby transition
+      const processedPlayers = new Set();
+      // First, process lobby players if coming from lobby
+      if (fromLobby && lobbyPlayers.length > 0) {
+        console.log('Processing players from lobby transition:', lobbyPlayers.length);
+        
+        lobbyPlayers.forEach(player => {
+          if (player.id === this.network.playerId) return; // Skip local player
+          
+          console.log(`Creating remote player from lobby: ${player.id} at (${player.x}, ${player.y})`);
+          this.addRemotePlayer(player);
+          processedPlayers.add(player.id);
+        });
+      }
       
-      // Show server is sending us player datas
+      // Then process any additional players from gameJoined that weren't in lobby data
       data.players.forEach(player => {
-        if (player.id !== this.network.playerId) {
-          console.log(`Found player ${player.id} at position x=${player.x}, y=${player.y}`);
-          
-          // Skip adding player if we're coming from lobby and they're flagged
-          if (player.fromLobby && this.scene.registry.get('fromLobby')) {
-            console.log(`Skipping duplicate player ${player.id} from lobby`);
-            return;
-          }
-          
+        if (player.id !== this.network.playerId && !processedPlayers.has(player.id)) {
+          console.log(`Creating remote player from gameJoined: ${player.id}`);
           this.addRemotePlayer(player);
         }
       });
@@ -114,13 +126,18 @@ export default class GameSync {
   
   // Add a remote player
   addRemotePlayer(playerData) {
-    // Skip if this is the local player or if already exists
-    if (playerData.id === this.network.playerId) return;
+    // Skip if this is the local player
+    if (playerData.id === this.network.playerId) {
+        console.log(`Skipping local player creation: ${playerData.id}`);
+        return;
+    }
+
+    // Check if remote player already exists
     if (this.remotePlayers.has(playerData.id)) {
         console.log(`Remote player ${playerData.id} already exists, skipping`);
         return;
     }
-    
+
     console.log(`Creating remote player ${playerData.id} as ${playerData.characterType || 'tank'}`);
     
     // Get a random spawn point if no position provided
@@ -163,7 +180,9 @@ export default class GameSync {
     
     this.remotePlayers.set(playerData.id, remotePlayer);
     console.log(`Created remote player ${playerData.id} with gravity disabled`);
-    
+    // Add to map
+    this.remotePlayers.set(playerData.id, remotePlayer);
+    console.log(`Current remote players: ${Array.from(this.remotePlayers.keys()).join(', ')}`);
     // Setup PvP collisions - add this line
     this.scene.setupPvPCollisions();
   }
@@ -171,9 +190,27 @@ export default class GameSync {
   // Update a remote player
   updateRemotePlayer(data) {
     const remotePlayer = this.remotePlayers.get(data.id);
+    
     if (!remotePlayer) {
-      console.log(`Cant update player ${data.id} because they dont exist`);
-      return;
+        console.log(`Can't update player ${data.id} because they don't exist. Players in map: ${Array.from(this.remotePlayers.keys()).join(', ')}`);
+        
+        // If we get multiple updates for a player that doesn't exist, try to re-fetch them
+        if (!this._pendingPlayerFetch) {
+            this._pendingPlayerFetch = true;
+            console.log(`Attempting to re-fetch player data for ${data.id}`);
+            
+            // Add a small delay to avoid spamming the server
+            setTimeout(() => {
+                this._pendingPlayerFetch = false;
+                this.network.joinGame({
+                    x: this.localPlayer.x,
+                    y: this.localPlayer.y,
+                    characterType: this.localPlayer.characterType,
+                    health: this.localPlayer.health
+                });
+            }, 1000);
+        }
+        return;
     }
     
     // Update players position
