@@ -47,7 +47,8 @@ export default class UIManager {
         this.network.on('playerJoined', (data) => {
             setTimeout(() => {
                 const player = this.gameSync.remotePlayers.get(data.id);
-                if (player) {
+                // Only create indicators if player exists AND we haven't already created them
+                if (player && !this.cooldownIndicators.has(data.id)) {
                     this.createPlayerCooldownIndicators(player);
                 }
             }, 200);
@@ -63,6 +64,11 @@ export default class UIManager {
         if (!player) return;
         
         const playerId = player.playerId || this.network.playerId;
+
+        // First remove any existing indicators for this player
+        if (this.cooldownIndicators.has(playerId)) {
+            this.removePlayerCooldownIndicators(playerId);
+        }
         
         // Define indicator configuration
         const indicatorConfig = {
