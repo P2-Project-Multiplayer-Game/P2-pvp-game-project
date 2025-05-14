@@ -10,3 +10,31 @@ export const SCREEN_HEIGHT = 600;
     // In Phaser (0,0) is the top left corner.
 export const PLAYER1_SPAWN_X = 100;
 export const PLAYER1_SPAWN_Y = 450;
+
+export const CHARACTER_DATA = {
+    'tank': {
+        textureKey: 'tank_idle',
+        animKey: 'tank_turn',
+        name: 'Tank'
+    },
+    'ninja': {
+        textureKey: 'ninja_idle',
+        animKey: 'ninja_turn',
+        name: 'Ninja'
+    },
+    'hero': {
+        textureKey: 'hero_idle',
+        animKey: 'hero_turn',
+        name: 'Hero'
+    },
+    'archer': {
+        textureKey: 'archer_idle',
+        animKey: 'archer_turn',
+        name: 'Archer'
+    },
+    'skeleton': {
+        textureKey: 'skeleton_idle',
+        animKey: 'skeleton_turn',
+        name: 'Skeleton'
+    }
+};
