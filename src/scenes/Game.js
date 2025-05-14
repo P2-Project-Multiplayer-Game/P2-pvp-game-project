@@ -370,6 +370,24 @@ export class Game extends Phaser.Scene {
             });   
         // Debug: Log dummy grounded state and body position
         //console.log(`Dummy body: x=${this.dummyTarget.body.x}, y=${this.dummyTarget.body.y}, width=${this.dummyTarget.body.width}, height=${this.dummyTarget.body.height}`);
+        // 1) create a full-screen black overlay above everything
+        const fade = this.add.rectangle(
+        0, 0,
+        this.scale.width, this.scale.height,
+        0x000000
+        )
+        .setOrigin(0)
+        .setDepth(10000)   // ensure it’s on top
+        .setAlpha(1);
+
+        // 2) tween its alpha to 0 over half a second
+        this.tweens.add({
+        targets: fade,
+        alpha: 0,
+        duration: 500,
+        ease: 'Linear',
+        onComplete: () => fade.destroy()
+        });
     }   
     //needed logic for the pvp 
     setupPvPCollisions() {
