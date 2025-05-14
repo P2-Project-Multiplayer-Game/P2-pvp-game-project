@@ -32,6 +32,23 @@ export class CharacterSelector extends Phaser.Scene {
                 repeat: -1
             });
 
+        // new text for tutorial option
+        const pressSpaceText = this.add.text(SCREEN_WIDTH / 2, 210, 'PRESS SPACE TO TEST CHARACTER', {
+            fontSize: '18px',
+            color: '#D1B183',
+            stroke: '#000000',
+            strokeThickness: 4,
+            resolution: 1
+        }).setOrigin(0.5, -1);
+        
+        // blinking effect to the space text too
+        this.tweens.add({
+            targets: pressSpaceText,
+            alpha: { from: 1, to: 0 },
+            duration: 1250,
+            yoyo: true,
+            repeat: -1
+        });
         
         this.menuCharacters = [
             {
@@ -103,6 +120,7 @@ export class CharacterSelector extends Phaser.Scene {
         this.input.keyboard.on('keydown-LEFT',  () => this.changeCharacter(-1));
         this.input.keyboard.on('keydown-RIGHT', () => this.changeCharacter(1));
         this.input.keyboard.on('keydown-ENTER', () => this.startGame(this.menuCharacters[this.currentCharacterIndex].key));
+        this.input.keyboard.on('keydown-SPACE', () => this.startTutorial(this.menuCharacters[this.currentCharacterIndex].key));
     }
 
     displayCharacter() {
@@ -155,5 +173,8 @@ export class CharacterSelector extends Phaser.Scene {
 
     startGame(key) {
         this.scene.start('Lobby', { character: key });
+    }
+    startTutorial(key) {
+        this.scene.start('Tutorial', { character: key });
     }
 }

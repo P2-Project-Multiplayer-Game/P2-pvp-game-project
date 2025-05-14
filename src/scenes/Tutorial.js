@@ -20,6 +20,36 @@ export class Tutorial extends Phaser.Scene {
         const map = this.make.tilemap({ key: 'tilemap' });
         const tileset = map.addTilesetImage('oakwood', 'tiles');
 
+        // Add return to character selector text at the top
+        const returnText = this.add.text(
+            SCREEN_WIDTH / 2,
+            20,
+            'PRESS ENTER TO GO BACK TO CHARACTER SELECTOR',
+            {
+                fontFamily: 'Arial',
+                fontSize: '24px',
+                fontWeight: 'bold',
+                color: '#ffffff',
+                stroke: '#000000',
+                strokeThickness: 4,
+                align: 'center'
+            }
+        ).setOrigin(0.5, 0).setDepth(100);
+        
+        // Add blinking effect to make it more noticeable
+        this.tweens.add({
+            targets: returnText,
+            alpha: { from: 1, to: 0.5 },
+            duration: 1000,
+            yoyo: true,
+            repeat: -1
+        });
+        
+        // Add keyboard listener for return to character selector
+        this.input.keyboard.on('keydown-ENTER', () => {
+            this.scene.start('CharacterSelector');
+        });
+
         // Create background from object layer
         const backgroundLayer = map.getObjectLayer('Background');
         if (backgroundLayer) {
