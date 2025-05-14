@@ -26,18 +26,14 @@ export class Lobby extends Phaser.Scene {
             'WAITING FOR PLAYERS',
             {
                 fontSize: '32px',
-                fontStyle: 'bold',
+                fontFamily: 'monoSpace',
                 color: '#D1B183',
                 stroke: '#000000',
                 strokeThickness: 4
             }
         ).setOrigin(0.5);
         
-        // Ready status display
-        this.add.image(SCREEN_WIDTH / 2, SCREEN_HEIGHT * 0.2, 'selector_character_frame')
-            .setScale(0.5)
-            .setOrigin(0.5);
-        
+        // Ready status text - without the frame for now
         this.readyStatusText = this.add.text(
             SCREEN_WIDTH / 2,
             SCREEN_HEIGHT * 0.2,
@@ -51,16 +47,17 @@ export class Lobby extends Phaser.Scene {
         ).setOrigin(0.5);
 
         // Ready prompt at bottom
-        this.add.image(SCREEN_WIDTH / 2, SCREEN_HEIGHT * 0.9, 'blank_ui_board')
+        this.add.image(SCREEN_WIDTH / 2, SCREEN_HEIGHT * 0.922, 'blank_ui_board')
             .setScale(0.45, 0.35)
             .setOrigin(0.5);
 
         this.readyPromptText = this.add.text(
             SCREEN_WIDTH / 2,
-            SCREEN_HEIGHT * 0.9,
+            SCREEN_HEIGHT * 0.922,
             'Press ENTER to ready up',
             {
                 fontSize: '24px',
+                fontFamily: 'monoSpace',
                 color: '#CFAF82',
                 stroke: '#000000',
                 strokeThickness: 4
@@ -76,19 +73,19 @@ export class Lobby extends Phaser.Scene {
             repeat: -1
         });
 
-        // Add character display
-        this.displaySelectedCharacter();
-
-        // Add torch animations
+        // Add torch animations - positioned exactly like in CharacterSelector
         this.add.sprite(310, 410, 'torch').play('torch_burn').setScale(3.5);
         this.add.sprite(505, 410, 'torch').play('torch_burn').setScale(3.5);
+
+        // Add character display
+        this.displaySelectedCharacter();
 
         // Listen for Enter key to toggle ready status
         this.input.keyboard.on('keydown-ENTER', this.toggleReady, this);
     }
 
     displaySelectedCharacter() {
-        // Character display settings
+        // Character display settings - matching CharacterSelector
         const characterData = {
             'tank': {
                 textureKey: 'tank_idle',
@@ -119,10 +116,10 @@ export class Lobby extends Phaser.Scene {
 
         const data = characterData[this.selectedCharacter] || characterData.tank;
 
-        // Create character sprite
+        // Create character sprite - matching CharacterSelector position
         this.characterSprite = this.add.sprite(
             SCREEN_WIDTH / 2, 
-            SCREEN_HEIGHT * 0.5,
+            SCREEN_HEIGHT * 0.72, // Match CharacterSelector (was 0.5)
             data.textureKey
         )
         .setScale(2.5)
@@ -131,14 +128,14 @@ export class Lobby extends Phaser.Scene {
         // Play idle animation
         this.characterSprite.play(data.animKey);
 
-        // Add character name
+        // Add character name - positioning below character
         this.add.text(
             SCREEN_WIDTH / 2,
-            SCREEN_HEIGHT * 0.65,
+            SCREEN_HEIGHT * 0.85, // Adjusted to match screenshot
             data.name,
             {
                 fontSize: '28px',
-                fontFamily: 'monospace',
+                fontFamily: 'monoSpace',
                 fontStyle: 'bold',
                 color: '#CFAF82',
                 stroke: '#000000',
