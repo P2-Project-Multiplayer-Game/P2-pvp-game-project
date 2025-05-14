@@ -95,6 +95,8 @@ export class Lobby extends Phaser.Scene {
         NetworkService.initialize()
             .then(networkManager => {
                 this.networkManager = networkManager;
+                // Set current scene name
+                this.networkManager.setCurrentScene('Lobby');
                 console.log('Connected to server with ID:', this.networkManager.playerId);
 
                 this.lobbyUIManager = new LobbyUIManager(this, this.networkManager);

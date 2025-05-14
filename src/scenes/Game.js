@@ -317,6 +317,8 @@ export class Game extends Phaser.Scene {
         NetworkService.initialize()
             .then(networkManager => {
                 this.networkManager = networkManager;
+                // Set current scene name
+                this.networkManager.setCurrentScene('Game');
                 console.log('Using NetworkManager with ID:', this.networkManager.playerId);
                 
                 // IMPORTANT: Get spawn position from registry first if coming from lobby

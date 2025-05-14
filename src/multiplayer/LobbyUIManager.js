@@ -38,14 +38,9 @@ export default class LobbyUIManager {
     // Implementation methods
 
     updateLobbyStatus(data) {
-        // Check if we're still in the Lobby scene or if UI elements exist
-        if (this.scene.scene.key !== 'Lobby' || !this.scene.readyStatusText) {
-            return; // Skip update if not in Lobby scene or text doesn't exist
-        }
         // Store the values in the scene for reference
         this.scene.totalPlayers = data.totalPlayers;
         this.scene.readyPlayers = data.playersReady;
-        
         // Update the ready status text
         this.scene.readyStatusText.setText(`${data.playersReady} out of ${data.totalPlayers} players ready`);
         
