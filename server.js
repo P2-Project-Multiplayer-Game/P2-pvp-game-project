@@ -67,35 +67,51 @@ io.on('connection', (socket) => {
 
   // Handle player joining game
   socket.on('join_game', (playerData) => {
-    // all players join the default room as defined in the lobbyManager
+    // Check if player is already in a room
+    const existingPlayer = players.get(socket.id);
     const roomId = lobbyManager.getDefaultRoom();
+    const isNewJoin = !existingPlayer || existingPlayer.roomId !== roomId;
+
     socket.join(roomId);
-    
-    // Store player data with character type in the players map
-    const player = {
-      id: socket.id,
-      x: playerData.x || 100,
-      y: playerData.y || 100,
-      roomId: roomId,
-      characterType: playerData.characterType || 'tank',
-      health: playerData.health || 100,
-      isAlive: true,  
-      rank: null,
-      isReady: false      
-    };
-    
-    players.set(socket.id, player);
-    console.log(`Player ${socket.id} joined room ${roomId} as ${player.characterType}`);
+    if (isNewJoin) {
+      socket.join(roomId);
+      // Store player data with character type in the players map
+      const player = {
+        id: socket.id,
+        x: playerData.x || 100,
+        y: playerData.y || 100,
+        roomId: roomId,
+        characterType: playerData.characterType || 'tank',
+        health: playerData.health || 100,
+        isAlive: true,  
+        rank: null,
+        isReady: false      
+      };
+      
+      players.set(socket.id, player);
+      console.log(`Player ${socket.id} joined room ${roomId} as ${player.characterType}`);
 
-    // Add player to lobby manager
-    lobbyManager.addPlayer(roomId, socket.id, player);
+      // Add player to lobby manager
+      lobbyManager.addPlayer(roomId, socket.id, player);
 
-    // Notify other players in the same room that a new player has joined
-    socket.to(roomId).emit('player_joined', player);
+      // Notify other players in the same room that a new player has joined
+      socket.to(roomId).emit('player_joined', player);
+    } else {
+      // Just update player position and data if they're already in the room
+      const player = players.get(socket.id);
+      if (playerData.x !== undefined) player.x = playerData.x;
+      if (playerData.y !== undefined) player.y = playerData.y;
+      if (playerData.characterType) player.characterType = playerData.characterType;
+      if (playerData.health) player.health = playerData.health;
+      
+      console.log(`Player ${socket.id} updated data in room ${player.roomId}`);
+    }
 
     // Send current lobby status to all players
     io.to(roomId).emit('lobby_status_update', lobbyManager.getLobbyStatus(roomId));
     
+    // Send player health to others
+    const player = players.get(socket.id);
     socket.to(roomId).emit('player_health_update', {
       id: socket.id,
       health: player.health
