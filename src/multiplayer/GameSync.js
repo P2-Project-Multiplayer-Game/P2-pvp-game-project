@@ -27,25 +27,22 @@ export default class GameSync {
     this.network.on('gameJoined', (data) => {
       console.log('Joined game room:', data.roomId);
       console.log('Got these players from server:', data.players);
+      
+      // Get lobby players data and create remote players
+      const lobbyPlayers = this.scene.registry.get('lobbyPlayers') || [];
+      console.log('Processing players from lobby:', lobbyPlayers.length);
 
-      // Check if we're coming from lobby to avoid duplicate players
-      const fromLobby = this.scene.registry.get('fromLobby');
-      const lobbyPlayers = fromLobby ? this.scene.registry.get('lobbyPlayers') || [] : [];
-
-      // Store player IDs we've already processed from lobby transition
+      // Track processed players to avoid duplicates
       const processedPlayers = new Set();
-      // First, process lobby players if coming from lobby
-      if (fromLobby && lobbyPlayers.length > 0) {
-        console.log('Processing players from lobby transition:', lobbyPlayers.length);
+
+      // Create remote players from lobby data
+      lobbyPlayers.forEach(player => {
+        if (player.id === this.network.playerId) return; // Skip local player
         
-        lobbyPlayers.forEach(player => {
-          if (player.id === this.network.playerId) return; // Skip local player
-          
-          console.log(`Creating remote player from lobby: ${player.id} at (${player.x}, ${player.y})`);
-          this.addRemotePlayer(player);
-          processedPlayers.add(player.id);
-        });
-      }
+        console.log(`Creating remote player: ${player.id} at (${player.x}, ${player.y})`);
+        this.addRemotePlayer(player);
+        processedPlayers.add(player.id);
+      });
       
       // Then process any additional players from gameJoined that weren't in lobby data
       data.players.forEach(player => {

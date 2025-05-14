@@ -309,9 +309,9 @@ export class Game extends Phaser.Scene {
         
         //this.cameras.main.startFollow(this.player);
         this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
-        // Check if coming from Lobby
-        const fromLobby = this.registry.get('fromLobby');
-        console.log('Coming from lobby?', fromLobby ? 'Yes' : 'No');
+        // Get players data from registry since we're always coming from lobby
+        const lobbyPlayers = this.registry.get('lobbyPlayers');
+        console.log('Players from lobby:', lobbyPlayers);
         
         // Get or initialize NetworkManager
         NetworkService.initialize()
@@ -324,22 +324,14 @@ export class Game extends Phaser.Scene {
                 // IMPORTANT: Get spawn position from registry first if coming from lobby
                 let spawnPosition = { x: this.player1.x, y: this.player1.y };
                 
-                if (fromLobby) {
-                    const lobbyPlayers = this.registry.get('lobbyPlayers');
-                    console.log('Players from lobby:', lobbyPlayers);
-                    
-                    const myPlayerData = lobbyPlayers.find(p => p.id === this.networkManager.playerId);
-                    
-                    if (myPlayerData) {
-                        spawnPosition = { x: myPlayerData.x, y: myPlayerData.y };
-                        console.log('Using spawn position from lobby:', spawnPosition);
-                    }
-                    
-                    // Position player at spawn point before creating GameSync
-                    this.player1.x = spawnPosition.x;
-                    this.player1.y = spawnPosition.y;
+                const myPlayerData = lobbyPlayers.find(p => p.id === this.networkManager.playerId);
+                if (myPlayerData) {
+                    spawnPosition = { x: myPlayerData.x, y: myPlayerData.y };
+                    console.log('Using spawn position:', spawnPosition);
                 }
-                
+                // Position player at spawn point
+                this.player1.x = spawnPosition.x;
+                this.player1.y = spawnPosition.y;
                 // Create GameSync with the properly positioned player
                 this.gameSync = new GameSync(this, this.networkManager);
                 this.gameSync.setLocalPlayer(this.player1);
@@ -365,11 +357,9 @@ export class Game extends Phaser.Scene {
                     this.setupPvPCollisions();
                 });
                 
-                // Manually clear the fromLobby flag after using it
-                if (fromLobby) {
-                    this.registry.remove('fromLobby');
-                    this.registry.remove('lobbyPlayers');
-                }
+                // Clean up registry data after using it
+                this.registry.remove('lobbyPlayers');   
+                
             })
             .catch(err => {
                 console.error('Failed to get network manager:', err);

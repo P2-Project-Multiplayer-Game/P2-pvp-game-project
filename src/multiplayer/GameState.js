@@ -42,32 +42,16 @@ export default class GameState {
         // Game start handler - will be triggered when transitioning from lobby
         this.network.on('game_start', (data) => {
             console.log('Game starting with players:', data.players.length);
+            // We'll only receive this in Lobby scene
+            const selectedCharacter = this.scene.selectedCharacter;
             
-            // If we're in the Lobby scene, transition to Game
-            if (this.scene.scene.key === 'Lobby') {
-                const selectedCharacter = this.scene.selectedCharacter;
-                
-                // Store important data in registry for the Game scene
-                this.scene.registry.set('fromLobby', true);
-                this.scene.registry.set('lobbyPlayers', data.players);
-                this.scene.registry.set('characterFromLobby', selectedCharacter);
-                
-                console.log('Transitioning from Lobby to Game with character:', selectedCharacter);
-                this.scene.scene.start('Game', { 
-                    character: selectedCharacter
-                });
-            }
-            // If we're in the Game scene, update player position
-            else if (this.scene.scene.key === 'Game') {
-                // Find our player data
-                const myPlayerData = data.players.find(p => p.id === this.network.playerId);
-                if (myPlayerData && this.gameSync && this.gameSync.localPlayer) {
-                    // Update position from server
-                    this.gameSync.localPlayer.x = myPlayerData.x;
-                    this.gameSync.localPlayer.y = myPlayerData.y;
-                    console.log(`Updated local player position to: ${myPlayerData.x}, ${myPlayerData.y}`);
-                }
-            }
+            // Store important data in registry for the Game scene
+            this.scene.registry.set('lobbyPlayers', data.players);
+            
+            console.log('Transitioning from Lobby to Game with character:', selectedCharacter);
+            this.scene.scene.start('Game', { 
+                character: selectedCharacter
+            });
         });
         
         // Countdown handler (optional - for visual countdown in lobby)
