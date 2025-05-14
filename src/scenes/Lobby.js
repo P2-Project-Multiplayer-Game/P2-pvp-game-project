@@ -23,7 +23,7 @@ export class Lobby extends Phaser.Scene {
         // Add character frame before text but after background
         this.add.image(SCREEN_WIDTH / 2, SCREEN_HEIGHT * 0.15, 'selector_character_frame')
             .setOrigin(0.5)
-            .setScale(0.6, 0.3)  // Stretch to become rectangular
+            .setScale(0.6, 0.4)  // Stretch to become rectangular
             .setDepth(1);
 
         // Add header text
@@ -55,7 +55,7 @@ export class Lobby extends Phaser.Scene {
 
         // Ready prompt at bottom
         this.add.image(SCREEN_WIDTH / 2, SCREEN_HEIGHT * 0.922, 'blank_ui_board')
-            .setScale(0.45, 0.35)
+            .setScale(0.85, 0.35)
             .setOrigin(0.5);
 
         this.readyPromptText = this.add.text(
