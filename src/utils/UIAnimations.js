@@ -31,7 +31,7 @@ export class UIAnimations {
         scene.tweens.add({
             targets: battleText,
             y: battleText.y - 15,  // Hover up 15 pixels
-            duration: 500,
+            duration: 335,
             yoyo: true,
             repeat: -1,            // Continually hover
             ease: 'Sine.easeInOut' // Smooth sine wave movement
@@ -41,17 +41,17 @@ export class UIAnimations {
         scene.tweens.add({
             targets: battleText,
             alpha: { from: 1, to: 0.5 },
-            duration: 625,
+            duration: 420,
             yoyo: true,
             repeat: 3,  // Blink a few times
             onComplete: () => {
                 // Keep screen black for less then a seconds total, then fade out quickly
-                scene.time.delayedCall(600, () => {
+                scene.time.delayedCall(400, () => {
                     // Start the fade transition - quick fade out
                     scene.tweens.add({
                         targets: fadeOverlay,
                         alpha: 0,
-                        duration: 400,  // Quick fade out (less than 1 second)
+                        duration: 270,  // Quick fade out (less than 1 second)
                         ease: 'Cubic.easeOut',  // Smoother fade transition
                         onComplete: () => {
                             fadeOverlay.destroy();
@@ -70,7 +70,7 @@ export class UIAnimations {
         return scene.tweens.add({
             targets: textObject,
             alpha: { from: 1, to: 0 },
-            duration: 625,
+            duration: 420,
             yoyo: true,
             repeat: -1
         });
