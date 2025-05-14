@@ -166,7 +166,7 @@ export default class LobbyUIManager {
         
         // Character data matching the same format used in Lobby.js
         // Use the imported CHARACTER_DATA 
-        const data = CHARACTER_DATA[this.selectedCharacter] || CHARACTER_DATA.tank;
+        const data = CHARACTER_DATA[playerData.characterType] || CHARACTER_DATA.tank;
         
         // Create character sprite for this remote player
         const sprite = this.scene.add.sprite(
