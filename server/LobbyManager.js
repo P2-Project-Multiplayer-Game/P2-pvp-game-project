@@ -9,8 +9,6 @@ class LobbyManager {
     this.lobbies.set(this.defaultRoom, {
       players: new Map(), // Map of playerId -> player data with ready state
       isGameStarted: false,
-      minPlayers: 1, // Minimum players required
-      maxPlayers: 5  // Maximum players allowed
     });
   }
   
@@ -23,11 +21,6 @@ class LobbyManager {
   addPlayer(roomId, playerId, playerData) {
     const lobby = this.lobbies.get(roomId);
     if (!lobby) return false;
-    
-    // Check if lobby is already full
-    if (lobby.players.size >= lobby.maxPlayers) {
-      return false;
-    }
     
     // Add player to lobby with initial ready state as false
     lobby.players.set(playerId, {
@@ -63,9 +56,6 @@ class LobbyManager {
     const lobby = this.lobbies.get(roomId);
     if (!lobby) return false;
     
-    // Must have minimum number of players
-    if (lobby.players.size < lobby.minPlayers) return false;
-    
     // All players must be ready
     for (const player of lobby.players.values()) {
       if (!player.isReady) return false;
@@ -93,8 +83,6 @@ class LobbyManager {
       totalPlayers: lobby.players.size,
       playersReady: playersReady,
       isGameStarted: lobby.isGameStarted,
-      minPlayers: lobby.minPlayers,
-      maxPlayers: lobby.maxPlayers
     };
   }
   
@@ -107,16 +95,5 @@ class LobbyManager {
     return true;
   }
 }
-/*
-1. Player enters Lobby scene
-2. Player selects character and presses "Ready" button
-3. LobbyUIManager displays ready state of all players
-4. When all players are ready:
-   a. Server sends "game_countdown_start" event with countdown value
-   b. LobbyUIManager displays countdown in Lobby scene
-   c. When countdown reaches 0, server sends "game_start" event
-   d. GameState.js receives "game_start" event and transitions to Game scene
-5. Game.js initializes with character data from Lobby scene
-6. Game begins
-*/
+
 module.exports = LobbyManager;
