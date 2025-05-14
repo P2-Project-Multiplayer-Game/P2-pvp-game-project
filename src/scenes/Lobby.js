@@ -19,6 +19,12 @@ export class Lobby extends Phaser.Scene {
             .setOrigin(0.5, 0.57)
             .setDisplaySize(SCREEN_WIDTH + 300, SCREEN_HEIGHT + 300);
 
+        // Add character frame before text but after background
+        this.add.image(SCREEN_WIDTH / 2, SCREEN_HEIGHT * 0.15, 'selector_character_frame')
+            .setOrigin(0.5)
+            .setScale(3.2, 1.2)  // Stretch to become rectangular
+            .setDepth(1);
+            
         // Add header text
         this.add.text(
             SCREEN_WIDTH / 2,
@@ -31,9 +37,9 @@ export class Lobby extends Phaser.Scene {
                 stroke: '#000000',
                 strokeThickness: 4
             }
-        ).setOrigin(0.5);
+        ).setOrigin(0.5).setDepth(2);
         
-        // Ready status text - without the frame for now
+        // Ready status text - on top of the frame
         this.readyStatusText = this.add.text(
             SCREEN_WIDTH / 2,
             SCREEN_HEIGHT * 0.2,
@@ -44,7 +50,7 @@ export class Lobby extends Phaser.Scene {
                 stroke: '#000000',
                 strokeThickness: 4
             }
-        ).setOrigin(0.5);
+        ).setOrigin(0.5).setDepth(2);
 
         // Ready prompt at bottom
         this.add.image(SCREEN_WIDTH / 2, SCREEN_HEIGHT * 0.922, 'blank_ui_board')

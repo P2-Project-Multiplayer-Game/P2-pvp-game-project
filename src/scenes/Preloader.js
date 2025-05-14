@@ -34,6 +34,7 @@ export class Preloader extends Phaser.Scene {
         this.load.image('menu_background', '/UI_elements/main_menu_background.png');
         this.load.image('choose_text_ui', '/UI_elements/choose_text_ui.png');
         this.load.image('blank_ui_board', '/UI_elements/blank_ui_board.png');
+        this.load.image('selector_character_frame', '/UI_elements/selector_character_frame.png');
         this.load.image('controls_info_ui', '/UI_elements/controls_info_ui.png');
         this.load.image('newGame_button', '/UI_elements/newGame_button.png');
         this.load.image('gameOver_sign', '/UI_elements/gameOver_sign.png');
