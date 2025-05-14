@@ -11,35 +11,23 @@ export default class GameState {
         this.network.on('gameOver', (data) => {
             console.log('Game over! Rankings:', data.rankings);
             
-            // Extract and prepare player data before cleanup
-            const playerRankings = [];
-            
             try {
-                // Process each ranked player
-                const playerRankings = data.rankings.map(player => {
-                    return {
-                        id: player.id,
-                        rank: player.rank,
-                        characterType: player.characterType,
-                        texture: {
-                            // Use character type as the texture key - they match in your game
-                            key: player.characterType || 'tank'
-                        }
-                    };
-                });
-            
-                console.log("Transitioning to GameOver with player data:", playerRankings);
-
-                // Clean up network resources to prevent further updates
+                // Just pass the minimal data needed - no CHARACTER_DATA dependency
+                const playerRankings = data.rankings.map(player => ({
+                    id: player.id,
+                    rank: player.rank,
+                    characterType: player.characterType
+                }));
+                
+                // Clean up network resources
                 this.cleanupNetworkResources();
                 
-                // Transition to game over scene with simplified player data
+                // Transition to GameOver with just the essential data
                 this.scene.scene.start('GameOver', { 
                     playersRanking: playerRankings
                 });
             } catch (e) {
                 console.error("Error preparing GameOver transition:", e);
-                // Fallback with minimal data
                 this.cleanupNetworkResources();
                 this.scene.scene.start('GameOver', { 
                     playersRanking: data.rankings

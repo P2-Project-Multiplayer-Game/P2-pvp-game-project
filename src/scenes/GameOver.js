@@ -1,4 +1,5 @@
 import { SCREEN_HEIGHT, SCREEN_WIDTH } from '../config.js';
+import { SCREEN_HEIGHT, SCREEN_WIDTH, CHARACTER_DATA } from '../config.js';
 export class GameOver extends Phaser.Scene {
     constructor() {
         super('GameOver');
@@ -42,80 +43,58 @@ export class GameOver extends Phaser.Scene {
     }
 
     displayWinnersOnPodium() {
-        // Sort players by rank if not already sorted
+        // Sort players by rank
         this.playersRanking.sort((a, b) => a.rank - b.rank);
         
-        // Pedestal positions (center = 1st, left = 2nd, right = 3rd)
+        // Pedestal positions
         const pedestalPositions = [
-            { rank: 1, x: SCREEN_WIDTH / 2, y: SCREEN_HEIGHT * 0.45 },    // 1st place (center/top)
-            { rank: 2, x: SCREEN_WIDTH / 4, y: SCREEN_HEIGHT * 0.60 },    // 2nd place (left)
-            { rank: 3, x: SCREEN_WIDTH / 1.35, y: SCREEN_HEIGHT * 0.73 }  // 3rd place (right)
+            { rank: 1, x: SCREEN_WIDTH / 2, y: SCREEN_HEIGHT * 0.45 },
+            { rank: 2, x: SCREEN_WIDTH / 4, y: SCREEN_HEIGHT * 0.60 },
+            { rank: 3, x: SCREEN_WIDTH / 1.35, y: SCREEN_HEIGHT * 0.73 }
         ];
         
-        // Display each player according to their rank
+        // Display each player according to rank
         this.playersRanking.forEach(player => {
-            // Only show top 3
-            if (player.rank > 3) return;
+            if (!player || player.rank > 3) return;
             
-            // Find corresponding pedestal position
             const pedestal = pedestalPositions.find(p => p.rank === player.rank);
             if (!pedestal) return;
             
-            // Get texture key and animation
-            const textureKey = player.characterType || 'tank';
-            const animKey = (player.animationKeys && player.animationKeys.turn) || 'turn';
-            
-            // Create character sprite on pedestal
-            const playerSprite = this.add.sprite(pedestal.x, pedestal.y, textureKey)
-                .setOrigin(0.5, 1)
-                .setScale(2.5);
+            try {
+                // Get all display data from CHARACTER_DATA
+                const charType = player.characterType || 'tank';
+                const characterData = CHARACTER_DATA[charType] || CHARACTER_DATA.tank;
                 
-            // Add rank number above player
-            this.add.text(pedestal.x + 40, pedestal.y - 130, `#${player.rank}`, {
-                fontSize: '30px',
-                fontStyle: 'bold',
-                color: player.rank === 1 ? '#FFD700' : (player.rank === 2 ? '#C0C0C0' : '#CD7F32'),
-                stroke: '#000000',
-                strokeThickness: 4
-            }).setOrigin(0.5);
-                
-            // Play idle animation only if it exists
-            if (animKey && this.anims.exists(animKey)) {
-                try {
-                    playerSprite.play(animKey, true);
-                } catch (e) {
-                    console.warn(`Could not play animation ${animKey}:`, e);
+                // Create character sprite
+                const playerSprite = this.add.sprite(pedestal.x, pedestal.y, characterData.textureKey)
+                    .setOrigin(0.5, 1)
+                    .setScale(2.5);
+                    
+                // Add rank number
+                this.add.text(pedestal.x + 40, pedestal.y - 130, `#${player.rank}`, {
+                    fontSize: '30px',
+                    fontStyle: 'bold',
+                    color: player.rank === 1 ? '#FFD700' : (player.rank === 2 ? '#C0C0C0' : '#CD7F32'),
+                    stroke: '#000000',
+                    strokeThickness: 4
+                }).setOrigin(0.5);
+                    
+                // Play animation
+                if (characterData.animKey && this.anims.exists(characterData.animKey)) {
+                    playerSprite.play(characterData.animKey, true);
                 }
+                
+                // Add character name
+                this.add.text(pedestal.x, pedestal.y + 10, characterData.name || charType, {
+                    fontSize: 22,
+                    fontStyle: 'Bold',
+                    color: '#FFFFFF',
+                    stroke: '#000000',
+                    strokeThickness: 4
+                }).setOrigin(0.5, 0);
+            } catch (e) {
+                console.error(`Error displaying player ${player.id || player.rank}:`, e);
             }
-
-            // Add character type name
-            this.add.text(pedestal.x, pedestal.y + 10, player.characterType || "Unknown", {
-                fontSize: 22,
-                fontStyle: 'Bold',
-                color: '#FFFFFF',
-                stroke: '#000000',
-                strokeThickness: 4
-            }).setOrigin(0.5, 0);
         });
-        
-        // Add text for players beyond top 3
-        if (this.playersRanking.length > 3) {
-            let otherRankingsText = 'Other players:\n';
-            
-            this.playersRanking.forEach(player => {
-                if (player.rank > 3) {
-                    otherRankingsText += `#${player.rank}: ${player.characterType}\n`;
-                }
-            });
-            
-            this.add.text(SCREEN_WIDTH / 2, SCREEN_HEIGHT * 0.9, otherRankingsText, {
-                fontSize: 22,
-                fontStyle: 'Bold',
-                color: '#FFFFFF',
-                stroke: '#000000',
-                strokeThickness: 3,
-                align: 'center'
-            }).setOrigin(0.5);
-        }
     }
 }
