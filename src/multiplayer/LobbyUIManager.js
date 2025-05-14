@@ -35,6 +35,19 @@ export default class LobbyUIManager {
     }
 
     // Implementation methods
+    
+    updateLobbyStatus(data) {
+        // Store the values in the scene for reference
+        this.scene.totalPlayers = data.totalPlayers;
+        this.scene.readyPlayers = data.playersReady;
+        
+        // Update the ready status text
+        this.scene.readyStatusText.setText(`${data.playersReady} out of ${data.totalPlayers} players ready`);
+        
+        // Log for debugging
+        console.log(`Lobby status updated: ${data.playersReady} out of ${data.totalPlayers} players ready`);
+    }
+
     startCountdown(countdown) {
         console.log('Game countdown started:', countdown);
         

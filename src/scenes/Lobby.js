@@ -90,7 +90,7 @@ export class Lobby extends Phaser.Scene {
 
         // Listen for Enter key to toggle ready status
         this.input.keyboard.on('keydown-ENTER', this.toggleReady, this);
-                // Initialize network connection 
+        // Initialize network connection 
         this.networkManager = new NetworkManager();
         this.networkManager.connect()
             .then(data => {
