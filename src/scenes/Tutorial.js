@@ -177,7 +177,7 @@ export class Tutorial extends Phaser.Scene {
     
     createDummyTargets(ground, platforms) {
         // Create practice dummy at a visible position
-        this.dummyTarget = this.physics.add.sprite(400, 450, 'tank_idle');
+        this.dummyTarget = this.physics.add.sprite(400, 300, 'tank_idle');
         this.dummyTarget.setImmovable(true);
         this.dummyTarget.health = 9999;
         this.dummyTarget.maxHealth = 9999;
@@ -289,10 +289,11 @@ export class Tutorial extends Phaser.Scene {
         // Add text to show damage dealt
         this.damageText = this.add.text(SCREEN_WIDTH/2, SCREEN_HEIGHT - 100, "", {
             fontFamily: 'Arial',
-            fontSize: 24,
+            fontSize: 16, // Changed from 24 to 16
             color: '#ffff00',
             stroke: '#000000',
-            strokeThickness: 3
+            strokeThickness: 2, // Also reduced stroke thickness
+            align: 'center'
         }).setOrigin(0.5);
     }
 
