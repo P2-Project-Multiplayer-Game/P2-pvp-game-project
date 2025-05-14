@@ -17,19 +17,6 @@ export class Game extends Phaser.Scene {
         this.networkManager = null;
         this.playersRanking = []; // Will store players in rank order
     }
-    // Define spawn points    
-    spawnPoints = [
-    { x: 100, y: 480 },  // Left side
-    { x: 400, y: 480 },  // Middle-left
-    { x: 700, y: 480 },  // Middle
-    { x: 1000, y: 480 }, // Middle-right
-    { x: 1300, y: 480 }, // Right side
-    { x: 250, y: 250 },  // Upper platforms
-    { x: 850, y: 250 }   // Upper platforms
-    ];
-
-    // Track used spawn points
-    usedSpawnPoints = [];
 
     getRandomSpawnPoint() {
     // Filter out already used spawn points
@@ -153,7 +140,7 @@ export class Game extends Phaser.Scene {
 
         this.playersInMatch = [];
         this.playersRanking = [];
-        
+
         // Get random spawn point
         const spawnPoint = this.getRandomSpawnPoint();
 

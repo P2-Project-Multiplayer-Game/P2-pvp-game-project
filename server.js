@@ -21,6 +21,41 @@ const lobbyManager = new LobbyManager();
 // Track players in rooms
 const players = new Map();
 
+// Add spawn points 
+const spawnPoints = [
+  { x: 100, y: 480 },  // Left side
+  { x: 400, y: 480 },  // Middle-left
+  { x: 700, y: 480 },  // Middle
+  { x: 1000, y: 480 }, // Middle-right
+  { x: 1300, y: 480 }, // Right side
+  { x: 250, y: 250 },  // Upper platforms
+  { x: 850, y: 250 }   // Upper platforms
+];
+//list of used spawned points
+const usedSpawnPoints = [];
+
+function getRandomSpawnPoint() {
+  // Filter out already used spawn points
+  const availablePoints = spawnPoints.filter(
+    point => !usedSpawnPoints.some(used => 
+      used.x === point.x && used.y === point.y
+    )
+  );
+  
+  // If all spawn points are used, reset and use any
+  if (availablePoints.length === 0) {
+    usedSpawnPoints.length = 0; // Clear array
+    const randomPoint = spawnPoints[Math.floor(Math.random() * spawnPoints.length)];
+    usedSpawnPoints.push(randomPoint);
+    return randomPoint;
+  }
+  
+  // Get random available point
+  const randomPoint = availablePoints[Math.floor(Math.random() * availablePoints.length)];
+  usedSpawnPoints.push(randomPoint);
+  return randomPoint;
+}
+
 // Socket.IO conecttion handling - this runs when a client connects
 io.on('connection', (socket) => {
   console.log('User connected:', socket.id);
@@ -95,7 +130,7 @@ io.on('connection', (socket) => {
         .filter(p => p.roomId === roomId)
     });
   });
-  
+
   // Handle player ready state toggle
   socket.on('player_ready_toggle', (data) => {
     const player = players.get(socket.id);
@@ -131,8 +166,22 @@ io.on('connection', (socket) => {
       
       // Wait 3 seconds then actually start the game
       setTimeout(() => {
+        // Clear used spawn points for fresh game
+        usedSpawnPoints.length = 0;
+        
+        // Get all current players in the room and assign spawn points
+        const roomPlayers = Array.from(players.values())
+          .filter(p => p.roomId === player.roomId)
+          .map(p => {
+            const spawnPoint = getRandomSpawnPoint();
+            // Update player position server-side
+            p.x = spawnPoint.x;
+            p.y = spawnPoint.y;
+            return {...p, fromLobby: true};
+          });
+        
         io.to(player.roomId).emit('game_start', {
-          players: Array.from(players.values()).filter(p => p.roomId === player.roomId)
+          players: roomPlayers
         });
       }, 3000);
     }
