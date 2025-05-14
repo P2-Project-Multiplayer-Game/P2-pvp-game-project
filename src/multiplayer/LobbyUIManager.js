@@ -144,19 +144,6 @@ export default class LobbyUIManager {
         }
     }
 
-    addPlayerToLobby(playerData) {
-        // Skip if this is the local player or player already exists
-        if (playerData.id === this.network.playerId || this.playerDisplays.has(playerData.id)) {
-            return;
-        }
-        
-        const SCREEN_WIDTH = this.scene.sys.game.config.width;
-        const SCREEN_HEIGHT = this.scene.sys.game.config.height;
-        
-        // Currently we'll just update the lobby count
-        // In a more advanced implementation, we would show remote player characters
-        console.log(`Player ${playerData.id} joined the lobby as ${playerData.characterType}`);
-    }
     
     removePlayerFromLobby(playerId) {
         if (this.playerDisplays.has(playerId)) {
