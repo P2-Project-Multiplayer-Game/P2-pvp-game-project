@@ -75,7 +75,31 @@ io.on('connection', (socket) => {
   
   // Send player their ID
   socket.emit('connected', { id: socket.id });
-
+    // Handle player movement/states updates
+  socket.on('player_update', (data) => {
+    const player = players.get(socket.id);
+    if (player) {
+      //for console logging putposes
+      // console.log(`Player ${socket.id} update: x=${data.x}, y=${data.y}, animation=${data.animation || 'none'}`);
+      // Updates player states with the received data from networkmanager
+      if (data.x !== undefined) player.x = data.x;
+      if (data.y !== undefined) player.y = data.y;
+      if (data.animation !== undefined) player.animation = data.animation;
+      if (data.facing !== undefined) player.facing = data.facing;
+      if (data.attack1OnCooldown !== undefined) player.attack1OnCooldown = data.attack1OnCooldown;
+      if (data.attack2OnCooldown !== undefined) player.attack2OnCooldown = data.attack2OnCooldown;
+      // Broadcast to other players in the same lobby
+      socket.to(player.roomId).emit('player_updated', {
+        id: socket.id,
+        x: player.x,
+        y: player.y,
+        animation: player.animation,
+        facing: player.facing,
+        attack1OnCooldown: player.attack1OnCooldown,
+        attack2OnCooldown: player.attack2OnCooldown
+      });
+    }
+  });
   // Handle player joining game
   socket.on('join_game', (playerData) => {
     // all players join the default room as defined in the lobbyManager
@@ -111,31 +135,7 @@ io.on('connection', (socket) => {
       id: socket.id,
       health: player.health
     });
-    // Handle player movement/states updates
-    socket.on('player_update', (data) => {
-      const player = players.get(socket.id);
-      if (player) {
-        //for console logging putposes
-        // console.log(`Player ${socket.id} update: x=${data.x}, y=${data.y}, animation=${data.animation || 'none'}`);
-        // Updates player states with the received data from networkmanager
-        if (data.x !== undefined) player.x = data.x;
-        if (data.y !== undefined) player.y = data.y;
-        if (data.animation !== undefined) player.animation = data.animation;
-        if (data.facing !== undefined) player.facing = data.facing;
-        if (data.attack1OnCooldown !== undefined) player.attack1OnCooldown = data.attack1OnCooldown;
-        if (data.attack2OnCooldown !== undefined) player.attack2OnCooldown = data.attack2OnCooldown;
-        // Broadcast to other players in the same lobby
-        socket.to(player.roomId).emit('player_updated', {
-          id: socket.id,
-          x: player.x,
-          y: player.y,
-          animation: player.animation,
-          facing: player.facing,
-          attack1OnCooldown: player.attack1OnCooldown,
-          attack2OnCooldown: player.attack2OnCooldown
-        });
-      }
-    });
+
     // succefull join notification
     socket.emit('game_joined', {
       roomId: roomId,
