@@ -23,6 +23,13 @@ const players = new Map();
 
 const countdownTimers = new Map();
 
+let connectionCount = 0;
+io.engine.on("connection", (socket) => {
+  connectionCount++;
+  console.log(`Active connections: ${connectionCount}`);
+  socket.on("close", () => connectionCount--);
+});
+
 // Add spawn points 
 const spawnPoints = [
   { x: 115, y: 522 },  // Left side
