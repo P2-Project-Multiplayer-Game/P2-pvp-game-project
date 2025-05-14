@@ -26,12 +26,12 @@ const countdownTimers = new Map();
 // Add spawn points 
 const spawnPoints = [
   { x: 100, y: 480 },  // Left side
-  { x: 400, y: 480 },  // Middle-left
-  { x: 700, y: 480 },  // Middle
-  { x: 1000, y: 480 }, // Middle-right
+  { x: 400, y: 480 },  // Middle-left platform
+  { x: 790, y: 508 },  // Middle  up platform
+  { x: 700, y: 480 }, // Middle right platform
   { x: 1300, y: 480 }, // Right side
-  { x: 138, y: 210 },  // Upper Left platform
-  { x: 452, y:123 }   // Upper  right platform
+  { x: 138, y: 193 },  // Upper Left top platform
+  { x: 452, y:123 }   // Upper  right top platform
 ];
 //list of used spawned points
 const usedSpawnPoints = [];
