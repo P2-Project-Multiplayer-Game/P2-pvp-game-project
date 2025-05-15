@@ -328,9 +328,9 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                         } else if (this.characterType === 'archer') {
                             //nothing happens
                         }  else if (this.characterType === 'hero') {
-                            this.destroyHerowave();
+                            //this.destroyHerowave();
                         }  else if (this.characterType === 'ninja') {
-                            this.destroyNinjawave();
+                            //this.destroyNinjawave();
                         }  else if (this.characterType === 'skeleton') {
                             //this.destroyFireball();
                         }
@@ -353,9 +353,9 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                     } else if (this.characterType === 'archer') {
                         //nithing happens this.des
                     } else if (this.characterType === 'hero') {
-                        this.destroyHerowave();
+                        //this.destroyHerowave();
                     } else if (this.characterType === 'ninja') {
-                        this.destroyNinjawave();
+                        //this.destroyNinjawave();
                     } else if (this.characterType === 'skeleton') {
                         //this.destroyFireball();
                     }
@@ -628,10 +628,10 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
             // Generate positions array if not provided (for local player)
             let fireballPositions = positions || [];
             if (!positions) {
-                for (let i = 0; i < 12; i++) {
-                    let randomInt = Math.floor(Math.random() * 75);
+                for (let i = 0; i < 3; i++) {
+                    let randomInt = Math.floor(Math.random() * 35);
                     fireballPositions.push({
-                        x: randomInt + (i) * SCREEN_WIDTH/12,
+                        x: randomInt + (i) * SCREEN_WIDTH/3,
                         y: 0
                     });
                 }
@@ -811,7 +811,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                     }
                 });
                 // Add a delayed hitbox for the blue crescent effect (2nd part of attack)
-                this.scene.time.delayedCall(282, () => {
+                this.scene.time.delayedCall(100, () => {
                     if (this.stateMachine.currentState === 'ATTACK2') {
                         // Create a completely separate hitbox specifically for the blue crescent
                         const crescent = this.scene.add.rectangle(
@@ -835,7 +835,7 @@ export class Character extends Phaser.Physics.Arcade.Sprite {
                         //crescent.setStrokeStyle(3, 0x00ffff);
                         
                         // Destroy the crescent hitbox after a short duration
-                        this.scene.time.delayedCall(200, () => {
+                        this.scene.time.delayedCall(80, () => {
                             if (crescent) {
                                 crescent.destroy();
                             }

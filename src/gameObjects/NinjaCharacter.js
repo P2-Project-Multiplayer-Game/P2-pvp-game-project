@@ -7,19 +7,19 @@ export class NinjaCharacter extends Character {
             idleSpriteKey: 'ninja_idle',
 
             //health system
-            health: 80, // Less health than tank
-            maxHealth: 80,
+            health: 100, // Less health than tank
+            maxHealth: 100,
 
             // comabt modifiers such as damage and attack cooldowns
             attackDamage: 15, // Higher damage
-            attack2Damage: 10, // the initial shockwave , probobly should have low damage
-            attack3Damage: 30, // the delayed move probably should have a higher damage 
+            attack2Damage: 25, // the initial shockwave , probobly should have low damage
+            attack3Damage: 40, // the delayed move probably should have a higher damage 
             attack1Cooldown: 500, // 0.5 seconds mele attack (alredy defualt value)
-            attack2Cooldown: 6000, // 6 seconds cooldown for attack2 
+            attack2Cooldown: 500, // 6 seconds cooldown for attack2 
 
             //projectile modifiers such as speed and lastability
             projectileVelocity: 800,     // Ninjawave speed (was 800)
-            projectileLifetime: 300,    // Ninjawave lifetime (was 1800ms)
+            projectileLifetime: 1800,    // Ninjawave lifetime (was 1800ms)
 
             //movementspeed modifiers
             moveSpeed: 300,         // Faster movement (ninja is agile)
@@ -95,7 +95,7 @@ export class NinjaCharacter extends Character {
         this.anims.create({
             key: this.animationKeys.attack2,
             frames: this.anims.generateFrameNames('ninja_attack2', { prefix: 'ninjaspecial', end: 7, zeroPad: 4 }),
-            frameRate: 8, // slow attack
+            frameRate: 16, // fast attack
             repeat: 0
         });
         this.anims.create({
