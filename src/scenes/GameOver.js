@@ -56,34 +56,31 @@ export class GameOver extends Phaser.Scene {
         
         // Pedestal positions
         const pedestalPositions = [
-            { rank: 1, x: SCREEN_WIDTH / 2, y: SCREEN_HEIGHT * 0.45 },
-            { rank: 2, x: SCREEN_WIDTH / 4, y: SCREEN_HEIGHT * 0.60 },
-            { rank: 3, x: SCREEN_WIDTH / 1.35, y: SCREEN_HEIGHT * 0.73 }
+            { rank: 1, x: SCREEN_WIDTH / 2, y: SCREEN_HEIGHT * 0.45 },    // 1st place (center/top)
+            { rank: 2, x: SCREEN_WIDTH / 4, y: SCREEN_HEIGHT * 0.60 },    // 2nd place (left)
+            { rank: 3, x: SCREEN_WIDTH / 1.35, y: SCREEN_HEIGHT * 0.73 }  // 3rd place (right)
         ];
         
-        // Display each player according to rank
+        // Display each player according to their rank
         this.playersRanking.forEach(player => {
-            if (!player || player.rank > 3) return;
-            
-            const pedestal = pedestalPositions.find(p => p.rank === player.rank);
-            if (!pedestal) return;
-            
+            if (!player) return;
+
             try {
-                // Get all display data from CHARACTER_DATA
+                // Get character data
                 const charType = player.characterType || 'tank';
                 const characterData = CHARACTER_DATA[charType] || CHARACTER_DATA.tank;
                 
                 if (player.rank <= 3) {
-                    // Show on podium (top 3 places)
+                    // Find corresponding pedestal position
                     const pedestal = pedestalPositions.find(p => p.rank === player.rank);
                     if (!pedestal) return;
                     
-                    // Create character sprite
+                    // Create character sprite on pedestal
                     const playerSprite = this.add.sprite(pedestal.x, pedestal.y, characterData.textureKey)
                         .setOrigin(0.5, 1)
                         .setScale(2.5);
                         
-                    // Add rank number
+                    // Add rank number above player
                     this.add.text(pedestal.x + 40, pedestal.y - 130, `#${player.rank}`, {
                         fontSize: '30px',
                         fontStyle: 'bold',
@@ -92,7 +89,7 @@ export class GameOver extends Phaser.Scene {
                         strokeThickness: 4
                     }).setOrigin(0.5);
                         
-                    // Play animation
+                    // Play animation if it exists
                     if (characterData.animKey && this.anims.exists(characterData.animKey)) {
                         playerSprite.play(characterData.animKey, true);
                     }
@@ -105,33 +102,31 @@ export class GameOver extends Phaser.Scene {
                         stroke: '#000000',
                         strokeThickness: 4
                     }).setOrigin(0.5, 0);
-                } else if (player.rank === 4 || player.rank === 5) {
-                    // Show 4th and 5th place in a line below podiums
-                    const xPosition = SCREEN_WIDTH * (player.rank === 4 ? 0.35 : 0.65);
-                    const yPosition = SCREEN_HEIGHT * 0.89;
-                    
-                    // Create smaller character sprite
-                    const playerSprite = this.add.sprite(xPosition, yPosition - 50, characterData.textureKey)
-                        .setOrigin(0.5, 1)
-                        .setScale(1.8);
-                        
-                    // Play animation if available
-                    if (characterData.animKey && this.anims.exists(characterData.animKey)) {
-                        playerSprite.play(characterData.animKey, true);
-                    }
-                    
-                    // Add character name and rank
-                    this.add.text(xPosition, yPosition, `#${player.rank} ${characterData.name || charType}`, {
-                        fontSize: 18,
-                        fontStyle: 'Bold',
-                        color: '#FFFFFF',
-                        stroke: '#000000',
-                        strokeThickness: 3
-                    }).setOrigin(0.5, 0);
                 }
             } catch (e) {
                 console.error(`Error displaying player ${player.id || player.rank}:`, e);
             }
         });
+        
+        // Add text for players beyond top 3
+        const otherPlayers = this.playersRanking.filter(player => player.rank > 3);
+        if (otherPlayers.length > 0) {
+            let otherRankingsText = 'Other players:\n';
+            
+            otherPlayers.forEach(player => {
+                const charType = player.characterType || 'tank';
+                const characterData = CHARACTER_DATA[charType] || CHARACTER_DATA.tank;
+                otherRankingsText += `#${player.rank}: ${characterData.name || charType}\n`;
+            });
+            
+            this.add.text(SCREEN_WIDTH / 2, SCREEN_HEIGHT * 0.9, otherRankingsText, {
+                fontSize: 22,
+                fontStyle: 'Bold',
+                color: '#FFFFFF',
+                stroke: '#000000',
+                strokeThickness: 3,
+                align: 'center'
+            }).setOrigin(0.5);
+        }
     }
 }
