@@ -140,6 +140,11 @@ export class CharacterSelector extends Phaser.Scene {
 
         if (this.nameText) this.nameText.destroy();
         if (this.attackText) this.attackText.destroy();
+        if (this.cooldownText) this.cooldownText.destroy();
+        if (this.primaryAttackText) this.primaryAttackText.destroy();
+        if (this.secondaryAttackText) this.secondaryAttackText.destroy();
+        if (this.primaryCooldownText) this.primaryCooldownText.destroy();
+        if (this.secondaryCooldownText) this.secondaryCooldownText.destroy();
 
         characterToDisplay.previewSprite.setVisible(true);
         characterToDisplay.previewSprite.play(characterToDisplay.idleAnim);
@@ -159,10 +164,11 @@ export class CharacterSelector extends Phaser.Scene {
             }
         ).setOrigin(0.5);
 
-        this.attackText = this.add.text(
-            SCREEN_WIDTH * 0.8,
-            SCREEN_HEIGHT * 0.92,
-            `Primary: ${characterToDisplay.primaryAttack}\nCooldown: ${characterToDisplay.primaryCooldown}\n\nSecondary: ${characterToDisplay.secondaryAttack}\nCooldown: ${characterToDisplay.secondaryCooldown}`,
+        // Left side - Attack names
+        this.primaryAttackText = this.add.text(
+            SCREEN_WIDTH * 0.25,
+            SCREEN_HEIGHT * 0.85,
+            `Primary: ${characterToDisplay.primaryAttack}`,
             {
                 fontFamily: 'Monospace',
                 fontSize: '20px',
@@ -172,7 +178,53 @@ export class CharacterSelector extends Phaser.Scene {
                 strokeThickness: 4,
                 resolution: 5
             }
-        ).setOrigin(0.5);
+        ).setOrigin(0, 0.5);
+
+        this.secondaryAttackText = this.add.text(
+            SCREEN_WIDTH * 0.25,
+            SCREEN_HEIGHT * 0.90,
+            `Secondary: ${characterToDisplay.secondaryAttack}`,
+            {
+                fontFamily: 'Monospace',
+                fontSize: '20px',
+                fontStyle: 'bold',
+                color: '#CFAF82',
+                stroke: '#000000',
+                strokeThickness: 4,
+                resolution: 5
+            }
+        ).setOrigin(0, 0.5);
+
+        // Right side - Cooldown times
+        this.primaryCooldownText = this.add.text(
+            SCREEN_WIDTH * 0.75,
+            SCREEN_HEIGHT * 0.85,
+            `Cooldown: ${characterToDisplay.primaryCooldown}`,
+            {
+                fontFamily: 'Monospace',
+                fontSize: '20px',
+                fontStyle: 'bold',
+                color: '#CFAF82',
+                stroke: '#000000',
+                strokeThickness: 4,
+                resolution: 5
+            }
+        ).setOrigin(1, 0.5);
+
+        this.secondaryCooldownText = this.add.text(
+            SCREEN_WIDTH * 0.75,
+            SCREEN_HEIGHT * 0.90,
+            `Cooldown: ${characterToDisplay.secondaryCooldown}`,
+            {
+                fontFamily: 'Monospace',
+                fontSize: '20px',
+                fontStyle: 'bold',
+                color: '#CFAF82',
+                stroke: '#000000',
+                strokeThickness: 4,
+                resolution: 5
+            }
+        ).setOrigin(1, 0.5);
     }
 
     changeCharacter(delta) {
