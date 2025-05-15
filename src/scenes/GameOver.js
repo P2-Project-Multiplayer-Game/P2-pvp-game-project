@@ -6,11 +6,23 @@ export class GameOver extends Phaser.Scene {
 
     init(data) {
         // Store the players in rank order (1st, 2nd, 3rd...)
+        // Store the players in rank order (1st, 2nd, 3rd...)
         this.playersRanking = data.playersRanking || [];
+        this.matchDuration = data.matchDuration || 0;
+        
         console.log('Game Over received players:', this.playersRanking.map(p => 
             `${p.characterType} (rank: ${p.rank})`).join(', '));
+            
+        console.log('Match duration:', this.formatTime(this.matchDuration));
     }
-
+    //time formatter
+    formatTime(ms) {
+    if (!ms) return '00:00';
+    const totalSeconds = Math.floor(ms / 1000);
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    }
     create() {
         // Background and decorative elements
         this.add.image(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 'menu_background')
@@ -44,7 +56,15 @@ export class GameOver extends Phaser.Scene {
             strokeThickness: 4,
             resolution: 1
         }).setOrigin(0.5, 0.5);
-
+        
+        this.add.text(SCREEN_WIDTH / 2, SCREEN_HEIGHT * 0.9, 
+            `Match Duration: ${this.formatTime(this.matchDuration)}`, {
+            fontSize: '24px',
+            fontStyle: 'bold',
+            color: '#FFFFFF',
+            stroke: '#000000',
+            strokeThickness: 3
+        }).setOrigin(0.5);
         this.input.keyboard.on('keydown-ENTER', () => this.scene.start('CharacterSelector'));
         // Display winners on pedestals
         this.displayWinnersOnPodium();

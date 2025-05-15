@@ -10,6 +10,7 @@ export default class GameState {
         // Game over handler
         this.network.on('gameOver', (data) => {
             console.log('Game over! Rankings:', data.rankings);
+            console.log('Match duration:', formatTime(data.matchDuration));
             
             try {
                 // Just pass the minimal data needed - no CHARACTER_DATA dependency
@@ -26,7 +27,8 @@ export default class GameState {
                 
                 // Transition to GameOver with just the essential data
                 this.scene.scene.start('GameOver', { 
-                    playersRanking: playerRankings
+                    playersRanking: playerRankings,
+                    matchDuration: data.matchDuration
                 });
             } catch (e) {
                 console.error("Error preparing GameOver transition:", e);
@@ -36,7 +38,14 @@ export default class GameState {
                 });
             }
         });
-
+        // Helper function to format time in mm:ss format
+        function formatTime(ms) {
+        if (!ms) return '00:00';
+        const totalSeconds = Math.floor(ms / 1000);
+        const minutes = Math.floor(totalSeconds / 60);
+        const seconds = totalSeconds % 60;
+        return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
         // Game start handler - will be triggered when transitioning from lobby
         this.network.on('gameStart', (data) => {
             console.log('Game starting with players:', data.players.length);

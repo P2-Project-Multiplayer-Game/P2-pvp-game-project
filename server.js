@@ -24,7 +24,7 @@ app.get('/', (req, res) => {
 const lobbyManager = new LobbyManager();
 // Track players in rooms
 const players = new Map();
-
+const matchStartTimes = new Map();
 const countdownTimers = new Map();
 
 let connectionCount = 0;
@@ -200,7 +200,9 @@ io.on('connection', (socket) => {
       const timerId = setTimeout(() => {
         // Clear used spawn points for fresh game
         usedSpawnPoints.length = 0;
-        
+        // Record match start time for this room
+        matchStartTimes.set(player.roomId, Date.now());
+        console.log(`Match in room ${player.roomId} started at ${new Date().toISOString()}`);
         // Get all current players in the room and assign spawn points
         const roomPlayers = Array.from(players.values())
           .filter(p => p.roomId === player.roomId)
@@ -454,7 +456,14 @@ io.on('connection', (socket) => {
         if (lastPlayerStanding) {
           lastPlayerStanding.rank = 1;
         }
-        
+        // Calculate match duration
+        let matchDuration = 0;
+        const matchStartTime = matchStartTimes.get(player.roomId);
+        if (matchStartTime) {
+          matchDuration = Date.now() - matchStartTime;
+          matchStartTimes.delete(player.roomId); // Clean up
+          console.log(`Match in room ${player.roomId} lasted ${Math.floor(matchDuration/1000)} seconds`);
+        }
         // Create final rankings sorted by rank (1st, 2nd, 3rd...)
         const finalRankings = roomPlayers
           .sort((a, b) => a.rank - b.rank) // Sort ascending by rank (1st, 2nd, 3rd...)
@@ -469,7 +478,8 @@ io.on('connection', (socket) => {
         // Send game over event with rankings
         io.to(player.roomId).emit('game_over', {
           winner: lastPlayerStanding ? lastPlayerStanding.id : null,
-          rankings: finalRankings
+          rankings: finalRankings,
+          matchDuration: matchDuration // Time in milliseconds
         });
       }
     }
