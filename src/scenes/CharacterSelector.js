@@ -160,12 +160,12 @@ export class CharacterSelector extends Phaser.Scene {
         ).setOrigin(0.5);
 
         this.attackText = this.add.text(
-            SCREEN_WIDTH / 5,
+            SCREEN_WIDTH * 0.8,
             SCREEN_HEIGHT * 0.92,
-            `Primary: ${characterToDisplay.primaryAttack} (CD: ${characterToDisplay.primaryCooldown})\nSecondary: ${characterToDisplay.secondaryAttack} (CD: ${characterToDisplay.secondaryCooldown})`,
+            `Primary: ${characterToDisplay.primaryAttack}\nCooldown: ${characterToDisplay.primaryCooldown}\n\nSecondary: ${characterToDisplay.secondaryAttack}\nCooldown: ${characterToDisplay.secondaryCooldown}`,
             {
                 fontFamily: 'Monospace',
-                fontSize: '24px',
+                fontSize: '20px',
                 fontStyle: 'bold',
                 color: '#CFAF82',
                 stroke: '#000000',
