@@ -173,8 +173,40 @@ export class Tutorial extends Phaser.Scene {
         
         // Add tutorial instructions - positioned to avoid overlap
         this.createTutorialText();
+        this.time.addEvent({
+            delay: 1000,
+            callback: this.cleanupProjectiles,
+            callbackScope: this,
+            loop: true
+        });
     }
-    
+    cleanupProjectiles() {
+        // Clean up any projectiles that have existed too long
+        this.fireballs.getChildren().forEach(fireball => {
+            if (fireball.active && fireball.body) {
+                // Get time since creation
+                const lifetime = fireball.getData('createdAt') ? 
+                    performance.now() - fireball.getData('createdAt') : 5000;
+                    
+                // Destroy if older than 5 seconds
+                if (lifetime > 5000) {
+                    fireball.destroy();
+                }
+            }
+        });
+        
+        // Also clean up other projectiles like arrows
+        this.arrows.getChildren().forEach(arrow => {
+            if (arrow.active && arrow.body) {
+                const lifetime = arrow.getData('createdAt') ? 
+                    performance.now() - arrow.getData('createdAt') : 5000;
+                    
+                if (lifetime > 5000) {
+                    arrow.destroy();
+                }
+            }
+        });
+    }
     createDummyTargets(ground, platforms) {
         // Create practice dummy at a visible position
         this.dummyTarget = this.physics.add.sprite(400, 300, 'tank_idle');
@@ -359,19 +391,13 @@ export class Tutorial extends Phaser.Scene {
     }
 
     handleFireballCollision(target, fireball) {
-        if (fireball && fireball.active && target && target.active) {
-            if (fireball.hitTargets && fireball.hitTargets.has(target)) {
-                return;
-            }
-            if (fireball.hitTargets) {
-                fireball.hitTargets.add(target);
-            }
-            
-            const damage = fireball.damage || (fireball.owner ? fireball.owner.attack2Damage : 10);
+        if (fireball && fireball.active) {
+            // Apply damage to target
+            const damage = fireball.damage || 10;
             this.applyDamageToTarget(target, damage, fireball.owner);
-            if (fireball.owner && fireball.owner.destroyFireball) {
-                fireball.owner.destroyFireball();
-            }
+            
+            // Destroy the fireball directly
+            fireball.destroy();
         }
     }
 
