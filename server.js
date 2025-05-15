@@ -38,13 +38,13 @@ io.engine.on("connection", (socket) => {
 
 // Add spawn points 
 const spawnPoints = [
-  { x: 115, y: 522 },  // Left side
-  { x: 400, y: 480 },  // Middle-left platform
-  { x: 500, y: 266 },  // Middle  up platform
-  { x: 706, y: 381 }, // Middle right platform
-  { x: 540, y: 509 }, // Right side
-  { x: 138, y: 193 },  // Upper Left top platform
-  { x: 452, y:123 }   // Upper  right top platform
+  { x: 85, y: 510 },  // Left side floor
+  { x: 745, y: 510 },  // Right side floor
+  { x: 421, y: 413 },  // Middle  down platform
+  { x: 65, y: 290 }, // Middle Left Shelf
+  { x: 750, y: 290 }, // Middle Right Shelf
+  { x: 425, y: 100 },  // Upper Middle top platform
+  { x: 118, y: 100 }   // Upper  Left top Shelf
 ];
 //list of used spawned points
 const usedSpawnPoints = [];
@@ -483,7 +483,7 @@ io.on('connection', (socket) => {
           matchDuration: matchDuration
         });
         console.log(`Game statistics logged to ${matchLogPath}`);
-        
+
         // Send game over event with rankings
         io.to(player.roomId).emit('game_over', {
           winner: lastPlayerStanding ? lastPlayerStanding.id : null,
