@@ -117,6 +117,7 @@ io.on('connection', (socket) => {
       isAlive: true,  
       rank: null,
       damageDealt: 0, 
+      kills: [], 
       isReady: false      
     };
     
@@ -418,6 +419,18 @@ io.on('connection', (socket) => {
       
       // Mark player as dead
       player.isAlive = false;
+      // Register kill for the killer
+      const killer = players.get(data.killedBy);
+      if (killer) {
+        // Add kill information with timestamp
+        killer.kills = killer.kills || [];
+        killer.kills.push({
+          victimId: socket.id,
+          victimType: player.characterType,
+          timestamp: Date.now()
+        });
+        console.log(`Player ${data.killedBy} now has ${killer.kills.length} kills`);
+      }
       
       // Calculate rankings - Traditional podium style (1st is winner, higher numbers = worse)
       const roomPlayers = Array.from(players.values()).filter(p => p.roomId === player.roomId);
@@ -449,7 +462,8 @@ io.on('connection', (socket) => {
             id: p.id,
             characterType: p.characterType,
             rank: p.rank,
-            damageDealt: p.damageDealt || 0  
+            damageDealt: p.damageDealt || 0  ,
+            kills: p.kills || []
           }));
         
         // Send game over event with rankings

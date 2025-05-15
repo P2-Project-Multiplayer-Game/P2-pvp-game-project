@@ -17,7 +17,8 @@ export default class GameState {
                     id: player.id,
                     rank: player.rank,
                     characterType: player.characterType,
-                    damageDealt: player.damageDealt || 0 
+                    damageDealt: player.damageDealt || 0,
+                    kills: player.kills || [] 
                 }));
                 
                 // Clean up network resources
