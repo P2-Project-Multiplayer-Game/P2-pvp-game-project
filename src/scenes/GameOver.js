@@ -95,7 +95,7 @@ export class GameOver extends Phaser.Scene {
                     }
                     
                     // Add character name
-                    this.add.text(pedestal.x, pedestal.y + 10, characterData.name || charType, {
+                    this.add.text(pedestal.x, pedestal.y + 10, `${characterData.name || charType}\nDamage: ${player.damageDealt || 0}`, {
                         fontSize: 22,
                         fontStyle: 'Bold',
                         color: '#FFFFFF',
@@ -116,7 +116,7 @@ export class GameOver extends Phaser.Scene {
             otherPlayers.forEach(player => {
                 const charType = player.characterType || 'tank';
                 const characterData = CHARACTER_DATA[charType] || CHARACTER_DATA.tank;
-                otherRankingsText += `#${player.rank}: ${characterData.name || charType}\n`;
+                 otherRankingsText += `#${player.rank}: ${characterData.name || charType} (Damage: ${player.damageDealt || 0})\n`;
             });
             
             this.add.text(SCREEN_WIDTH / 2, SCREEN_HEIGHT * 0.9, otherRankingsText, {
