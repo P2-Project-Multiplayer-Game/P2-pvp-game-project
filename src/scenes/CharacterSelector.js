@@ -57,7 +57,9 @@ export class CharacterSelector extends Phaser.Scene {
                 idleAnim: 'tank_turn',
                 name: 'Tank',
                 primaryAttack: 'Sword Strike',
-                secondaryAttack: 'Shockwave Blast'
+                secondaryAttack: 'Shockwave Blast',
+                primaryCooldown: '0.5s',
+                secondaryCooldown: '1.0s'
             },
             {
                 key: 'ninja',
@@ -65,7 +67,9 @@ export class CharacterSelector extends Phaser.Scene {
                 idleAnim: 'ninja_turn',
                 name: 'Ninja',
                 primaryAttack: 'Swift Slash',
-                secondaryAttack: 'Crescent Wave'
+                secondaryAttack: 'Crescent Wave',
+                primaryCooldown: '0.5s',
+                secondaryCooldown: '6.0s'
             },
             {
                 key: 'hero',
@@ -73,7 +77,9 @@ export class CharacterSelector extends Phaser.Scene {
                 idleAnim: 'hero_turn',
                 name: 'Hero',
                 primaryAttack: 'Melee Strike',
-                secondaryAttack: 'Crimson Wave'
+                secondaryAttack: 'Crimson Wave',
+                primaryCooldown: '0.5s',
+                secondaryCooldown: '2.0s'
             },
             {
                 key: 'archer',
@@ -81,7 +87,9 @@ export class CharacterSelector extends Phaser.Scene {
                 idleAnim: 'archer_turn',
                 name: 'Archer',
                 primaryAttack: 'Quick Strike',
-                secondaryAttack: 'Arrow Shot'
+                secondaryAttack: 'Arrow Shot',
+                primaryCooldown: '0.5s',
+                secondaryCooldown: '1.0s'
             },
             {
                 key: 'skeleton',
@@ -89,7 +97,9 @@ export class CharacterSelector extends Phaser.Scene {
                 idleAnim: 'skeleton_turn',
                 name: 'Skeleton',
                 primaryAttack: 'Bone Strike',
-                secondaryAttack: 'Firestorm'
+                secondaryAttack: 'Firestorm',
+                primaryCooldown: '0.5s',
+                secondaryCooldown: '5.0s'
             }
         ];
         this.currentCharacterIndex = 0;
@@ -154,6 +164,21 @@ export class CharacterSelector extends Phaser.Scene {
             SCREEN_WIDTH / 5,
             SCREEN_HEIGHT * 0.92,
             `Primary: ${characterToDisplay.primaryAttack}\nSecondary: ${characterToDisplay.secondaryAttack}`,
+            {
+                fontFamily: 'Monospace',
+                fontSize: '24px',
+                fontStyle: 'bold',
+                color: '#CFAF82',
+                stroke: '#000000',
+                strokeThickness: 4,
+                resolution: 5
+            }
+        ).setOrigin(0.5);
+        
+        this.attackText = this.add.text(
+            SCREEN_WIDTH / 5,
+            SCREEN_HEIGHT * 0.92,
+            `Primary: ${characterToDisplay.primaryAttack} (CD: ${characterToDisplay.primaryCooldown})\nSecondary: ${characterToDisplay.secondaryAttack} (CD: ${characterToDisplay.secondaryCooldown})`,
             {
                 fontFamily: 'Monospace',
                 fontSize: '24px',
