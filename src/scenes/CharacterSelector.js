@@ -166,7 +166,7 @@ export class CharacterSelector extends Phaser.Scene {
 
         // Left side - Attack names
         this.primaryAttackText = this.add.text(
-            SCREEN_WIDTH * 0.05, 
+            SCREEN_WIDTH * 0.25, 
             SCREEN_HEIGHT * 0.85,
             `Primary: ${characterToDisplay.primaryAttack}`,
             {
@@ -181,7 +181,7 @@ export class CharacterSelector extends Phaser.Scene {
         ).setOrigin(0, 0.5);
 
         this.secondaryAttackText = this.add.text(
-            SCREEN_WIDTH * 0.05, 
+            SCREEN_WIDTH * 0.25, 
             SCREEN_HEIGHT * 0.90,
             `Secondary: ${characterToDisplay.secondaryAttack}`,
             {
@@ -197,7 +197,7 @@ export class CharacterSelector extends Phaser.Scene {
 
         // Right side - Cooldown times
         this.primaryCooldownText = this.add.text(
-            SCREEN_WIDTH * 1, 
+            SCREEN_WIDTH * 0.75, 
             SCREEN_HEIGHT * 0.85,
             `Cooldown: ${characterToDisplay.primaryCooldown}`,
             {
@@ -209,10 +209,10 @@ export class CharacterSelector extends Phaser.Scene {
                 strokeThickness: 4,
                 resolution: 5
             }
-        ).setOrigin(1, 0.5);
+        ).setOrigin(0, 0.5);
 
         this.secondaryCooldownText = this.add.text(
-            SCREEN_WIDTH * 1,  
+            SCREEN_WIDTH * 0.75,  
             SCREEN_HEIGHT * 0.90,
             `Cooldown: ${characterToDisplay.secondaryCooldown}`,
             {
@@ -224,7 +224,7 @@ export class CharacterSelector extends Phaser.Scene {
                 strokeThickness: 4,
                 resolution: 5
             }
-        ).setOrigin(1, 0.5);
+        ).setOrigin(0, 0.5);
     }
 
     changeCharacter(delta) {
