@@ -159,24 +159,8 @@ export class CharacterSelector extends Phaser.Scene {
             }
         ).setOrigin(0.5);
 
-
         this.attackText = this.add.text(
             SCREEN_WIDTH / 5,
-            SCREEN_HEIGHT * 0.92,
-            `Primary: ${characterToDisplay.primaryAttack}\nSecondary: ${characterToDisplay.secondaryAttack}`,
-            {
-                fontFamily: 'Monospace',
-                fontSize: '24px',
-                fontStyle: 'bold',
-                color: '#CFAF82',
-                stroke: '#000000',
-                strokeThickness: 4,
-                resolution: 5
-            }
-        ).setOrigin(0.5);
-
-        this.attackText = this.add.text(
-            -SCREEN_WIDTH / 5,
             SCREEN_HEIGHT * 0.92,
             `Primary: ${characterToDisplay.primaryAttack} (CD: ${characterToDisplay.primaryCooldown})\nSecondary: ${characterToDisplay.secondaryAttack} (CD: ${characterToDisplay.secondaryCooldown})`,
             {
