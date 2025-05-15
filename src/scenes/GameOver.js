@@ -37,7 +37,7 @@ export class GameOver extends Phaser.Scene {
         .setOrigin(0.5)
         .on('pointerdown', () => this.scene.start('CharacterSelector'));
         // play again text
-        const pressEnterText = this.add.text(SCREEN_WIDTH / 2, SCREEN_HEIGHT * 0.85, 'PRESS ENTER TO PLAY AGAIN', {
+        const pressEnterText = this.add.text(SCREEN_WIDTH / 2, SCREEN_HEIGHT * 0.75, 'PRESS ENTER TO PLAY AGAIN', {
             fontSize: '20px',
             color: '#FFD700', // Gold color
             stroke: '#000000',
