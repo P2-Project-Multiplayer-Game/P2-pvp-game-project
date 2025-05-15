@@ -95,7 +95,7 @@ export class GameOver extends Phaser.Scene {
                     }
                     
                     // Add character name
-                    this.add.text(pedestal.x, pedestal.y + 10, `${characterData.name || charType}\nDamage: ${player.damageDealt || 0}`, {
+                    this.add.text(pedestal.x+20, pedestal.y + 10, `${characterData.name || charType}\nDamage: ${player.damageDealt || 0}`, {
                         fontSize: 22,
                         fontStyle: 'Bold',
                         color: '#FFFFFF',

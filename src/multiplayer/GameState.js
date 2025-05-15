@@ -16,7 +16,8 @@ export default class GameState {
                 const playerRankings = data.rankings.map(player => ({
                     id: player.id,
                     rank: player.rank,
-                    characterType: player.characterType
+                    characterType: player.characterType,
+                    damageDealt: player.damageDealt || 0 
                 }));
                 
                 // Clean up network resources
