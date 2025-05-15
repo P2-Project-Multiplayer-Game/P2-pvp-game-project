@@ -244,12 +244,17 @@ io.on('connection', (socket) => {
     const target = players.get(data.targetId);
     
     if (attacker && target && target.roomId === attacker.roomId) {
-      // Calculate new health
+      // Calculate new health and actual damage dealt
       if (!target.health) target.health = 100; // Default health if not set
+      
+      // Calculate effective damage (can't be more than current health)
+      const effectiveDamage = Math.min(target.health, data.damage);
+      
+      // Update target health
       target.health = Math.max(0, target.health - data.damage);
-
-      // Track damage dealt by attacker
-      attacker.damageDealt = (attacker.damageDealt || 0) + data.damage;
+      
+      // Track damage dealt by attacker (only count effective damage)
+      attacker.damageDealt = (attacker.damageDealt || 0) + effectiveDamage;
       console.log(`Player ${socket.id} has dealt ${attacker.damageDealt} total damage`);
 
       // broadcast the hit to all players in room
