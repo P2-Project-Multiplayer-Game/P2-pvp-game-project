@@ -44,7 +44,7 @@ export class GameOver extends Phaser.Scene {
             strokeThickness: 4,
             resolution: 1
         }).setOrigin(0.5, 0.5);
-        
+
         this.input.keyboard.on('keydown-ENTER', () => this.scene.start('CharacterSelector'));
         // Display winners on pedestals
         this.displayWinnersOnPodium();
@@ -73,33 +73,62 @@ export class GameOver extends Phaser.Scene {
                 const charType = player.characterType || 'tank';
                 const characterData = CHARACTER_DATA[charType] || CHARACTER_DATA.tank;
                 
-                // Create character sprite
-                const playerSprite = this.add.sprite(pedestal.x, pedestal.y, characterData.textureKey)
-                    .setOrigin(0.5, 1)
-                    .setScale(2.5);
+                if (player.rank <= 3) {
+                    // Show on podium (top 3 places)
+                    const pedestal = pedestalPositions.find(p => p.rank === player.rank);
+                    if (!pedestal) return;
                     
-                // Add rank number
-                this.add.text(pedestal.x + 40, pedestal.y - 130, `#${player.rank}`, {
-                    fontSize: '30px',
-                    fontStyle: 'bold',
-                    color: player.rank === 1 ? '#FFD700' : (player.rank === 2 ? '#C0C0C0' : '#CD7F32'),
-                    stroke: '#000000',
-                    strokeThickness: 4
-                }).setOrigin(0.5);
+                    // Create character sprite
+                    const playerSprite = this.add.sprite(pedestal.x, pedestal.y, characterData.textureKey)
+                        .setOrigin(0.5, 1)
+                        .setScale(2.5);
+                        
+                    // Add rank number
+                    this.add.text(pedestal.x + 40, pedestal.y - 130, `#${player.rank}`, {
+                        fontSize: '30px',
+                        fontStyle: 'bold',
+                        color: player.rank === 1 ? '#FFD700' : (player.rank === 2 ? '#C0C0C0' : '#CD7F32'),
+                        stroke: '#000000',
+                        strokeThickness: 4
+                    }).setOrigin(0.5);
+                        
+                    // Play animation
+                    if (characterData.animKey && this.anims.exists(characterData.animKey)) {
+                        playerSprite.play(characterData.animKey, true);
+                    }
                     
-                // Play animation
-                if (characterData.animKey && this.anims.exists(characterData.animKey)) {
-                    playerSprite.play(characterData.animKey, true);
+                    // Add character name
+                    this.add.text(pedestal.x, pedestal.y + 10, characterData.name || charType, {
+                        fontSize: 22,
+                        fontStyle: 'Bold',
+                        color: '#FFFFFF',
+                        stroke: '#000000',
+                        strokeThickness: 4
+                    }).setOrigin(0.5, 0);
+                } else if (player.rank === 4 || player.rank === 5) {
+                    // Show 4th and 5th place in a line below podiums
+                    const xPosition = SCREEN_WIDTH * (player.rank === 4 ? 0.35 : 0.65);
+                    const yPosition = SCREEN_HEIGHT * 0.89;
+                    
+                    // Create smaller character sprite
+                    const playerSprite = this.add.sprite(xPosition, yPosition - 50, characterData.textureKey)
+                        .setOrigin(0.5, 1)
+                        .setScale(1.8);
+                        
+                    // Play animation if available
+                    if (characterData.animKey && this.anims.exists(characterData.animKey)) {
+                        playerSprite.play(characterData.animKey, true);
+                    }
+                    
+                    // Add character name and rank
+                    this.add.text(xPosition, yPosition, `#${player.rank} ${characterData.name || charType}`, {
+                        fontSize: 18,
+                        fontStyle: 'Bold',
+                        color: '#FFFFFF',
+                        stroke: '#000000',
+                        strokeThickness: 3
+                    }).setOrigin(0.5, 0);
                 }
-                
-                // Add character name
-                this.add.text(pedestal.x, pedestal.y + 10, characterData.name || charType, {
-                    fontSize: 22,
-                    fontStyle: 'Bold',
-                    color: '#FFFFFF',
-                    stroke: '#000000',
-                    strokeThickness: 4
-                }).setOrigin(0.5, 0);
             } catch (e) {
                 console.error(`Error displaying player ${player.id || player.rank}:`, e);
             }
