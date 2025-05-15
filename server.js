@@ -10,6 +10,8 @@ process.on('warning', e => { // stack overflaww debug
   console.warn('----------------------');
 });
 //module.exports = { io, server };
+const CharacterLogger = require('./server/CharacterLogger');
+const characterLogger = new CharacterLogger();
 
 // giving directionory forfiles that the server can utilize a
 app.use(express.static(__dirname));
@@ -474,6 +476,13 @@ io.on('connection', (socket) => {
             damageDealt: p.damageDealt || 0  ,
             kills: p.kills || []
           }));
+
+        // Log match data to CSV file
+        const matchLogPath = characterLogger.logMatch({
+          rankings: finalRankings,
+          matchDuration: matchDuration
+        });
+        console.log(`Game statistics logged to ${matchLogPath}`);
         
         // Send game over event with rankings
         io.to(player.roomId).emit('game_over', {
