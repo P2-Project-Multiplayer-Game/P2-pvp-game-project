@@ -116,6 +116,7 @@ io.on('connection', (socket) => {
       health: playerData.health || 100,
       isAlive: true,  
       rank: null,
+      damageDealt: 0, 
       isReady: false      
     };
     
@@ -246,7 +247,11 @@ io.on('connection', (socket) => {
       // Calculate new health
       if (!target.health) target.health = 100; // Default health if not set
       target.health = Math.max(0, target.health - data.damage);
-      
+
+      // Track damage dealt by attacker
+      attacker.damageDealt = (attacker.damageDealt || 0) + data.damage;
+      console.log(`Player ${socket.id} has dealt ${attacker.damageDealt} total damage`);
+
       // broadcast the hit to all players in room
       io.to(attacker.roomId).emit('player_hit', {
         attackerId: socket.id,
@@ -438,7 +443,8 @@ io.on('connection', (socket) => {
           .map(p => ({
             id: p.id,
             characterType: p.characterType,
-            rank: p.rank
+            rank: p.rank,
+            damageDealt: p.damageDealt || 0  
           }));
         
         // Send game over event with rankings
