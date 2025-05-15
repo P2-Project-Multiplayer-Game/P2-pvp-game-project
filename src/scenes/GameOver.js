@@ -119,7 +119,7 @@ export class GameOver extends Phaser.Scene {
                 otherRankingsText += `#${player.rank}: ${characterData.name || charType}\n`;
             });
             
-            this.add.text(SCREEN_WIDTH / 2, SCREEN_HEIGHT * 0.7, otherRankingsText, {
+            this.add.text(SCREEN_WIDTH / 2, SCREEN_HEIGHT * 1.1, otherRankingsText, {
                 fontSize: 22,
                 fontStyle: 'Bold',
                 color: '#FFFFFF',
