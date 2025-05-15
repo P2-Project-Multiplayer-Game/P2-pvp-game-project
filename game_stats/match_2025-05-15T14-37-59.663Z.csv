@@ -1,0 +1,23 @@
+MATCH SUMMARY
+Date,2025-05-15T14:37:59.664Z
+Duration,0:38
+
+CHARACTER RANKINGS
+Rank,Character,Damage Dealt,Kills
+1,skeleton,235,3
+2,hero,0,0
+3,archer,75,0
+4,ninja,10,0
+
+KILL BREAKDOWN
+Killer Character,Victim Character,Count
+skeleton,ninja,1
+skeleton,archer,1
+skeleton,hero,1
+
+TOTAL DAMAGE BY CHARACTER
+Character,Total Damage
+skeleton,235
+hero,0
+archer,75
+ninja,10
