@@ -57,39 +57,39 @@ export class CharacterSelector extends Phaser.Scene {
                 idleAnim: 'tank_turn',
                 name: 'Tank',
                 primaryAttack: 'Sword Strike',
-                secondaryAttack: 'Power Blast'
+                secondaryAttack: 'Shockwave Blast'
             },
             {
                 key: 'ninja',
                 textureKey: 'ninja_idle',
                 idleAnim: 'ninja_turn',
                 name: 'Ninja',
-                primaryAttack: 'NinjaAttack1',
-                secondaryAttack: 'NinjaAttack2'
+                primaryAttack: 'Swift Slash',
+                secondaryAttack: 'Crescent Wave'
             },
             {
                 key: 'hero',
                 textureKey: 'hero_idle',
                 idleAnim: 'hero_turn',
                 name: 'Hero',
-                primaryAttack: 'HeroAttack1',
-                secondaryAttack: 'HeroAttack2'
+                primaryAttack: 'Melee Strike',
+                secondaryAttack: 'Crimson Wave'
             },
             {
                 key: 'archer',
                 textureKey: 'archer_idle',
                 idleAnim: 'archer_turn',
                 name: 'Archer',
-                primaryAttack: 'ArcherAttack1',
-                secondaryAttack: 'ArcherAttack2'
+                primaryAttack: 'Quick Strike',
+                secondaryAttack: 'Arrow Shot'
             },
             {
                 key: 'skeleton',
                 textureKey: 'skeleton_idle',
                 idleAnim: 'skeleton_turn',
                 name: 'Skeleton',
-                primaryAttack: 'SkeletonAttack1',
-                secondaryAttack: 'SkeletonAttack2'
+                primaryAttack: 'Bone Strike',
+                secondaryAttack: 'Firestorm'
             }
         ];
         this.currentCharacterIndex = 0;
