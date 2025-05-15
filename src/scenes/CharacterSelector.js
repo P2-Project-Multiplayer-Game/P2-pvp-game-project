@@ -174,9 +174,9 @@ export class CharacterSelector extends Phaser.Scene {
                 resolution: 5
             }
         ).setOrigin(0.5);
-        
+
         this.attackText = this.add.text(
-            SCREEN_WIDTH / 5,
+            -SCREEN_WIDTH / 5,
             SCREEN_HEIGHT * 0.92,
             `Primary: ${characterToDisplay.primaryAttack} (CD: ${characterToDisplay.primaryCooldown})\nSecondary: ${characterToDisplay.secondaryAttack} (CD: ${characterToDisplay.secondaryCooldown})`,
             {
