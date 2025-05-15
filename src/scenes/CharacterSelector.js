@@ -166,7 +166,7 @@ export class CharacterSelector extends Phaser.Scene {
 
         // Left side - Attack names
         this.primaryAttackText = this.add.text(
-            SCREEN_WIDTH * 0.5, 
+            SCREEN_WIDTH * 0.05, 
             SCREEN_HEIGHT * 0.85,
             `Primary: ${characterToDisplay.primaryAttack}`,
             {
@@ -181,7 +181,7 @@ export class CharacterSelector extends Phaser.Scene {
         ).setOrigin(0, 0.5);
 
         this.secondaryAttackText = this.add.text(
-            SCREEN_WIDTH * 0.5, 
+            SCREEN_WIDTH * 0.05, 
             SCREEN_HEIGHT * 0.90,
             `Secondary: ${characterToDisplay.secondaryAttack}`,
             {
