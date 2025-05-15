@@ -57,7 +57,7 @@ export class GameOver extends Phaser.Scene {
             resolution: 1
         }).setOrigin(0.5, 0.5);
 
-        this.add.text(SCREEN_WIDTH / 2, SCREEN_HEIGHT * 0.05, 
+        this.add.text(SCREEN_WIDTH / 2, SCREEN_HEIGHT * 0.02, 
             `Match Duration: ${this.formatTime(this.matchDuration)}`, {
             fontSize: '24px',
             fontStyle: 'bold',
