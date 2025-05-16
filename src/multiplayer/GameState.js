@@ -1,3 +1,5 @@
+import NetworkService from '../services/NetworkService.js';  
+
 export default class GameState {
     constructor(scene, networkManager, gameSync) {
         this.scene = scene;
@@ -97,7 +99,9 @@ export default class GameState {
             if (this.scene.combatManager) {
                 this.scene.combatManager.isShuttingDown = true;
             }
-            
+            //  Disconnect the socket completely
+            console.log("Disconnecting socket before GameOver scene transition");
+            NetworkService.disconnect();
             console.log("Network resources cleaned up for GameOver transition");
         } catch (e) {
             console.error("Error cleaning up network resources:", e);
