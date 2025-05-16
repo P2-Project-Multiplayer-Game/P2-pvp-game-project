@@ -232,8 +232,19 @@ io.on('connection', (socket) => {
     const player = players.get(socket.id);
     if (player && player.roomId) {
       socket.to(player.roomId).emit('player_left', { id: socket.id });
+      
       // Remove from lobby manager
       lobbyManager.removePlayer(player.roomId, socket.id);
+      
+      // Check if room is now empty after player left
+      const playersInRoom = Array.from(players.values())
+        .filter(p => p.roomId === player.roomId);
+        
+      // If room is empty, reset the game state for that room
+      if (playersInRoom.length === 0) {
+        console.log(`Room ${player.roomId} is empty, resetting game state`);
+        lobbyManager.setGameStarted(player.roomId, false);
+      }
       
       // Update lobby status
       io.to(player.roomId).emit('lobby_status_update', 
