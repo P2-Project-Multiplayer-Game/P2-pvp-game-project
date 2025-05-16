@@ -65,8 +65,8 @@ export class Lobby extends Phaser.Scene {
         ).setOrigin(0.5).setDepth(2);
 
         // Define positions for the two buttons
-        const enterButtonX = SCREEN_WIDTH * 0.35; // Left side
-        const backButtonX = SCREEN_WIDTH * 0.65; // Right side
+        const enterButtonX = SCREEN_WIDTH * 0.15; // Left side
+        const backButtonX = SCREEN_WIDTH * 0.85; // Right side
         const buttonY = SCREEN_HEIGHT * 0.922;
 
         // Ready prompt at bottom left
@@ -105,7 +105,7 @@ export class Lobby extends Phaser.Scene {
         const backPromptText = this.add.text(
             backButtonX,
             buttonY,
-            '← Press BACKSPACE to return',
+            'Press BACKSPACE to return',
             {
                 fontSize: '24px',
                 fontFamily: 'monoSpace',
