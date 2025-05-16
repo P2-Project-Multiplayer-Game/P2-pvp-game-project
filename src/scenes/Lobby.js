@@ -138,7 +138,12 @@ export class Lobby extends Phaser.Scene {
         this.isTogglingReady = true;
         
         console.log(`Toggling ready state from ${this.isReady} to ${!this.isReady}`);
-        
+        // Force to true on first press in a new lobby session
+        if (!this.hasToggledReady) {
+            console.log('First toggle in this session, ensuring we go to ready state');
+            this.isReady = false;  // Ensure we're starting from false
+            this.hasToggledReady = true; // Mark that we've toggled once
+        }
         // Toggle local ready state
         this.isReady = !this.isReady;
         

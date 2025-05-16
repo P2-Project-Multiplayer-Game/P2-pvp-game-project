@@ -120,7 +120,7 @@ io.on('connection', (socket) => {
       rank: null,
       damageDealt: 0, 
       kills: [], 
-      isReady: false      
+      isReady: false  // Default to false but don't emit the event yet 
     };
     
     players.set(socket.id, player);
@@ -134,12 +134,12 @@ io.on('connection', (socket) => {
 
     // Send current lobby status to all players
     io.to(roomId).emit('lobby_status_update', lobbyManager.getLobbyStatus(roomId));
-    
+    /*
     socket.to(roomId).emit('player_health_update', {
       id: socket.id,
       health: player.health
     });
-
+    */
     // succefull join notification
     socket.emit('game_joined', {
       roomId: roomId,
