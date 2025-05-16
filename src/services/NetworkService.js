@@ -34,23 +34,12 @@ class NetworkService {
         if (this.networkManager && this.networkManager.socket) {
             console.log('NetworkService: Forcing disconnection');
             
-            // Clear all listeners before disconnecting
-            if (this.networkManager.eventListeners) {
-                for (const event in this.networkManager.eventListeners) {
-                    console.log(`Removing all listeners for ${event}`);
-                    this.networkManager.eventListeners[event] = [];
-                }
-            }
-            
-            // Set transitioning flag to skip new events during disconnect
-            this.networkManager.isTransitioning = true;
-            
             // Disconnect
             this.networkManager.disconnect();
             this.initialized = false;
             this.networkManager = null;
             
-            console.log('NetworkService: Completed full cleanup');
+            console.log('NetworkService: disconnected');
         }
     }
 }
