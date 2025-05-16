@@ -82,9 +82,13 @@ export default class LobbyUIManager {
 
     startCountdown(countdown) {
         console.log('Game countdown started:', countdown);
-        
+        // Simple safety check - only proceed if we're in the Lobby scene
+        if (!this.scene || !this.scene.scene || this.scene.scene.key !== 'Lobby') {
+            console.log('Ignoring countdown - not in Lobby scene');
+            return;
+        }
         // Create countdown text if it doesn't exist already
-        if (!this.scene.countdownText) {
+        try {
             this.scene.countdownText = this.scene.add.text(
                 SCREEN_WIDTH / 2,
                 SCREEN_HEIGHT * 0.26, // Position below ready status text
@@ -106,31 +110,31 @@ export default class LobbyUIManager {
                 yoyo: true,
                 repeat: -1
             });
-        } else {
-            // Update existing text
-            this.scene.countdownText.setText(`Starting in ${countdown}...`);
+
+        
+            // Update the countdown number each second
+            let currentCount = countdown;
+            
+            // Clear any existing countdown timer
+            if (this.countdownTimer) {
+                this.scene.time.removeEvent(this.countdownTimer);
+            }
+            
+            this.countdownTimer = this.scene.time.addEvent({
+                delay: 1000,
+                callback: () => {
+                    currentCount--;
+                    if (currentCount > 0) {
+                        this.scene.countdownText.setText(`Starting in ${currentCount}...`);
+                    } else {
+                        this.scene.countdownText.setText('GO!');
+                    }
+                },
+                repeat: countdown - 1
+            });
+        } catch (err) {
+            console.log("Error handling countdown:", err);
         }
-        
-        // Update the countdown number each second
-        let currentCount = countdown;
-        
-        // Clear any existing countdown timer
-        if (this.countdownTimer) {
-            this.scene.time.removeEvent(this.countdownTimer);
-        }
-        
-        this.countdownTimer = this.scene.time.addEvent({
-            delay: 1000,
-            callback: () => {
-                currentCount--;
-                if (currentCount > 0) {
-                    this.scene.countdownText.setText(`Starting in ${currentCount}...`);
-                } else {
-                    this.scene.countdownText.setText('GO!');
-                }
-            },
-            repeat: countdown - 1
-        });
     }
 
     initializeLobbyPlayers(players) {
@@ -152,6 +156,7 @@ export default class LobbyUIManager {
     updatePlayerReadyState(data) {
         // If this is the local player, update our sprite
         if (data.id === this.network.playerId) {
+            console.log(`Server updated my ready state to: ${data.isReady}`);
             this.scene.isReady = data.isReady;
             
             // Update the text prompt
@@ -224,18 +229,6 @@ export default class LobbyUIManager {
         
         // Reposition all players
         this.repositionAllPlayers();
-    }
-
-    removePlayerFromLobby(playerId) {
-        if (this.playerDisplays.has(playerId)) {
-            const display = this.playerDisplays.get(playerId);
-            if (display.sprite) display.sprite.destroy();
-            if (display.text) display.text.destroy();
-            this.playerDisplays.delete(playerId);
-            
-            // Reposition remaining players
-            this.repositionAllPlayers();
-        }
     }
 
     repositionAllPlayers() {

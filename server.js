@@ -120,7 +120,7 @@ io.on('connection', (socket) => {
       rank: null,
       damageDealt: 0, 
       kills: [], 
-      isReady: false      
+      isReady: false  // Default to false but don't emit the event yet 
     };
     
     players.set(socket.id, player);
@@ -134,12 +134,6 @@ io.on('connection', (socket) => {
 
     // Send current lobby status to all players
     io.to(roomId).emit('lobby_status_update', lobbyManager.getLobbyStatus(roomId));
-    
-    socket.to(roomId).emit('player_health_update', {
-      id: socket.id,
-      health: player.health
-    });
-
     // succefull join notification
     socket.emit('game_joined', {
       roomId: roomId,
@@ -189,6 +183,14 @@ io.on('connection', (socket) => {
     // Check if all players are ready to start the game
     if (lobbyManager.areAllPlayersReady(player.roomId)) {
       console.log(`All players in room ${player.roomId} are ready. Starting game...`);
+
+      // First make sure any stale game state is reset
+      const currentStatus = lobbyManager.getLobbyStatus(player.roomId);
+      if (currentStatus.isGameStarted) {
+        console.log(`Warning: Room ${player.roomId} already had isGameStarted=true. Explicitly resetting before starting new game.`);
+        lobbyManager.setGameStarted(player.roomId, false);
+      }
+  
       
       // Mark game as started in lobby manager
       lobbyManager.setGameStarted(player.roomId, true);
@@ -232,12 +234,35 @@ io.on('connection', (socket) => {
     const player = players.get(socket.id);
     if (player && player.roomId) {
       socket.to(player.roomId).emit('player_left', { id: socket.id });
-      // Remove from lobby manager
+      
+      // Remove player from lobby manager
       lobbyManager.removePlayer(player.roomId, socket.id);
       
-      // Update lobby status
-      io.to(player.roomId).emit('lobby_status_update', 
-        lobbyManager.getLobbyStatus(player.roomId));
+      // Check if room is now empty after player left
+      const playersInRoom = Array.from(players.values())
+        .filter(p => p.roomId === player.roomId);
+        
+      // If room is empty, perform a full cleanup
+      if (playersInRoom.length === 0) {
+        console.log(`Room ${player.roomId} is empty, performing full reset`);
+        
+        // Force reset room
+        lobbyManager.setGameStarted(player.roomId, false);
+        
+        // Clear any countdown timers for this room
+        if (countdownTimers.has(player.roomId)) {
+          clearTimeout(countdownTimers.get(player.roomId));
+          countdownTimers.delete(player.roomId);
+        }
+        
+        // Verify reset happened
+        const newStatus = lobbyManager.getLobbyStatus(player.roomId);
+        console.log(`Room ${player.roomId} reset complete: isGameStarted=${newStatus.isGameStarted}, playersReady=${newStatus.playersReady}`);
+      } else {
+        // Send updated lobby status to remaining players
+        io.to(player.roomId).emit('lobby_status_update', 
+          lobbyManager.getLobbyStatus(player.roomId));
+      }
     }
     // Remove player from tracking
     players.delete(socket.id);
@@ -260,7 +285,7 @@ io.on('connection', (socket) => {
       
       // Track damage dealt by attacker (only count effective damage)
       attacker.damageDealt = (attacker.damageDealt || 0) + effectiveDamage;
-      console.log(`Player ${socket.id} has dealt ${attacker.damageDealt} total damage`);
+      //console.log(`Player ${socket.id} has dealt ${attacker.damageDealt} total damage`);
 
       // broadcast the hit to all players in room
       io.to(attacker.roomId).emit('player_hit', {
@@ -275,7 +300,7 @@ io.on('connection', (socket) => {
         health: target.health
       });
       
-      console.log(`Player ${socket.id} hit player ${data.targetId} for ${data.damage} damage. Health now: ${target.health}`);
+      //console.log(`Player ${socket.id} hit player ${data.targetId} for ${data.damage} damage. Health now: ${target.health}`);
     }
   });
 
@@ -283,7 +308,7 @@ io.on('connection', (socket) => {
     const player = players.get(socket.id);
     
     if (player) {
-      // broadcast shockwave to other players in same room
+      // abroadcast shockwave to other players in same room
       socket.to(player.roomId).emit('shockwave_created', {
         playerId: socket.id,
         x: data.x,
@@ -291,7 +316,7 @@ io.on('connection', (socket) => {
         direction: data.direction
       });
       
-      console.log(`Player ${socket.id} created shockwave facing ${data.direction}`)
+      //console.log(`Player ${socket.id} created shockwave facing ${data.direction}`)
     }
   });
 
@@ -318,7 +343,7 @@ io.on('connection', (socket) => {
         direction: data.direction
       });
       
-      console.log(`Player ${socket.id} created herowave facing ${data.direction}`)
+      //console.log(`Player ${socket.id} created herowave facing ${data.direction}`)
     }
   });
 
@@ -344,7 +369,7 @@ io.on('connection', (socket) => {
         direction: data.direction
       });
       
-      console.log(`Player ${socket.id} created arrow facing ${data.direction}`)
+      //console.log(`Player ${socket.id} created arrow facing ${data.direction}`)
     }
   });
 
@@ -372,7 +397,7 @@ io.on('connection', (socket) => {
         direction: data.direction
       });
       
-      console.log(`Player ${socket.id} created ninjawave facing ${data.direction}`)
+      //console.log(`Player ${socket.id} created ninjawave facing ${data.direction}`)
     }
   });
 
@@ -400,7 +425,7 @@ io.on('connection', (socket) => {
               positions: data.positions // Include the positions array
           });
           
-          console.log(`Player ${socket.id} created fireball facing ${data.direction} with positions:`, data.positions);
+          //console.log(`Player ${socket.id} created fireball facing ${data.direction} with positions:`, data.positions);
       }
   });
 
@@ -490,6 +515,11 @@ io.on('connection', (socket) => {
           rankings: finalRankings,
           matchDuration: matchDuration // Time in milliseconds
         });
+        console.log(`Game over in room ${player.roomId}, explicitly resetting game state`);
+        lobbyManager.setGameStarted(player.roomId, false);
+
+        // Also notify everyone in the room about the state change
+        io.to(player.roomId).emit('lobby_status_update', lobbyManager.getLobbyStatus(player.roomId));
       }
     }
   });

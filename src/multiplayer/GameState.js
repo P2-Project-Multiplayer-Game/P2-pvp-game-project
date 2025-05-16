@@ -1,3 +1,5 @@
+import NetworkService from '../services/NetworkService.js';  
+
 export default class GameState {
     constructor(scene, networkManager, gameSync) {
         this.scene = scene;
@@ -21,9 +23,9 @@ export default class GameState {
                     damageDealt: player.damageDealt || 0,
                     kills: player.kills || [] 
                 }));
-                
-                // Clean up network resources
-                this.cleanupNetworkResources();
+                //  Disconnect the socket completely
+                console.log("Disconnecting socket before GameOver scene transition");
+                NetworkService.disconnect();
                 
                 // Transition to GameOver with just the essential data
                 this.scene.scene.start('GameOver', { 
@@ -66,41 +68,5 @@ export default class GameState {
             console.log('Game countdown started:', data.countdown);
             // Handle countdown display if needed
         });
-    }
-
-    cleanupNetworkResources() {
-        try {
-            // Mark network as transitioning first
-            if (this.network) {
-                this.network.isTransitioning = true;
-            }
-            // Remove all listeners from NetworkManager for player updates
-            if (this.network) {
-                this.network.removeAllListeners('playerUpdated');
-                this.network.removeAllListeners('playerHealthUpdate');
-            }
-            
-            // Clean up GameSync
-            if (this.gameSync) {
-                // Disable update method
-                this.gameSync.isShuttingDown = true;
-            }
-            
-            // Clean up any other managers that might be updating
-            if (this.scene.healthDisplayManager) {
-                this.scene.healthDisplayManager.isShuttingDown = true;
-            }
-            
-            if (this.scene.uiManager) {
-                this.scene.uiManager.isShuttingDown = true;
-            }
-            if (this.scene.combatManager) {
-                this.scene.combatManager.isShuttingDown = true;
-            }
-            
-            console.log("Network resources cleaned up for GameOver transition");
-        } catch (e) {
-            console.error("Error cleaning up network resources:", e);
-        }
     }
 }

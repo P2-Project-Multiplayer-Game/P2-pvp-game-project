@@ -186,8 +186,6 @@ export default class GameSync {
   
   // Update a remote player
   updateRemotePlayer(data) {
-    // Skip if we're shutting down
-    if (this.isShuttingDown) return;
 
     const remotePlayer = this.remotePlayers.get(data.id);
     
@@ -270,8 +268,8 @@ export default class GameSync {
   update() {
 
     // Skip if shutting down or no local player
-    if (this.isShuttingDown || !this.localPlayer || !this.network || 
-        !this.network.connected || this.localPlayer.isDead || this.network.isTransitioning) {
+    if ( !this.localPlayer || !this.network || 
+        !this.network.connected || this.localPlayer.isDead) {
         return;
     }
     

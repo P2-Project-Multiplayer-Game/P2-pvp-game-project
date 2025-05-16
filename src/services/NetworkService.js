@@ -29,6 +29,19 @@ class NetworkService {
         throw error;
     }
     }
+    
+    disconnect() {
+        if (this.networkManager && this.networkManager.socket) {
+            console.log('NetworkService: Forcing disconnection');
+            
+            // Disconnect
+            this.networkManager.disconnect();
+            this.initialized = false;
+            this.networkManager = null;
+            
+            console.log('NetworkService: disconnected');
+        }
+    }
 }
 
 // Create and export a singleton instance meaning using the same NetworkManager across scenes
