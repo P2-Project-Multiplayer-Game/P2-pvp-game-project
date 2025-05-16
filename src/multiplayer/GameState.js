@@ -23,9 +23,11 @@ export default class GameState {
                     damageDealt: player.damageDealt || 0,
                     kills: player.kills || [] 
                 }));
-                
+                //  Disconnect the socket completely
+                console.log("Disconnecting socket before GameOver scene transition");
+                NetworkService.disconnect();
                 // Clean up network resources
-                this.cleanupNetworkResources();
+                //this.cleanupNetworkResources();
                 
                 // Transition to GameOver with just the essential data
                 this.scene.scene.start('GameOver', { 
@@ -69,7 +71,7 @@ export default class GameState {
             // Handle countdown display if needed
         });
     }
-
+    /*
     cleanupNetworkResources() {
         try {
             // Mark network as transitioning first
@@ -107,4 +109,5 @@ export default class GameState {
             console.error("Error cleaning up network resources:", e);
         }
     }
+    */
 }

@@ -134,12 +134,6 @@ io.on('connection', (socket) => {
 
     // Send current lobby status to all players
     io.to(roomId).emit('lobby_status_update', lobbyManager.getLobbyStatus(roomId));
-    /*
-    socket.to(roomId).emit('player_health_update', {
-      id: socket.id,
-      health: player.health
-    });
-    */
     // succefull join notification
     socket.emit('game_joined', {
       roomId: roomId,
