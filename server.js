@@ -189,6 +189,14 @@ io.on('connection', (socket) => {
     // Check if all players are ready to start the game
     if (lobbyManager.areAllPlayersReady(player.roomId)) {
       console.log(`All players in room ${player.roomId} are ready. Starting game...`);
+
+      // First make sure any stale game state is reset
+      const currentStatus = lobbyManager.getLobbyStatus(player.roomId);
+      if (currentStatus.isGameStarted) {
+        console.log(`Warning: Room ${player.roomId} already had isGameStarted=true. Explicitly resetting before starting new game.`);
+        lobbyManager.setGameStarted(player.roomId, false);
+      }
+  
       
       // Mark game as started in lobby manager
       lobbyManager.setGameStarted(player.roomId, true);
@@ -240,20 +248,26 @@ io.on('connection', (socket) => {
       const playersInRoom = Array.from(players.values())
         .filter(p => p.roomId === player.roomId);
         
-      // If room is empty, reset the game state for that room
+      // If room is empty, perform a full cleanup
       if (playersInRoom.length === 0) {
         console.log(`Room ${player.roomId} is empty, performing full reset`);
         
-        // Check current state before reset
-        const currentStatus = lobbyManager.getLobbyStatus(player.roomId);
-        console.log(`Room state before reset: isGameStarted=${currentStatus.isGameStarted}`);
-        
-        // Reset game start status
+        // Force reset room
         lobbyManager.setGameStarted(player.roomId, false);
+        
+        // Clear any countdown timers for this room
+        if (countdownTimers.has(player.roomId)) {
+          clearTimeout(countdownTimers.get(player.roomId));
+          countdownTimers.delete(player.roomId);
+        }
         
         // Verify reset happened
         const newStatus = lobbyManager.getLobbyStatus(player.roomId);
-        console.log(`Room state after reset: isGameStarted=${newStatus.isGameStarted}`);
+        console.log(`Room ${player.roomId} reset complete: isGameStarted=${newStatus.isGameStarted}, playersReady=${newStatus.playersReady}`);
+      } else {
+        // Send updated lobby status to remaining players
+        io.to(player.roomId).emit('lobby_status_update', 
+          lobbyManager.getLobbyStatus(player.roomId));
       }
     }
     // Remove player from tracking

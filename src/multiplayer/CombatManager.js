@@ -63,7 +63,7 @@ export default class CombatManager {
     if (target.playerId) {
       this.network.sendPlayerHit(target.playerId, damage);
     }
-    console.log(`Hit registered: ${attacker.characterType} hit ${target.playerId || 'dummy'} for ${damage} damage`);
+    //console.log(`Hit registered: ${attacker.characterType} hit ${target.playerId || 'dummy'} for ${damage} damage`);
   }
 
   // Register shockwave using NetworkManager
@@ -77,7 +77,7 @@ export default class CombatManager {
       player.flipX ? 'left' : 'right'
     );
     
-    console.log("Sent shockwave creation event to server");
+    //console.log("Sent shockwave creation event to server");
   }
 
   registerHerowave() {
@@ -90,7 +90,7 @@ export default class CombatManager {
       player.flipX ? 'left' : 'right'
     );
     
-    console.log("Sent herowave creation event to server");
+    //console.log("Sent herowave creation event to server");
   }
 
   registerArrow() {
@@ -103,7 +103,7 @@ export default class CombatManager {
       player.flipX ? 'left' : 'right'
     );
     
-    console.log("Sent arrow creation event to server");
+    //console.log("Sent arrow creation event to server");
   }
 
   registerNinjawave() {
@@ -116,7 +116,7 @@ export default class CombatManager {
       player.flipX ? 'left' : 'right'
     );
     
-    console.log("Sent ninjawave creation event to server");
+    //console.log("Sent ninjawave creation event to server");
   }
 
   registerFireball(positions) {
@@ -130,7 +130,7 @@ export default class CombatManager {
       positions
     );
     
-    console.log("Sent fireball creation event to server with positions:", positions);
+   // console.log("Sent fireball creation event to server with positions:", positions);
   }
 
   // Handle player hit logic

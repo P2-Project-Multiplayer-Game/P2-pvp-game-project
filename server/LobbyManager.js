@@ -89,9 +89,26 @@ class LobbyManager {
   // Set game started status for a lobby
   setGameStarted(roomId, isStarted) {
     const lobby = this.lobbies.get(roomId);
-    if (!lobby) return false;
+    if (!lobby) {
+      console.log(`[LobbyManager] Error: Room ${roomId} not found`);
+      return false;
+    }
+    // Log the state change for debugging
+    console.log(`[LobbyManager] Setting game started for room ${roomId} to ${isStarted}`);
+    const previousValue = lobby.isGameStarted;
     
     lobby.isGameStarted = isStarted;
+    
+    // If we're ending a game (setting to false), also reset all player ready states
+    if (isStarted === false) {
+      console.log(`[LobbyManager] Game ending, resetting all player ready states in room ${roomId}`);
+      for (const [playerId, playerData] of lobby.players.entries()) {
+        playerData.isReady = false;
+        lobby.players.set(playerId, playerData);
+      }
+    }
+    
+    console.log(`[LobbyManager] Game started changed from ${previousValue} to ${lobby.isGameStarted}`);
     return true;
   }
 }
