@@ -177,7 +177,7 @@ export default class CombatManager {
   // creates shockwave for remote player
   handleRemoteShockwave(data) {
     if (this.isShuttingDown) return;
-    console.log('Handling remote shockwave creation from player:', data.playerId);
+    //console.log('Handling remote shockwave creation from player:', data.playerId);
     
     const remotePlayer = this.gameSync.remotePlayers.get(data.playerId);
     
@@ -193,11 +193,11 @@ export default class CombatManager {
       remotePlayer.flipX = false;
     }
     
-    console.log(`Creating shockwave for remote player ${data.playerId} (${remotePlayer.characterType}) facing ${data.direction}`);
+    //console.log(`Creating shockwave for remote player ${data.playerId} (${remotePlayer.characterType}) facing ${data.direction}`);
     
     if (remotePlayer.characterType === 'tank') {
       remotePlayer.createShockwave();
-      console.log(`Remote shockwave created successfully at (${remotePlayer.x}, ${remotePlayer.y})`);
+      //console.log(`Remote shockwave created successfully at (${remotePlayer.x}, ${remotePlayer.y})`);
     }
   }
 
@@ -211,7 +211,7 @@ export default class CombatManager {
   // handle remote herowave creation
   handleRemoteHerowave(data) {
     if (this.isShuttingDown) return;
-    console.log('Handling remote herowave creation from player:', data.playerId);
+    //console.log('Handling remote herowave creation from player:', data.playerId);
     
     const remotePlayer = this.gameSync.remotePlayers.get(data.playerId);
     
@@ -227,11 +227,11 @@ export default class CombatManager {
       remotePlayer.flipX = false;
     }
     
-    console.log(`Creating herowave for remote player ${data.playerId} (${remotePlayer.characterType}) facing ${data.direction}`);
+    //console.log(`Creating herowave for remote player ${data.playerId} (${remotePlayer.characterType}) facing ${data.direction}`);
     
     if (remotePlayer.characterType === 'hero') {
       remotePlayer.createHerowave();
-      console.log(`Remote herowave created successfully at (${remotePlayer.x}, ${remotePlayer.y})`);
+      //console.log(`Remote herowave created successfully at (${remotePlayer.x}, ${remotePlayer.y})`);
     }
   }
 
@@ -246,7 +246,7 @@ export default class CombatManager {
   // handle remote arrows
   handleRemoteArrow(data) {
     if (this.isShuttingDown) return;
-    console.log('Handling remote arrow creation from player:', data.playerId);
+    //console.log('Handling remote arrow creation from player:', data.playerId);
     
     const remotePlayer = this.gameSync.remotePlayers.get(data.playerId);
     
@@ -268,13 +268,13 @@ export default class CombatManager {
       remotePlayer.y = data.y;
     }
     */
-    console.log(`Creating arrow for remote player ${data.playerId} (${remotePlayer.characterType}) facing ${data.direction}`);
+    //console.log(`Creating arrow for remote player ${data.playerId} (${remotePlayer.characterType}) facing ${data.direction}`);
     
     if (remotePlayer.characterType === 'archer') {
       // Add small delay to ensure positioning is correct
       this.scene.time.delayedCall(10, () => {
         remotePlayer.createArrow();
-        console.log(`Remote arrow created successfully at (${remotePlayer.x}, ${remotePlayer.y})`);
+        //console.log(`Remote arrow created successfully at (${remotePlayer.x}, ${remotePlayer.y})`);
       });
     }
   }
@@ -332,7 +332,7 @@ export default class CombatManager {
   // handle remote ninjawave creation
   handleRemoteNinjawave(data) {
     if (this.isShuttingDown) return;
-    console.log('Handling remote ninjawave creation from player:', data.playerId);
+    //console.log('Handling remote ninjawave creation from player:', data.playerId);
     
     const remotePlayer = this.gameSync.remotePlayers.get(data.playerId);
     
@@ -348,11 +348,11 @@ export default class CombatManager {
       remotePlayer.flipX = false;
     }
     
-    console.log(`Creating ninjawave for remote player ${data.playerId} (${remotePlayer.characterType}) facing ${data.direction}`);
+    //console.log(`Creating ninjawave for remote player ${data.playerId} (${remotePlayer.characterType}) facing ${data.direction}`);
     
     if (remotePlayer.characterType === 'ninja') {
       remotePlayer.createNinjawave();
-      console.log(`Remote ninjawave created successfully at (${remotePlayer.x}, ${remotePlayer.y})`);
+      //console.log(`Remote ninjawave created successfully at (${remotePlayer.x}, ${remotePlayer.y})`);
     }
   }
 
@@ -366,7 +366,7 @@ export default class CombatManager {
   // handle remote fireball creation
   handleRemoteFireball(data) {
     if (this.isShuttingDown) return;
-      console.log('Handling remote fireball creation from player:', data.playerId);
+      //console.log('Handling remote fireball creation from player:', data.playerId);
       
       const remotePlayer = this.gameSync.remotePlayers.get(data.playerId);
       
@@ -382,7 +382,7 @@ export default class CombatManager {
           remotePlayer.flipX = false;
       }
       
-      console.log(`Creating fireball for remote player ${data.playerId} with positions:`, data.positions);
+      //console.log(`Creating fireball for remote player ${data.playerId} with positions:`, data.positions);
       
       if (remotePlayer.characterType === 'skeleton') {
           // Pass the positions to createFireball

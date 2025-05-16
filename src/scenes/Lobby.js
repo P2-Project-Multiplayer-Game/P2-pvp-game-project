@@ -64,14 +64,19 @@ export class Lobby extends Phaser.Scene {
             }
         ).setOrigin(0.5).setDepth(2);
 
-        // Ready prompt at bottom
-        this.add.image(SCREEN_WIDTH / 2, SCREEN_HEIGHT * 0.922, 'blank_ui_board')
+        // Define positions for the two buttons
+        const enterButtonX = SCREEN_WIDTH * 0.35; // Left side
+        const backButtonX = SCREEN_WIDTH * 0.65; // Right side
+        const buttonY = SCREEN_HEIGHT * 0.922;
+
+        // Ready prompt at bottom left
+        this.add.image(enterButtonX, buttonY, 'blank_ui_board')
             .setScale(1.1, 0.35)
             .setOrigin(0.5);
 
         this.readyPromptText = this.add.text(
-            SCREEN_WIDTH / 2,
-            SCREEN_HEIGHT * 0.922,
+            enterButtonX, 
+            buttonY,
             'Press ENTER to ready up',
             {
                 fontSize: '24px',
@@ -82,7 +87,7 @@ export class Lobby extends Phaser.Scene {
             }
         ).setOrigin(0.5);
 
-        // Add blinking effect to the prompt
+        // Add blinking effect to the enter prompt
         this.tweens.add({
             targets: this.readyPromptText,
             alpha: { from: 1, to: 0.5 },
@@ -90,20 +95,34 @@ export class Lobby extends Phaser.Scene {
             yoyo: true,
             repeat: -1
         });
-
-        //visual back button prompt
-        this.add.text(
-            60, // Position in top-left corner with some padding
-            30,
+        
+        // Add backspace prompt at bottom right with matching styling
+        this.add.image(backButtonX, buttonY, 'blank_ui_board')
+            .setScale(1.1, 0.35)
+            .setOrigin(0.5);
+        
+        // Add the backspace text
+        const backPromptText = this.add.text(
+            backButtonX,
+            buttonY,
             '← Press BACKSPACE to return',
             {
-                fontSize: '16px',
+                fontSize: '24px',
                 fontFamily: 'monoSpace',
                 color: '#CFAF82',
                 stroke: '#000000',
-                strokeThickness: 2
+                strokeThickness: 4
             }
-        ).setOrigin(0, 0.5);
+        ).setOrigin(0.5);
+
+        // Add matching blinking effect to the backspace prompt
+        this.tweens.add({
+            targets: backPromptText,
+            alpha: { from: 1, to: 0.5 },
+            duration: 1000,
+            yoyo: true,
+            repeat: -1
+        });
 
         // Add torch animations - positioned exactly like in CharacterSelector
         this.add.sprite(310, 410, 'torch').play('torch_burn').setScale(3.5);
