@@ -19,7 +19,6 @@ export class Lobby extends Phaser.Scene {
 
         // Reset lobby state variables explicitly 
         this.isReady = false;
-        this.hasToggledReady = false;  // Critical reset for proper toggle behavior
         this.isTogglingReady = false;
         
         console.log('Lobby state reset: isReady=false, hasToggledReady=false');

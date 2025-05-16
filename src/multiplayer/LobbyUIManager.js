@@ -231,18 +231,6 @@ export default class LobbyUIManager {
         this.repositionAllPlayers();
     }
 
-    removePlayerFromLobby(playerId) {
-        if (this.playerDisplays.has(playerId)) {
-            const display = this.playerDisplays.get(playerId);
-            if (display.sprite) display.sprite.destroy();
-            if (display.text) display.text.destroy();
-            this.playerDisplays.delete(playerId);
-            
-            // Reposition remaining players
-            this.repositionAllPlayers();
-        }
-    }
-
     repositionAllPlayers() {
         // Get screen dimensions directly from the scene
         const SCREEN_WIDTH = this.scene.sys.game.config.width;
