@@ -283,7 +283,7 @@ io.on('connection', (socket) => {
     const player = players.get(socket.id);
     
     if (player) {
-      // broadcast shockwave to other players in same room
+      // abroadcast shockwave to other players in same room
       socket.to(player.roomId).emit('shockwave_created', {
         playerId: socket.id,
         x: data.x,
