@@ -507,6 +507,11 @@ io.on('connection', (socket) => {
           rankings: finalRankings,
           matchDuration: matchDuration // Time in milliseconds
         });
+        console.log(`Game over in room ${player.roomId}, explicitly resetting game state`);
+        lobbyManager.setGameStarted(player.roomId, false);
+
+        // Also notify everyone in the room about the state change
+        io.to(player.roomId).emit('lobby_status_update', lobbyManager.getLobbyStatus(player.roomId));
       }
     }
   });
