@@ -260,7 +260,7 @@ io.on('connection', (socket) => {
       
       // Track damage dealt by attacker (only count effective damage)
       attacker.damageDealt = (attacker.damageDealt || 0) + effectiveDamage;
-      console.log(`Player ${socket.id} has dealt ${attacker.damageDealt} total damage`);
+      //console.log(`Player ${socket.id} has dealt ${attacker.damageDealt} total damage`);
 
       // broadcast the hit to all players in room
       io.to(attacker.roomId).emit('player_hit', {
