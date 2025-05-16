@@ -6,7 +6,6 @@ export default class NetworkManager {
     this.connected = false;
     this.eventListeners = {};
     this.roomId = null;
-    this.isTransitioning = false;
 
     this.currentScene = null;
     this.sceneSpecificEvents = {
@@ -231,6 +230,7 @@ export default class NetworkManager {
       // Skip specific events during transition to GameOver
       if (this.isTransitioning && 
           (event === 'playerUpdated' || event === 'playerHealthUpdate')) {
+          console.log(`[Debug] Skipping event ${event} during transition`);
           return; // Skip player updates during transition
       }
       

@@ -10,11 +10,18 @@ export class Lobby extends Phaser.Scene {
         this.isReady = false;
         this.totalPlayers = 1; // For local testing
         this.readyPlayers = 0; // For local testing
+        this.isTogglingReady = false;
     }
 
     init(data) {
         // Get the selected character from CharacterSelector
         this.selectedCharacter = data.character || 'tank';
+
+        // Reset lobby state variables explicitly 
+        this.isReady = false;
+        this.isTogglingReady = false;
+        
+        console.log('Lobby state reset: isReady=false, hasToggledReady=false');
     }
 
     create() {
@@ -56,14 +63,19 @@ export class Lobby extends Phaser.Scene {
             }
         ).setOrigin(0.5).setDepth(2);
 
-        // Ready prompt at bottom
-        this.add.image(SCREEN_WIDTH / 2, SCREEN_HEIGHT * 0.922, 'blank_ui_board')
+        // Define positions for the two buttons
+        const enterButtonX = SCREEN_WIDTH * 0.25; // Left side
+        const backButtonX = SCREEN_WIDTH * 0.75; // Right side
+        const buttonY = SCREEN_HEIGHT * 0.922;
+
+        // Ready prompt at bottom left
+        this.add.image(enterButtonX, buttonY, 'blank_ui_board')
             .setScale(1.1, 0.35)
             .setOrigin(0.5);
 
         this.readyPromptText = this.add.text(
-            SCREEN_WIDTH / 2,
-            SCREEN_HEIGHT * 0.922,
+            enterButtonX, 
+            buttonY,
             'Press ENTER to ready up',
             {
                 fontSize: '24px',
@@ -74,9 +86,37 @@ export class Lobby extends Phaser.Scene {
             }
         ).setOrigin(0.5);
 
-        // Add blinking effect to the prompt
+        // Add blinking effect to the enter prompt
         this.tweens.add({
             targets: this.readyPromptText,
+            alpha: { from: 1, to: 0.5 },
+            duration: 1000,
+            yoyo: true,
+            repeat: -1
+        });
+        
+        // Add backspace prompt at bottom right with matching styling
+        this.add.image(backButtonX, buttonY, 'blank_ui_board')
+            .setScale(1.1, 0.35)
+            .setOrigin(0.5);
+        
+        // Add the backspace text
+        const backPromptText = this.add.text(
+            backButtonX,
+            buttonY,
+            'Press BACKSPACE to return',
+            {
+                fontSize: '24px',
+                fontFamily: 'monoSpace',
+                color: '#CFAF82',
+                stroke: '#000000',
+                strokeThickness: 4
+            }
+        ).setOrigin(0.5);
+
+        // Add matching blinking effect to the backspace prompt
+        this.tweens.add({
+            targets: backPromptText,
             alpha: { from: 1, to: 0.5 },
             duration: 1000,
             yoyo: true,
@@ -92,6 +132,8 @@ export class Lobby extends Phaser.Scene {
 
         // Listen for Enter key to toggle ready status
         this.input.keyboard.on('keydown-ENTER', this.toggleReady, this);
+        // Add back button functionality with Backspace key
+        this.input.keyboard.on('keydown-BACKSPACE', this.goBackToCharacterSelector, this);
         // Initialize network connection using the singleton service
         NetworkService.initialize()
             .then(networkManager => {
@@ -132,20 +174,43 @@ export class Lobby extends Phaser.Scene {
         this.characterSprite.play(data.animKey);
     }
     toggleReady() {
-        // Toggle ready state
+        // Prevent rapid toggling that could cause state desyncs
+        if (this.isTogglingReady) return;
+        this.isTogglingReady = true;
+        
+        console.log(`Toggling ready state from ${this.isReady} to ${!this.isReady}`);
+        
+        // Toggle local ready state
         this.isReady = !this.isReady;
         
-        // Update UI elements
-        this.readyPromptText.setText(this.isReady ? 'Press ENTER to cancel' : 'Press ENTER to ready up');
-        
-        if (this.isReady) {
-            this.characterSprite.setTint(0x00ff00);
-        } else {
-            this.characterSprite.clearTint();
-        }
-        
-        // Send ready state to server
+        // Sync with server
         this.networkManager.sendPlayerReadyToggle(this.isReady);
+        
+        // Re-enable after a short delay to prevent double-presses
+        this.time.delayedCall(500, () => {
+            this.isTogglingReady = false;
+        });
     }
-
+    goBackToCharacterSelector() {
+        console.log('Returning to character selector...');
+        
+        // Clean up network resources
+        try {
+            // Disconnect from the network
+            NetworkService.disconnect();
+            
+            // Remove any event listeners to prevent memory leaks
+            this.input.keyboard.removeAllKeys();
+            
+            // Stop any active tweens
+            this.tweens.killAll();
+            
+            // Transition back to the character selector screen
+            this.scene.start('CharacterSelector');
+        } catch (error) {
+            console.error('Error returning to character selector:', error);
+            // force scene transition even if cleanup fails
+            this.scene.start('CharacterSelector');
+        }
+    }
 }
