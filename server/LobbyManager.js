@@ -99,14 +99,6 @@ class LobbyManager {
     
     lobby.isGameStarted = isStarted;
     
-    // If we're ending a game (setting to false), also reset all player ready states
-    if (isStarted === false) {
-      console.log(`[LobbyManager] Game ending, resetting all player ready states in room ${roomId}`);
-      for (const [playerId, playerData] of lobby.players.entries()) {
-        playerData.isReady = false;
-        lobby.players.set(playerId, playerData);
-      }
-    }
     
     console.log(`[LobbyManager] Game started changed from ${previousValue} to ${lobby.isGameStarted}`);
     return true;
