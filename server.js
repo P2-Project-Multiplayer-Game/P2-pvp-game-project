@@ -233,7 +233,7 @@ io.on('connection', (socket) => {
     if (player && player.roomId) {
       socket.to(player.roomId).emit('player_left', { id: socket.id });
       
-      // Remove from lobby manager
+      // Remove player from lobby manager
       lobbyManager.removePlayer(player.roomId, socket.id);
       
       // Check if room is now empty after player left
@@ -242,13 +242,19 @@ io.on('connection', (socket) => {
         
       // If room is empty, reset the game state for that room
       if (playersInRoom.length === 0) {
-        console.log(`Room ${player.roomId} is empty, resetting game state`);
+        console.log(`Room ${player.roomId} is empty, performing full reset`);
+        
+        // Check current state before reset
+        const currentStatus = lobbyManager.getLobbyStatus(player.roomId);
+        console.log(`Room state before reset: isGameStarted=${currentStatus.isGameStarted}`);
+        
+        // Reset game start status
         lobbyManager.setGameStarted(player.roomId, false);
+        
+        // Verify reset happened
+        const newStatus = lobbyManager.getLobbyStatus(player.roomId);
+        console.log(`Room state after reset: isGameStarted=${newStatus.isGameStarted}`);
       }
-      
-      // Update lobby status
-      io.to(player.roomId).emit('lobby_status_update', 
-        lobbyManager.getLobbyStatus(player.roomId));
     }
     // Remove player from tracking
     players.delete(socket.id);
