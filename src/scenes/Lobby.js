@@ -10,6 +10,7 @@ export class Lobby extends Phaser.Scene {
         this.isReady = false;
         this.totalPlayers = 1; // For local testing
         this.readyPlayers = 0; // For local testing
+        this.isTogglingReady = false;
     }
 
     init(data) {
@@ -132,20 +133,22 @@ export class Lobby extends Phaser.Scene {
         this.characterSprite.play(data.animKey);
     }
     toggleReady() {
-        // Toggle ready state
+        // Prevent rapid toggling that could cause state desyncs
+        if (this.isTogglingReady) return;
+        this.isTogglingReady = true;
+        
+        console.log(`Toggling ready state from ${this.isReady} to ${!this.isReady}`);
+        
+        // Toggle local ready state
         this.isReady = !this.isReady;
         
-        // Update UI elements
-        this.readyPromptText.setText(this.isReady ? 'Press ENTER to cancel' : 'Press ENTER to ready up');
-        
-        if (this.isReady) {
-            this.characterSprite.setTint(0x00ff00);
-        } else {
-            this.characterSprite.clearTint();
-        }
-        
-        // Send ready state to server
+        // Sync with server
         this.networkManager.sendPlayerReadyToggle(this.isReady);
+        
+        // Re-enable after a short delay to prevent double-presses
+        this.time.delayedCall(500, () => {
+            this.isTogglingReady = false;
+        });
     }
 
 }

@@ -152,6 +152,7 @@ export default class LobbyUIManager {
     updatePlayerReadyState(data) {
         // If this is the local player, update our sprite
         if (data.id === this.network.playerId) {
+            console.log(`Server updated my ready state to: ${data.isReady}`);
             this.scene.isReady = data.isReady;
             
             // Update the text prompt
