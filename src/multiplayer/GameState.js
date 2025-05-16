@@ -26,8 +26,6 @@ export default class GameState {
                 //  Disconnect the socket completely
                 console.log("Disconnecting socket before GameOver scene transition");
                 NetworkService.disconnect();
-                // Clean up network resources
-                //this.cleanupNetworkResources();
                 
                 // Transition to GameOver with just the essential data
                 this.scene.scene.start('GameOver', { 
