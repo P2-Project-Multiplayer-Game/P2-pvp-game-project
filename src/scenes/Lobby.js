@@ -91,6 +91,20 @@ export class Lobby extends Phaser.Scene {
             repeat: -1
         });
 
+        //visual back button prompt
+        this.add.text(
+            60, // Position in top-left corner with some padding
+            30,
+            '← Press BACKSPACE to return',
+            {
+                fontSize: '16px',
+                fontFamily: 'monoSpace',
+                color: '#CFAF82',
+                stroke: '#000000',
+                strokeThickness: 2
+            }
+        ).setOrigin(0, 0.5);
+
         // Add torch animations - positioned exactly like in CharacterSelector
         this.add.sprite(310, 410, 'torch').play('torch_burn').setScale(3.5);
         this.add.sprite(505, 410, 'torch').play('torch_burn').setScale(3.5);
@@ -100,6 +114,8 @@ export class Lobby extends Phaser.Scene {
 
         // Listen for Enter key to toggle ready status
         this.input.keyboard.on('keydown-ENTER', this.toggleReady, this);
+        // Add back button functionality with Backspace key
+        this.input.keyboard.on('keydown-BACKSPACE', this.goBackToCharacterSelector, this);
         // Initialize network connection using the singleton service
         NetworkService.initialize()
             .then(networkManager => {
@@ -157,5 +173,26 @@ export class Lobby extends Phaser.Scene {
             this.isTogglingReady = false;
         });
     }
-
+    goBackToCharacterSelector() {
+        console.log('Returning to character selector...');
+        
+        // Clean up network resources
+        try {
+            // Disconnect from the network
+            NetworkService.disconnect();
+            
+            // Remove any event listeners to prevent memory leaks
+            this.input.keyboard.removeAllKeys();
+            
+            // Stop any active tweens
+            this.tweens.killAll();
+            
+            // Transition back to the character selector screen
+            this.scene.start('CharacterSelector');
+        } catch (error) {
+            console.error('Error returning to character selector:', error);
+            // force scene transition even if cleanup fails
+            this.scene.start('CharacterSelector');
+        }
+    }
 }
