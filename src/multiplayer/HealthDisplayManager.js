@@ -3,7 +3,6 @@ export default class HealthDisplayManager {
         this.scene = scene;
         this.gameSync = gameSync;
         this.network = networkManager;
-        this.isShuttingDown = false;
         this.healthDisplays = new Map(); // Maps playerId -> text object
         this.corners = [
             { x: 20, y: 0, origin: { x: 0, y: 0 } },           // Top left
@@ -129,7 +128,6 @@ export default class HealthDisplayManager {
     }
 
     updateHealthDisplay(playerId, health) {
-        if (this.isShuttingDown) return;
         
         const display = this.healthDisplays.get(playerId);
         if (!display) return;
@@ -199,7 +197,6 @@ export default class HealthDisplayManager {
     }
 
     update() {
-        if (this.isShuttingDown) return;
         // Update local player's health display every frame
         // (useful for health changes not triggered by network events)
         if (this.gameSync.localPlayer) {

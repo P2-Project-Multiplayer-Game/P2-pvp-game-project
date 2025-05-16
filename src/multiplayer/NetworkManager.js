@@ -6,7 +6,6 @@ export default class NetworkManager {
     this.connected = false;
     this.eventListeners = {};
     this.roomId = null;
-    this.isTransitioning = false;
 
     this.currentScene = null;
     this.sceneSpecificEvents = {

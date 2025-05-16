@@ -494,24 +494,7 @@ export class Game extends Phaser.Scene {
             fireball.owner.destroyFireball();
         }
     }
-    // shutdown method
-    shutdown() {
-        // Clean up network resources if GameState hasn't done it already
-        if (this.gameState && this.gameState.cleanupNetworkResources) {
-            this.gameState.cleanupNetworkResources();
-        } else if (this.networkManager) {
-            this.networkManager.isTransitioning = true;
-        }
-        
-        // Additional cleanup
-        if (this.gameSync) {
-            this.gameSync.isShuttingDown = true;
-        }
-        
-        if (this.healthDisplayManager) {
-            this.healthDisplayManager.isShuttingDown = true;
-        }
-    }
+
     update() {
         // Update players
         this.player1.update();
