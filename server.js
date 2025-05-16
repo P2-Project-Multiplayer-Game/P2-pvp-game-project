@@ -275,7 +275,7 @@ io.on('connection', (socket) => {
         health: target.health
       });
       
-      console.log(`Player ${socket.id} hit player ${data.targetId} for ${data.damage} damage. Health now: ${target.health}`);
+      //console.log(`Player ${socket.id} hit player ${data.targetId} for ${data.damage} damage. Health now: ${target.health}`);
     }
   });
 
@@ -291,7 +291,7 @@ io.on('connection', (socket) => {
         direction: data.direction
       });
       
-      console.log(`Player ${socket.id} created shockwave facing ${data.direction}`)
+      //console.log(`Player ${socket.id} created shockwave facing ${data.direction}`)
     }
   });
 
@@ -318,7 +318,7 @@ io.on('connection', (socket) => {
         direction: data.direction
       });
       
-      console.log(`Player ${socket.id} created herowave facing ${data.direction}`)
+      //console.log(`Player ${socket.id} created herowave facing ${data.direction}`)
     }
   });
 
@@ -344,7 +344,7 @@ io.on('connection', (socket) => {
         direction: data.direction
       });
       
-      console.log(`Player ${socket.id} created arrow facing ${data.direction}`)
+      //console.log(`Player ${socket.id} created arrow facing ${data.direction}`)
     }
   });
 
@@ -372,7 +372,7 @@ io.on('connection', (socket) => {
         direction: data.direction
       });
       
-      console.log(`Player ${socket.id} created ninjawave facing ${data.direction}`)
+      //console.log(`Player ${socket.id} created ninjawave facing ${data.direction}`)
     }
   });
 
@@ -400,7 +400,7 @@ io.on('connection', (socket) => {
               positions: data.positions // Include the positions array
           });
           
-          console.log(`Player ${socket.id} created fireball facing ${data.direction} with positions:`, data.positions);
+          //console.log(`Player ${socket.id} created fireball facing ${data.direction} with positions:`, data.positions);
       }
   });
 
