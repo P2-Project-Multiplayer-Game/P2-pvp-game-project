@@ -65,8 +65,8 @@ export class Lobby extends Phaser.Scene {
         ).setOrigin(0.5).setDepth(2);
 
         // Define positions for the two buttons
-        const enterButtonX = SCREEN_WIDTH * 0.15; // Left side
-        const backButtonX = SCREEN_WIDTH * 0.85; // Right side
+        const enterButtonX = SCREEN_WIDTH * 0.25; // Left side
+        const backButtonX = SCREEN_WIDTH * 0.75; // Right side
         const buttonY = SCREEN_HEIGHT * 0.922;
 
         // Ready prompt at bottom left
