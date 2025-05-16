@@ -16,6 +16,13 @@ export class Lobby extends Phaser.Scene {
     init(data) {
         // Get the selected character from CharacterSelector
         this.selectedCharacter = data.character || 'tank';
+
+        // Reset lobby state variables explicitly 
+        this.isReady = false;
+        this.hasToggledReady = false;  // Critical reset for proper toggle behavior
+        this.isTogglingReady = false;
+        
+        console.log('Lobby state reset: isReady=false, hasToggledReady=false');
     }
 
     create() {
@@ -138,12 +145,7 @@ export class Lobby extends Phaser.Scene {
         this.isTogglingReady = true;
         
         console.log(`Toggling ready state from ${this.isReady} to ${!this.isReady}`);
-        // Force to true on first press in a new lobby session
-        if (!this.hasToggledReady) {
-            console.log('First toggle in this session, ensuring we go to ready state');
-            this.isReady = false;  // Ensure we're starting from false
-            this.hasToggledReady = true; // Mark that we've toggled once
-        }
+        
         // Toggle local ready state
         this.isReady = !this.isReady;
         
