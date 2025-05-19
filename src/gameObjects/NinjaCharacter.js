@@ -46,7 +46,6 @@ export class NinjaCharacter extends Character {
             }
         });
         this.setScale(0.90);
-
         this.body.setSize(20, 55);
         // Store the different offsets 
         this.rightFacingOffset = { x: 10, y: 0 };
@@ -57,6 +56,18 @@ export class NinjaCharacter extends Character {
         
         //previous flipX state to detect changes
         this.prevFlipX = this.flipX;
+
+        
+        //kalleopdatering start
+
+        this.on('animationcomplete', (anim) => {
+            if (anim.key === this.animationKeys.attack2) {
+                this.body.setSize(20, 55); // back to default hitbox
+                this.updateBodyboxOffset(); // back to default offset
+            }
+        });
+        
+        //kalleopdatering forsat i update
         
     }
 
@@ -107,17 +118,23 @@ export class NinjaCharacter extends Character {
     }
 
     update() {
-        // Check if flipX state changed
-        if (this.flipX !== this.prevFlipX) {
-            if (this.flipX) {
-                this.body.setOffset(this.leftFacingOffset.x, this.leftFacingOffset.y);
-            } else {
-                this.body.setOffset(this.rightFacingOffset.x, this.rightFacingOffset.y);
-            }
+        const currentAnim = this.anims.currentAnim?.key;
+        const currentFrame = this.anims.currentFrame?.index;
+
+        if (currentAnim === this.animationKeys.attack2 && currentFrame === 5) {
+            // specifik frame offset
+            this.body.setOffset(50, this.body.offset.y); // her kan specifik frame offset justeres
+        } else if (this.flipX !== this.prevFlipX) {
+            this.updateBodyboxOffset();
             this.prevFlipX = this.flipX;
         }
         
         // Call parent update method
         super.update();
+    }
+
+    updateBodyboxOffset() {
+        const offset = this.flipX ? this.leftFacingOffset : this.rightFacingOffset;
+        this.body.setOffset(offset.x, offset.y);
     }
 }
