@@ -59,10 +59,19 @@ export class NinjaCharacter extends Character {
 
         
         //kalleopdatering start
-
+        
+        this.on('animationstart', (anim) => {
+            if (anim.key === this.animationKeys.attack2) {
+                this.setScale(0.90),
+                this.body.setOffset(this.body.offset.x, 7/*this.body.offset.y*/);
+            }
+        });
+    
+        this.originalY = y;
         this.on('animationcomplete', (anim) => {
             if (anim.key === this.animationKeys.attack2) {
-                this.updateBodyboxOffset(); // tilbage til default offset
+                this.updateBodyboxOffset(), // tilbage til default offset
+                this.setOrigin(0.5,0.2);
             }
         });
         
@@ -105,7 +114,7 @@ export class NinjaCharacter extends Character {
         this.anims.create({
             key: this.animationKeys.attack2,
             frames: this.anims.generateFrameNames('ninja_attack2', { prefix: 'ninjaspecial', end: 7, zeroPad: 4 }),
-            frameRate: 8, // slow attack
+            frameRate: 2, // slow attack
             repeat: 0
         });
         this.anims.create({
@@ -117,12 +126,19 @@ export class NinjaCharacter extends Character {
     }
 
     update() {
+        /*
+        if (this.anims.currentAnim?.key === this.animationKeys.attack2) {
+            this.setY(this.originalY - 3); // Raise sprite a bit to prevent ground clip
+            } else {
+            this.setY(this.originalY); // Reset when not attacking
+        }
+        */
         const currentAnim = this.anims.currentAnim?.key;
         const currentFrame = this.anims.currentFrame?.index;
 
         if (currentAnim === this.animationKeys.attack2 && currentFrame === 5) {
             // specifik frame offset
-            this.body.setOffset(50, this.body.offset.y); // her kan specifik frame offset justeres
+            this.body.setOffset(55, this.body.offset.y); // her kan specifik frame offset justeres
         } else if (this.flipX !== this.prevFlipX) {
             this.updateBodyboxOffset();
             this.prevFlipX = this.flipX;
