@@ -62,8 +62,7 @@ export class NinjaCharacter extends Character {
 
         this.on('animationcomplete', (anim) => {
             if (anim.key === this.animationKeys.attack2) {
-                this.body.setSize(20, 55); // back to default hitbox
-                this.updateBodyboxOffset(); // back to default offset
+                this.updateBodyboxOffset(); // tilbage til default offset
             }
         });
         
