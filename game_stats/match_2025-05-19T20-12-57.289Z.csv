@@ -1,0 +1,17 @@
+MATCH SUMMARY
+Date,2025-05-19T20:12:57.289Z
+Duration,0:58
+
+CHARACTER RANKINGS
+Rank,Character,Damage Dealt,Kills
+1,tank,80,1
+2,skeleton,0,0
+
+KILL BREAKDOWN
+Killer Character,Victim Character,Count
+tank,skeleton,1
+
+TOTAL DAMAGE BY CHARACTER
+Character,Total Damage
+tank,80
+skeleton,0
